@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "code-documentation": {
+      "source": "bytedance/deer-flow",
+      "sourceType": "github",
+      "skillPath": "skills/public/code-documentation/SKILL.md",
+      "computedHash": "ec9a1d364fa9e90e425c7c3e8cff85a0cb21ca1b7321b6e4964ece5b693227b1"
+    },
+    "design-doc-mermaid": {
+      "source": "spillwavesolutions/design-doc-mermaid",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "362eecfd376c8932aa86d366a6406bf389ac4f2f52d93e5892adf8c963392afe"
+    },
+    "plankton-code-quality": {
+      "source": "affaan-m/ecc",
+      "sourceType": "github",
+      "skillPath": "skills/plankton-code-quality/SKILL.md",
+      "computedHash": "c0e572a1e475ed4375f85cd98fdf5e50d055e778dda9423711c1e42f288b67cd"
+    }
+  }
+}
