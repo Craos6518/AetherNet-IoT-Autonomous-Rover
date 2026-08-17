@@ -25,6 +25,7 @@ AetherNet IoT es un sistema distribuido de domótica modular, control de acceso 
 ### 2.3. Robótica Móvil (Rover Tanque Autónomo)
 * **RF-3.1:** El Rover (Arduino UNO + L298N) debe recibir comandos de tracción con una latencia mínima a través del transceptor nRF24L01 (2.4 GHz).
 * **RF-3.2:** El vehículo debe esquivar obstáculos frontales usando el sensor HC-SR04 y evitar caídas en bordes utilizando la matriz de sensores infrarrojos TCRT5000.
+* **RF-3.3 (fail-safe RF):** Si el Rover no recibe un paquete RF válido del Gateway dentro de una ventana de timeout definida (a calibrar en firmware, valor de referencia inicial: 300-500 ms), debe detener inmediatamente ambos motores (fail-stop) hasta recibir un nuevo comando válido. El Rover no debe continuar en movimiento ni intentar maniobras autónomas adicionales mientras el enlace esté caído — ver `docs/architecture.md` §6 y riesgo relacionado en `docs/risk-register.md`.
 
 ### 2.4. Automatización y LowCode (Node-RED)
 * **RF-4.1:** El motor de reglas debe capturar eventos críticos (ej. intrusión) y enviar una notificación push/mensaje a través de un Bot de Telegram.
@@ -75,3 +76,12 @@ AetherNet IoT es un sistema distribuido de domótica modular, control de acceso 
   * *Dado* que el HC-SR04 devuelve lecturas con dispersión,
   * *Cuando* se aplica el filtro EMA ($\alpha = 0.2$),
   * *Entonces* la señal resultante se estabiliza, descartando picos anómalos (falsos obstáculos) antes de enviar la orden a los motores.
+
+### HU-04: Fail-safe del Rover ante pérdida de enlace RF
+**Como** operador del sistema,
+**Quiero** que el Rover se detenga si pierde comunicación con el Gateway,
+**Para** evitar que quede en movimiento sin control ante una pérdida de señal.
+* **Criterios de Aceptación (BDD):**
+  * *Dado* que el Rover está en movimiento recibiendo comandos RF válidos,
+  * *Cuando* transcurre la ventana de timeout sin recibir un nuevo paquete válido,
+  * *Entonces* el firmware del UNO corta el PWM de ambos motores (fail-stop) y permanece detenido hasta recibir un comando nuevo.
