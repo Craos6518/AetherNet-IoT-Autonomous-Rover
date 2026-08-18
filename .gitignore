@@ -1,0 +1,258 @@
+# AetherNet IoT & Autonomous Rover - .gitignore
+# Generated for multi-component project: Python/FastAPI, Android/Kotlin, C++/Arduino, Node-RED, Docker
+
+# =============================================================================
+# Python / Backend / Stats
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.venv/
+venv/
+env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.pyre/
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments (if any in subdirectories)
+backend/.venv/
+stats/.venv/
+automation/.venv/
+
+# Environment files (keep .env.example but ignore actual .env)
+.env
+.env.local
+.env.*.local
+backend/.env
+automation/.env
+
+# =============================================================================
+# Docker
+# =============================================================================
+.docker/
+docker-compose.override.yml
+*.dockerfile~
+
+# =============================================================================
+# Android / Kotlin / Gradle
+# =============================================================================
+*.apk
+*.ap_
+*.aab
+*.aas
+*.jks
+*.keystore
+*.store
+*.ks
+*.key
+*.jks
+*.keystore
+*.store
+*.ks
+*.key
+*.properties
+*.gradle
+*.gradle.kts
+.gradle/
+build/
+out/
+local.properties
+signing.properties
+gradle.properties
+*.iml
+.idea/
+*.iws
+*.ipr
+# Android Studio specific
+.cxx/
+.externalNativeBuild/
+*.apk
+*.aar
+*.ap_
+*.aab
+*.jks
+*.keystore
+*.store
+*.ks
+*.key
+# Gradle wrapper (keep gradlew, gradlew.bat, but ignore jar)
+gradle/wrapper/gradle-wrapper.jar
+
+# =============================================================================
+# C++ / Arduino / Firmware
+# =============================================================================
+# Build artifacts
+*.o
+*.obj
+*.elf
+*.hex
+*.bin
+*.eep
+*.map
+*.lss
+*.sym
+*.lst
+*.d
+*.dep
+
+# Arduino CLI / IDE
+.build/
+.build-*/
+*.ino.cpp
+*.ino.h
+*.ino.elf
+*.ino.hex
+*.ino.bin
+*.ino.eep
+*.ino.map
+*.ino.lss
+*.ino.sym
+*.ino.lst
+
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+platformio.ini~
+
+# VS Code / Arduino extension
+.vscode/arduino.json
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/tasks.json
+
+# =============================================================================
+# Node-RED / Automation
+# =============================================================================
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.automation/.node-red/
+automation/.node-red/node_modules/
+automation/.node-red/settings.js
+automation/.node-red/flows*.json
+automation/.node-red/flows*.json.backup
+automation/.node-red/*.log
+automation/.node-red/*.pid
+automation/.node-red/lib/
+automation/.node-red/projects/
+
+# =============================================================================
+# IDE / Editor
+# =============================================================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+!.vscode/tasks.json.example
+!.vscode/launch.json.example
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# =============================================================================
+# OS / Filesystem
+# =============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.tmp
+*.temp
+
+# =============================================================================
+# Logs / Runtime
+# =============================================================================
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# =============================================================================
+# Testing / Coverage
+# =============================================================================
+coverage/
+.nyc_output/
+*.lcov
+
+# =============================================================================
+# Secrets / Credentials (NEVER COMMIT)
+# =============================================================================
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+*.secret
+*.credentials
+*.token
+
+# =============================================================================
+# Project-specific
+# =============================================================================
+# Database
+*.db
+*.sqlite
+*.sqlite3
+postgres_data/
+
+# Mosquitto
+mosquitto/data/
+mosquitto/log/
+
+# Firmware build outputs
+firmware/*/build/
+firmware/*/.build/
+firmware/*/.pio/
+
+# Stats output
+stats/output/
+stats/data/
+stats/*.csv
+stats/*.json
+stats/*.png
+stats/*.pdf
+
+# Documentation builds
+docs/_build/
+docs/site/
+*.pdf
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp

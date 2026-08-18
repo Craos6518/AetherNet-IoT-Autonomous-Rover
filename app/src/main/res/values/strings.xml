@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">AetherControl</string>
+    <string name="app_name_short">AetherNet</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="connection_status_connected">Conectado</string>
+    <string name="connection_status_disconnected">Desconectado</string>
+    <string name="connection_status_connecting">Conectando…</string>
+
+    <!-- Relays -->
+    <string name="relay_on">Encendido</string>
+    <string name="relay_off">Apagado</string>
+    <string name="relay_toggle">Conmutar</string>
+
+    <!-- Access -->
+    <string name="access_title">Control de Acceso</string>
+    <string name="pin_hint">Ingrese PIN</string>
+    <string name="pin_submit">Enviar</string>
+    <string name="access_granted">Acceso concedido</string>
+    <string name="access_denied">Acceso denegado</string>
+
+    <!-- Rover -->
+    <string name="rover_title">Rover Autónomo</string>
+    <string name="rover_mode_manual">Manual</string>
+    <string name="rover_mode_auto">Autónomo</string>
+    <string name="rover_stop">Detener</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Configuración</string>
+    <string name="mqtt_host">Host MQTT</string>
+    <string name="mqtt_port">Puerto MQTT</string>
+    <string name="mqtt_username">Usuario</string>
+    <string name="mqtt_password">Contraseña</string>
+
+    <!-- Errors -->
+    <string name="error_network">Error de red</string>
+    <string name="error_mqtt_connection">No se pudo conectar al broker MQTT</string>
+    <string name="error_bluetooth_unavailable">Bluetooth no disponible</string>
+</resources>

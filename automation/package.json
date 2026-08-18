@@ -1,0 +1,17 @@
+{
+  "name": "aethernet-automation",
+  "version": "1.0.0",
+  "description": "Node-RED flows for AetherNet IoT automation",
+  "scripts": {
+    "start": "node-red -u ./data",
+    "dev": "node-red -u ./data -v"
+  },
+  "dependencies": {
+    "node-red": "^3.1.0",
+    "node-red-contrib-tuya-local": "^1.0.0",
+    "node-red-dashboard": "^3.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
+}

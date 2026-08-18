@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aethernet-postgres
+    environment:
+      POSTGRES_DB: aethernet
+      POSTGRES_USER: ${POSTGRES_USER:-aethernet}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aethernet} -d aethernet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aethernet-net
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: aethernet-mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./backend/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./backend/mosquitto/data:/mosquitto/data
+      - ./backend/mosquitto/log:/mosquitto/log
+    networks:
+      - aethernet-net
+
+  fastapi:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aethernet-fastapi
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-aethernet}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/aethernet
+      MQTT_BROKER_HOST: mosquitto
+      MQTT_BROKER_PORT: 1883
+      MQTT_USERNAME: ${MQTT_USERNAME:-}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    networks:
+      - aethernet-net
+
+volumes:
+  postgres_data:
+
+networks:
+  aethernet-net:
+    driver: bridge
