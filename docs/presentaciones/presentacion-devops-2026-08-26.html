@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AetherNet · DevOps — Presentación 5 min</title>
+<style>
+:root{
+  --bg:#0a101c; --bg2:#0d1524; --card:#111c2ecc; --line:#23324d; --line2:#2e4166;
+  --tx:#e9eff9; --mut:#9db0cc; --dim:#6b7f9e;
+  --cy:#3fd8f5; --am:#ffc857; --vi:#a78bfa; --gr:#4ade80; --rd:#f87171;
+  --tb:64px; --hb:60px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --disp:"Charter","Bitstream Charter",Georgia,Cambria,"Times New Roman",serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--tx);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;overflow:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -10%,#3fd8f51c,transparent 60%),
+    radial-gradient(800px 520px at 105% 110%,#a78bfa1a,transparent 60%),
+    radial-gradient(600px 400px at 85% -15%,#ffc85710,transparent 55%);
+}
+::selection{background:#3fd8f53d}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:var(--cy)}
+:focus-visible{outline:2px solid var(--cy);outline-offset:2px;border-radius:6px}
+kbd{border:1px solid var(--line2);border-bottom-width:2px;border-radius:6px;padding:.06rem .45rem;background:#ffffff10;font-family:var(--mono);font-size:.78em;color:var(--tx)}
+#bar{position:fixed;top:0;left:0;height:3px;width:100%;background:linear-gradient(90deg,var(--cy),var(--vi));z-index:60;transform:scaleX(0);transform-origin:0 50%;transition:transform .35s ease}
+#topbar{position:fixed;top:0;left:0;right:0;height:var(--tb);display:flex;align-items:center;gap:14px;padding:0 18px;background:#0a101cd9;backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:50}
+.brand{display:flex;align-items:center;gap:11px;margin-right:auto}
+.brand:hover{opacity:.9}
+.mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3fd8f5,#5ea0ff 55%,#a78bfa);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#07101d;letter-spacing:.5px}
+.brand b{font-size:.95rem;letter-spacing:.2px;display:block;line-height:1.15}
+.brand small{color:var(--mut);font-size:.72rem;display:block;letter-spacing:.4px}
+#timer{font-family:var(--mono);font-size:1.05rem;color:var(--mut);padding:.3rem .75rem;border:1px solid var(--line);border-radius:999px;display:flex;gap:.45rem;align-items:baseline;user-select:none;transition:border-color .2s,color .2s}
+#timer span{font-size:.68rem;color:var(--dim)}
+#timer.run{color:var(--cy);border-color:#3fd8f566}
+#timer.warn{color:var(--am);border-color:#ffc85777}
+#timer.over{color:var(--rd);border-color:#f8717177;animation:pulse 1.1s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 5px #f8717122}}
+.tbtn{border:1px solid var(--line);border-radius:9px;padding:.42rem .7rem;color:var(--mut);font-size:.82rem;display:inline-flex;gap:.4rem;align-items:center;transition:.18s}
+.tbtn:hover{color:var(--tx);border-color:var(--line2);background:#ffffff08}
+.tbtn.on{color:var(--am);border-color:#ffc85766;background:#ffc85712}
+.tbtn.sq{width:36px;justify-content:center;padding:.42rem 0}
+#deck{position:fixed;top:var(--tb);bottom:var(--hb);left:0;right:0;z-index:1}
+.slide{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .38s ease,transform .38s ease,visibility .38s;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.slide::-webkit-scrollbar{width:8px}
+.slide::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.wrap{max-width:1090px;margin:0 auto;padding:42px 30px 64px}
+.kicker{display:flex;align-items:center;gap:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.16em;font-size:.72rem;font-weight:700;margin-bottom:14px}
+.kicker::before{content:"";width:26px;height:2px;background:linear-gradient(90deg,var(--cy),transparent);border-radius:2px}
+h1{font-family:var(--disp);font-size:clamp(2.2rem,4.8vw,3.5rem);font-weight:700;letter-spacing:-.015em;line-height:1.05;margin:.18em 0}
+h2{font-family:var(--disp);font-size:clamp(1.55rem,3.1vw,2.3rem);font-weight:700;letter-spacing:-.01em;line-height:1.14;margin-bottom:18px}
+h1 .x{color:var(--cy);font-weight:300;padding:0 .08em}
+.lead{color:var(--mut);font-size:clamp(1rem,1.6vw,1.16rem);line-height:1.55;max-width:62ch}
+.muted{color:var(--mut)}.dimtxt{color:var(--dim)}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0}
+.chip{display:inline-flex;align-items:center;gap:.45rem;padding:.38rem .8rem;border:1px solid var(--line);border-radius:999px;font-size:.83rem;color:var(--mut);background:#ffffff07}
+.chip b{color:var(--tx);font-weight:650}
+.chip.hl{border-color:#3fd8f54d;color:#bdeef9;background:#3fd8f510}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+.card h3{font-size:1.02rem;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.term{cursor:help;border-bottom:1.5px dotted #3fd8f5b0;padding-bottom:1px;text-decoration:none;transition:background .15s}
+.term:hover,.term:focus-visible{background:#3fd8f518;border-bottom-style:solid;border-radius:3px 3px 0 0}
+.tbadge{position:sticky;top:0;z-index:5;display:flex;justify-content:flex-end;pointer-events:none;margin-bottom:-30px}
+.tbadge span{pointer-events:auto;display:inline-flex;gap:8px;align-items:center;font-family:var(--mono);font-size:.72rem;color:var(--mut);background:#0d1626e0;border:1px solid var(--line);padding:.3rem .65rem;border-radius:999px;backdrop-filter:blur(6px)}
+.pull{border-left:3px solid var(--cy);background:#3fd8f50c;border-radius:12px;padding:14px 20px;font-size:1.05rem;line-height:1.5;color:#d6e5f5;font-style:italic;margin-top:20px;max-width:70ch}
+.notes{display:none;margin-top:26px;background:#ffc8570e;border-radius:10px;padding:11px 16px;font-size:.9rem;color:#e8d5a8;line-height:1.5}
+.notes b{display:inline-block;font-size:.68rem;letter-spacing:.14em;color:var(--am);margin-right:10px;text-transform:uppercase}
+body.notes-on .notes{display:block}
+.flow{display:flex;gap:12px;align-items:stretch;margin:22px 0 8px}
+.fcol{flex:1;display:flex;flex-direction:column;gap:8px}
+.fhead{text-align:center;font-size:.7rem;letter-spacing:.15em;font-weight:700;color:var(--mut);text-transform:uppercase}
+.fmid{flex:0 0 190px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;border:1px solid #3fd8f54d;border-radius:16px;background:radial-gradient(140px 90px at 50% 40%,#3fd8f51f,transparent),#0e1930;padding:18px 14px;text-align:center}
+.fmid .sig{font-family:Georgia,Cambria,serif;font-size:2.6rem;color:var(--cy);line-height}
+.fmid b{font-size:.95rem;letter-spacing:.04em}
+.fmid small{color:var(--mut);font-size:.76rem;line-height:1.4}
+.farrow{align-self:center;color:var(--cy);font-size:1.5rem;flex:0 0 auto;opacity:.85}
+.formula-card{margin:20px 0;padding:26px 20px;text-align:center;border:1px solid #3fd8f540;border-radius:16px;background:radial-gradient(420px 130px at 50% 0%,#3fd8f512,transparent),var(--card)}
+.formula{font-family:Georgia,Cambria,"Times New Roman",serif;font-style:italic;font-size:clamp(1.55rem,3.4vw,2.35rem);letter-spacing:.01em;color:#eaf6fb}
+.formula sub{font-size:.55em;font-style:normal;color:var(--cy)}
+.fcap{margin-top:12px;color:var(--mut);font-size:.86rem}
+.fcap b{color:var(--tx)}
+.demo{margin-top:22px;border:1px solid var(--line2);border-radius:16px;background:#0d1729;overflow:hidden}
+.demo-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--line);background:#ffffff05}
+.demo-head .ttl{font-weight:700;font-size:.9rem;margin-right:auto;display:flex;gap:8px;align-items-center}
+.demo-body{padding:14px 16px 18px}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:10px}
+.toolbar label{font-size:.85rem;color:var(--mut);display:flex;gap:.55rem;align-items:center}
+input[type=range]{accent-color:var(--cy);width:min(220px,40vw)}
+.presets{display:flex;gap:6px}
+.preset{font-family:var(--mono);font-size:.74rem;border:1px solid var(--line);border-radius:7px;padding:.24rem .5rem;color:var(--mut)}
+.preset:hover,.preset.on{color:var(--cy);border-color:#3fd8f566;background:#3fd8f512}
+.btn{border:1px solid var(--line2);border-radius:10px;padding:.5rem .95rem;font-size:.86rem;color:var(--tx);transition:.18s;display:inline-flex;gap:.45rem;align-items:center}
+.btn:hover{background:#ffffff0d;border-color:#3f5480}
+.btn.pri{background:linear-gradient(135deg,var(--cy),#5ea0ff);color:#06121d;font-weight:700;border:none}
+.btn.pri:hover{filter:brightness(1.08)}
+.metrics{display:flex;flex-wrap:wrap;gap:10px;margin-left:auto}
+.metric{font-family:var(--mono);font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:.32rem .7rem;color:var(--mut)}
+.metric b{color:var(--tx)}
+.metric.good b{color:var(--gr)}
+.metric.mid b{color:var(--am)}
+.chartbox{position:relative;height:255px;border-radius:12px;overflow:hidden;background:#0a1322;border:1px solid var(--line)}
+.chartbox canvas{position:absolute;inset:0;width:100%;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:10px;font-size:.78rem;color:var(--mut)}
+.legend i{display:inline-block;width:20px;height:0;border-top:3px solid;border-radius:2px;margin-right:6px;vertical-align:middle}
+.svgbox{background:#0a1322;border:1px solid var(--line);border-radius:12px;padding:10px 6px 4px;margin-top:14px}
+.svgcap{display:flex;flex-wrap:wrap;gap:12px;font-size:.73rem;color:var(--dim);margin-top:8px}
+.svgcap i{display:inline-block;width:16px;border-top:2px solid;border-radius:2px;margin-right:5px;vertical-align:middle}
+#hud{position:fixed;left:0;right:0;bottom:0;height:var(--hb);display:flex;align-items:center;gap:12px;padding:0 16px;background:#0a101cd9;backdrop-filter:blur(12px);border-top:1px solid var(--line);z-index:50}
+.navbtn{width:38px;height:38px;border:1px solid var(--line);border-radius:11px;color:var(--mut);font-size:1rem;display:flex;align-items:center;justify-content:center;transition:.15s}
+.navbtn:hover{color:var(--tx);border-color:var(--line2);background:#ffffff08}
+#dots{display:flex;gap:7px;align-items:center;margin:0 4px}
+.dot{width:9px;height:9px;border-radius:99px;background:#33445f;transition:.22s;padding:0}
+.dot:hover{background:var(--dim)}
+.dot.on{width:26px;background:linear-gradient(90deg,var(--cy),var(--vi))}
+#counter{font-family:var(--mono);font-size:.8rem;color:var(--mut);min-width:64px;text-align:center}
+#hudhint{margin-left:auto;color:var(--dim);font-size:.74rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#tip{position:fixed;z-index:1000;max-width:min(350px,86vw);background:#101c31f6;border:1px solid #3fd8f54d;border-radius:13px;padding:11px 14px;box-shadow:0 16px 50px #000000b0;backdrop-filter:blur(10px);animation:tipin .14s ease}
+@keyframes tipin{from{opacity:0}to{opacity:1}}
+#tip::after{content:"";position:absolute;top:-6px;left:var(--ax,50%);width:11px;height:11px;background:#101c31;border-left:1px solid #3fd8f54d;border-top:1px solid #3fd8f54d;transform:translateX(-50%) rotate(45deg)}
+#tip.below::after{top:auto;bottom:-6px;transform:translateX(-50%) rotate(225deg)}
+#tipName{display:block;color:var(--cy);font-weight:700;font-size:.8rem;letter-spacing:.05em;margin-bottom:4px}
+#tipDef{color:#cdd9ea;font-size:.85rem;line-height:1.5}
+#help{position:fixed;inset:0;z-index:900;display:flex;align-items:center;justify-content:center;background:#04080fd0;backdrop-filter:blur(6px);animation:tipin .15s ease}
+.hpanel{background:#101c31;border:1px solid var(--line2);border-radius:18px;padding:26px 30px;max-width:440px;width:calc(100vw - 48px);box-shadow:0 24px 80px #000c}
+.hpanel h3{font-size:1.05rem;margin-bottom:16px}
+.hrow{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px dashed var(--line);color:var(--mut);font-size:.87rem}
+.hrow:last-of-type{border:none}
+.hrow div b{color:var(--tx);font-weight:600}
+@media(max-width:700px){
+  .flow{flex-direction:column}.farrow{transform:rotate(90deg);align-self:center}
+  .fmid{flex:auto}
+  #hudhint{display:none}
+  .brand small{display:none}
+}
+@media print{
+  body{overflow:visible;background:#fff;color:#111}
+  body::before,#bar,#topbar,#hud,#tip,#help{display:none!important}
+  #deck{position:static}
+  .slide{position:relative;inset:auto;opacity:1!important;visibility:visible!important;transform:none!important;overflow:visible;page-break-after:always;height:auto}
+  .notes{display:none}
+  .card,.chartbox,.demo{border-color:#ccc}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<div id="bar"></div>
+
+<header id="topbar">
+  <button class="brand" id="homeBtn" title="Ir al inicio" aria-label="Inicio">
+    <span class="mark">Δ</span>
+    <span><b>AetherNet × DevOps</b><small>TS6D3 · Grupo 401</small></span>
+  </button>
+  <div id="timer" role="timer" aria-label="Cronómetro de la presentación" title="Clic o T: iniciar / pausar · R: reiniciar">00:00 <span>/ 05:00</span></div>
+  <button class="tbtn" id="btnNotes" title="Notas del presentador (N)">📝 Notas</button>
+  <button class="tbtn sq" id="btnFs" title="Pantalla completa (F)" aria-label="Pantalla completa">⛶</button>
+  <button class="tbtn sq" id="btnHelp" title="Ayuda y atajos (?)" aria-label="Ayuda">?</button>
+</header>
+
+<main id="deck">
+
+<!-- 1 · PORTADA -->
+<section class="slide" aria-label="Portada">
+  <div class="wrap">
+    <p class="kicker">Proyecto integrador · Presentación para aval de contenido</p>
+    <h1>AetherNet<span class="x">×</span>DevOps</h1>
+    <p class="lead">Infraestructura containerizada, CI/CD y firmware base — 100% FOSS, sin nubes propietarias</p>
+    <div class="chips">
+      <span class="chip hl">🎓 TS6D3 DevOps · Grupo 401</span>
+      <span class="chip">👨‍🏫 Profesor Julián</span>
+      <span class="chip">📅 Viernes 28 de agosto de 2026 · 18:00</span>
+      <span class="chip">⏱ ~5 min + 5 min de diálogo</span>
+      <a class="chip" href="https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover" target="_blank" rel="noopener">🔗 github.com/Craos6518/AetherNet-IoT-Autonomous-Rover</a>
+    </div>
+    <div class="agenda card">
+      <h3 style="margin-bottom:12px">Agenda — 5 bloques</h3>
+      <button class="arow" data-go="1"><span class="n">01</span><span class="t">Saludo y contexto</span><span class="d">0:00–0:40</span></button>
+      <button class="arow" data-go="2"><span class="n">02</span><span class="t">Arquitectura 5 subsistemas</span><span class="d">0:40–1:20</span></button>
+      <button class="arow" data-go="3"><span class="n">03</span><span class="t">Alineación syllabus</span><span class="d">1:20–2:30</span></button>
+      <button class="arow" data-go="5"><span class="n">04</span><span class="t">Plan y evidencias</span><span class="d">2:30–3:30</span></button>
+      <button class="arow" data-go="6"><span class="n">05</span><span class="t">Petición formal</span><span class="d">3:30–4:30</span></button>
+    </div>
+    <p class="demnote" style="margin-top:18px">💡 Pasa el mouse —o toca— cualquier término <span class="term" tabindex="0" data-term="subrayado punteado" data-def="Los términos con línea punteada cian tienen definición: al pasar el mouse aparece una tarjeta como esta.">subrayado así</span> para ver su significado. Atajos: <kbd>T</kbd> cronómetro · <kbd>N</kbd> notas internas · <kbd>F</kbd> pantalla completa.</p>
+    <aside class="notes"><b>Nota interna</b>Contexto: sismo M 7.4 del 10 de agosto — clases suspendidas en UTP Pereira; retorno virtual por definir. Inicio agradeciendo el espacio; tono calmado y directo.</aside>
+  </div>
+</section>
+
+<!-- 2 · ARCHITECTURE -->
+<section class="slide" aria-label="Arquitectura 5 subsistemas">
+  <div class="wrap">
+    <div class="tbadge"><span>⏱ 0:40 – 1:20 · Arquitectura</span></div>
+    <p class="kicker">Arquitectura AetherNet: 5 subsistemas reales</p>
+    <div class="grid g2">
+      <div class="card">
+        <h3>📱 App Móvil</h3>
+        <p class="muted" style="font-size:.9rem;line-height:1.55">Kotlin + Jetpack Compose (UI declarativa), MVVM, Hilt, MQTT (Paho), Bluetooth SPP (RFCOMM/SPP). Interfaz: dashboard, joystick, PIN, alertas. <span class="term dimtxt">Todo en red local (Wi-Fi), contingencia BT clásica.</span></p>
+      </div>
+      <div class="card">
+        <h3>🖥 Backend Local</h3>
+        <p class="muted" style="font-size:.9rem;line-height:1.55">FastAPI + PostgreSQL + Mosquitto MQTT (Docker Compose). API REST, base de datos de eventos, broker de mensajes tiempo real. <span class="term dimtxt">3 contenedores en red interna, volúmenes persistentes, healthchecks.</span></p>
+      </div>
+      <div class="card">
+        <h3>🌐 Gateway ESP32</h3>
+        <p class="muted" style="font-size:.9rem;line-height:1.55">C++ (Arduino CLI), Wi-Fi + Radio 2.4GHz (nRF24L01) + Puerto serie (UART). Puente entre sensores y la red local. <span class="term dimtxt">Comunicación UART ↔ Radio ↔ Puerto serie.</span></p>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>🔧 Controlador MEGA</h3>
+        <p class="muted" style="font-size:.9rem;line-height:1.55">C++ (Arduino IDE), Teclado 4x4, Servomotor MG90S, Láser KY-008, LED RGB, Relés. <span class="term dimtxt">Cerrojo electrónico, trampa láser, control de relés.</span></p>
+      </div>
+      <div class="card">
+        <h3>🚜 Rover UNO</h3>
+        <p class="muted" style="font-size:.9rem;line-height:1.55">C++ (Arduino UNO), Motores L298N, Ultrasonido HC-SR04, Sensores IR TCRT5000, Radio nRF24L01. <span class="term dimtxt">Navegación por radiofrecuencia, evasión de obstáculos, anti-caída.</span></p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>📊 Estadística</h3>
+      <p class="muted" style="font-size:.9rem;line-height:1.55">Python (Pandas, SciPy) / R. Filtro EMA, Prueba t-Student, Análisis Weibull. Aplicados a sensores reales. <span class="term dimtxt">KPI: Precisión del Filtro Estadístico > 85% (PRD §5).</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · SYLLABUS ALIGNMENT -->
+<section class="slide" aria-label="Alineación syllabus">
+  <div class="wrap">
+    <div class="tbadge"><span>⏱ 1:20 – 2:30 · Syllabus</span></div>
+    <p class="kicker">Alineación con TS6D3 DevOps — Qué tema del syllabus cubre cada parte</p>
+    <div class="grid g2">
+      <div class="card">
+        <h3>T1: Fundamentos DevOps</h3>
+        <p class="muted">Todo el proyecto vive el ciclo CALMS: Plan → Code → Build → Test → Deploy → Operate → Monitor. Documentar arquitectura, definir Definition of Done.</p>
+        <p class="demnote">Cubre: RNF-1.1, RNF-1.2.</p>
+      </div>
+      <div class="card">
+        <h3>T2: Git</h3>
+        <p class="muted">Repositorio real con feature branches, pull requests, commits convencionales. Flujo de ramas pulido.</p>
+        <p class="demnote">Cubre: RNF-1.2.</p>
+      </div>
+      <div class="card">
+        <h3>T3: Linux / Shell</h3>
+        <p class="muted">Entorno Docker/WSL, scripts de arranque único (docker-compose up), permisos de puertos serie. <span class="term dimtxt">🟡 Scripts de despliegue local, variables de entorno.</span></p>
+        <p class="demnote">Cubre: RNF-1.1.</p>
+      </div>
+      <div class="card">
+        <h3>T3: Docker + Docker Compose</h3>
+        <p class="muted">Core del backend: 3 contenedores (API + BD + Broker MQTT) conectados en red interna, volúmenes persistentes, healthchecks. <span class="term dimtxt">🟡 docker-compose.yml completo, healthchecks, redes.</span></p>
+        <p class="demnote">Cubre: RNF-1.1.</p>
+      </div>
+      <div class="card">
+        <h3>T5: CI/CD</h3>
+        <p class="muted">Pipeline obligatorio: en cada push compila 3 firmwares C++ (ESP32, MEGA, UNO) con arduino-cli y falla si hay errores. <span class="term dimtxt">🟡 Workflow YAML listo, cache de dependencias, artefactos.</span></p>
+        <p class="demnote">Cubre: RNF-1.2.</p>
+      </div>
+      <div class="card">
+        <h3>T6: Monitoreo</h3>
+        <p class="muted">KPIs medibles: Latencia RF <10ms, Filtro EMA >85% ruido, Falsos positivos láser 0%, FOSS 100%. <span class="term dimtxt">⏳ Dashboards Grafana + alertas básicas (pendiente lab).</span></p>
+        <p class="demnote">Cubre: RNF-2.1, RNF-2.2.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · WORKSHOPS -->
+<section class="slide" aria-label="Workshops syllabus">
+  <div class="wrap">
+    <div class="tbadge"><span>⏱ 2:30 – 3:30 · Workshops</span></div>
+    <p class="kicker">Workshops del syllabus → Entregables reales</p>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Taller 1: Orquestación Docker Compose</h3>
+        <p class="muted">docker-compose.yml con 3 servicios, healthchecks, volúmenes, red interna. <span class="term dimtxt">🟡 En curso.</span></p>
+        <p class="demnote">Cubre: Taller 1 del syllabus.</p>
+      </div>
+      <div class="card">
+        <h3>Taller 2: CI con GitHub Actions</h3>
+        <p class="muted">.github/workflows/ci-firmware.yml compila ESP32 + MEGA + UNO con arduino-cli. <span class="term dimtxt">🟡 Planeado.</span></p>
+        <p class="demnote">Cubre: Taller 2 del syllabus.</p>
+      </div>
+      <div class="card">
+        <h3>Proyecto Final: Flujo DevOps completo</h3>
+        <p class="muted">El proyecto integrador entero: Git → CI → Contenedores → Despliegue local → Monitoreo → Docs. <span class="term dimtxt">🟡 Base lista, integra en Sprint 4.</span></p>
+        <p class="demnote">Cubre: Taller Final del syllabus.</p>
+      </div>
+    </div>
+    <p class="demnote" style="margin-top:14px">✅ Evidencia: backend/docker-compose.yml, .github/workflows/ci-firmware.yml, prd.md, requirements.md, sprints.md, backlog.md.</p>
+  </div>
+</section>
+
+<!-- 5 · PLAN DE CONTINGENCIA -->
+<section class="slide" aria-label="Plan de contingencia">
+  <div class="wrap">
+    <div class="tbadge"><span>⏱ 3:30 – 4:30 · Plan</span></div>
+    <p class="kicker">Plan de contingencia durante la situación actual</p>
+    <div class="banner"><span class="ico">🏠</span><span><b>Todo el hardware en casa:</b> ESP32, Arduino MEGA, Arduino UNO, módulos nRF24L01, HC-SR04, TCRT5000, KY-008, servos, relés, LED RGB, teclado 4x4, L298N, chasis oruga, ESP8266, Arduino Nano, HC-06, sensores varios. <b>Laptop con entorno completo.</b> Esto me permite <b>flashear, depurar y probar comunicación real</b> entre microcontroladores desde casa (UART, SPI, Radio 2.4GHz), no solo compilar.</span></div>
+    <div class="stepper">
+      <div class="step s1">
+        <div class="stepnum">1</div>
+        <div><h3>Ahora (casa — hardware + software)</h3>
+          <p>docker-compose.yml completo + salud de contenedores. <span class="term dimtxt">Pipeline arduino-cli compilando 3 firmwares + flasheo y depuración real ESP32/MEGA/UNO.</span></p></div>
+        <span class="pill now">● En curso</span>
+      </div>
+      <div class="step s2">
+        <div class="stepnum">2</div>
+        <div><h3>Cuando volvamos al lab (integración completa)</h3>
+          <p>Pruebas de integración E2E sistema completo, latencia real, calibración.</p></div>
+        <span class="pill next">○ Siguiente</span>
+      </div>
+    </div>
+    <div class="chips">
+      <span class="chip">🗂 Evidencia: <b>backend/docker-compose.yml</b>, <b>.github/workflows/ci-firmware.yml</b>, <b>prd.md</b>, <b>requirements.md</b>, <b>sprints.md</b>, <b>backlog.md</b>.</span>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · PETICIÓN FORMAL (duplicate slot, will be overwritten)-->
+<section class="slide" aria-label="Petición formal">
+  <div class="wrap centerpage">
+    <div class="tbadge"><span>⏱ 4:30 – 5:00 · Petición</span></div>
+    <p class="asklead">Lo que vengo a pedir hoy</p>
+    <p class="ask">¿Contaría con su <b>aval</b> para considerar el presente esquema de contingencia <b>para mi proceso académico</b> mientras se define el regreso progresivo?</p>
+    <div class="commit">
+      <div class="card"><b>🗓 Me adapto a su cronograma</b>Fechas y ritmo que usted indique; la directriz institucional manda sobre cualquier plan propio.</div>
+      <div class="card"><b>📦 Entregables a su medida</b>Informes parciales, evidencias por workshop, o lo que considere pertinente evaluar.</div>
+      <div class="card"><b>🎯 Avances medibles y verificables</b>Cada fase cierra con evidencia concreta: KPIs, KPIs, KPIs.</div>
+    </div>
+    <div class="finalq">
+      <p>«En síntesis: ¿qué condiciones pondría usted para aprobar este esquema?»</p>
+      <small>⏸ pausa después de preguntar — escuchar y tomar notas</small>
+    </div>
+    <aside class="notes"><b>Nota interna</b>Tras la pregunta: silencio y escuchar activa. Si duda: ofrecer enviar por escrito el plan por fases con entregables por workshop del syllabus.</aside>
+  </div>
+</section>
+
+<!-- 8 · POSIBLES PREGUNTAS -->
+<section class="slide" aria-label="Posibles preguntas y respuestas preparadas">
+  <div class="wrap">
+    <p class="kicker">Preparación · Diálogo con la docente</p>
+    <h2>Respuestas listas <span class="dimtxt" style="font-size:.62em;font-weight:500">— clic para girar cada tarjeta</span></h2>
+    <div class="flipgrid">
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="fin">
+        <div class="face front"><span class="qtag">Pregunta probable</span><p class="q">“¿Cómo construye infraestructura sin clases?”</p><p class="hint">🔄 clic o Enter para ver la respuesta</p></div>
+        <div class="face back"><span class="qtag">Respuesta</span><p class="a">Tengo todos los componentes electrónicos en casa (ESP32, MEGA, UNO, módulos nRF24L01, HC-SR04, etc.) y mi laptop con entorno de desarrollo completo. Esto me permite flashear, depurar y probar comunicación real entre microcontroladores desde casa, no solo compilar.</p></div>
+      </div></div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="fin">
+        <div class="face front"><span class="qtag">Pregunta probable</span><p class="q">“DevOps no tiene enfoque en hardware, ¿no?”</p><p class="hint">🔄 clic o Enter para ver la respuesta</p></div>
+        <div class="face back"><span class="qtag">Respuesta</span><p class="a">Correcto. DevOps cubre la infraestructura y el ciclo de vida del software, pero en AetherNet el hardware es el punto de partida: sin firmware compilado y comunicando microcontroladores, no hay CI/CD que valer. <b>El hardware es la base sobre la que reposan todas las demás áreas</b>.</p></div>
+      </div></div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="fin">
+        <div class="face front"><span class="qtag">Pregunta probable</span><p class="q">“¿Cómo puedo verificar tu avance?”</p><p class="hint">🔄 clic o Enter para ver la respuesta</p></div>
+        <div class="face back"><span class="qtag">Respuesta</span><p class="a">Evidencia en el repositorio: <b>backend/docker-compose.yml</b>, <b>.github/workflows/ci-firmware.yml</b>, <b>prd.md</b>, <b>requirements.md</b>, <b>sprints.md</b>, <b>backlog.md</b>. <b>Puedo enviar un cronograma escrito hoy mismo.</b></p></div>
+      </div></div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="fin">
+        <div class="face front"><span class="qtag">Pregunta probable</span><p class="q">“¿Y si el calendario académico cambia?”</p><p class="hint">🔄 clic o Enter para ver la respuesta</p></div>
+        <div class="face back"><span class="qtag">Respuesta</span><p class="a">El plan es modular: cada fase cierra un entregable independiente; se ajusta sin perder lo avanzado. <b>Los KPIs (latencia, ruido, falsos positivos, FOSS%) son métricas objetivas que no dependen del calendario</b>.</p></div>
+      </div></div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="fin">
+        <div class="face front"><span class="qtag">Pregunta probable</span><p class="q">“¿Qué necesitas de mí?”</p><p class="hint">🔄 clic o Enter para ver la respuesta</p></div>
+        <div class="face back"><span class="qtag">Respuesta</span><p class="a">Mi <b>aval</b> al esquema de contingencia, y que usted defina las evidencias y fechas de chequeo que considere adecuadas. <b>Entregarables = KPIs verificables (latencia <10ms, ruido >85%, FOSS 100%)</b>.</p></div>
+      </div></div>
+    </div>
+    <aside class="notes"><b>Nota interna</b>Repasar estas cinco tarjetas antes de la llamada. Si surge una sexta pregunta fuera de guion: responder honesto y ofrecer detallarlo por escrito.</aside>
+  </div>
+</section>
+
+<!-- 9 · RECORDATORIOS -->
+<section class="slide" aria-label="Recordatorios">
+  <div class="wrap">
+    <p class="kicker">Antes de colgar</p>
+    <h2>Recordatorios rápidos</h2>
+    <ul class="checklist">
+      <li><input type="checkbox" class="chk" id="c1"><span>Agradecer su tiempo y su preocupación por el grupo.</span></li>
+      <li><input type="checkbox" class="chk" id="c2"><span>Confirmar canal de entrega de evidencias (correo, repositorio, notebook compartido).</span></li>
+      <li><input type="checkbox" class="chk" id="c3"><span>Preguntar fecha tentativa del próximo chequeo, si ella lo desea.</span></li>
+      <li><input type="checkbox" class="chk" id="c4"><span>No prometer fechas que dependan de decisiones de la universidad.</span></li>
+    </ul>
+    <div class="banner" style="max-width:720px"><span class="ico">📨</span><span><b>Si duda sobre el esquema:</b> ofrecer enviar hoy mismo el plan por fases con entregables por workshop del syllabus → <a href="https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover" target="_blank" rel="noopener">repositorio del proyecto</a>.</span></div>
+    <p class="demnote" style="margin-top:14px">✔ Tu lista se guarda automáticamente en este navegador para el día de la llamada.</p>
+    <aside class="notes"><b>Nota interna</b>Última impresión cuenta: cerrar agradeciendo y confirmando un siguiente paso concreto (canal + fecha de chequeo).</aside>
+  </div>
+</section>
+
+<!-- 10 · GLOSARIO -->
+<section class="slide" aria-label="Glosario de términos">
+  <div class="wrap">
+    <p class="kicker">Soporte · Consulta rápida</p>
+    <h2>Glosario de términos <span class="dimtxt" style="font-size:.6em;font-weight:500">(<span id="glossCount">0</span> definiciones)</span></h2>
+    <input id="glossFilter" type="search" placeholder="Filtrar términos… (ej.: docker, arduino-cli, mqtt)">
+    <dl id="glossList"></dl>
+    <p class="demnote" style="margin-top:22px">Todos estos términos aparecen subrayados en las diapositivas: pasa el mouse sobre ellos para ver su definición sin salir de la presentación.</p>
+  </div>
+</section>
+
+</main>
+
+<footer id="hud">
+  <button class="navbtn" id="btnPrev" title="Anterior (←)" aria-label="Diapositiva anterior">←</button>
+  <div id="dots" role="tablist" aria-label="Ir a diapositiva"></div>
+  <span id="counter">1 / 8</span>
+  <button class="navbtn" id="btnNext" title="Siguiente (→)" aria-label="Diapositiva siguiente">→</button>
+  <span id="hudhint">← → navegar · <b>T</b> cronómetro · <b>N</b> notas · <b>?</b> ayuda · pasa el mouse sobre los términos punteados</span>
+</footer>
+
+<div id="tip" role="tooltip" hidden><strong id="tipName"></strong><p id="tipDef"></p></div>
+
+<div id="help" hidden>
+  <div class="hpanel" role="dialog" aria-modal="true" aria-label="Ayuda y atajos de teclado">
+    <h3>⌨️ Atajos y funciones</h3>
+    <div class="hrow"><div><b>← / →</b> · navegar diapositivas</div><span><kbd>◀</kbd> <kbd>▶</kbd></span></div>
+    <div class="hrow"><div><b>T</b> iniciar / pausar cronómetro</div><span><kbd>T</kbd></span></div>
+    <div class="hrow"><div><b>R</b> reiniciar cronómetro</div><span><kbd>R</kbd></span></div>
+    <div class="hrow"><div><b>N</b> mostrar / ocultar notas internas</div><span><kbd>N</kbd></span></div>
+    <div class="hrow"><div><b>F</b> pantalla completa (ideal para compartir)</div><span><kbd>F</kbd></span></div>
+    <div class="hrow"><div><b>?</b> abrir / cerrar esta ayuda</div><span><kbd>?</kbd></span></div>
+    <div class="hrow"><div><b>Esc</b> cerrar ventanas y definiciones</div><span><kbd>Esc</kbd></span></div>
+    <p class="demnote" style="margin-top:14px">Consejo: en la videollamada comparte esta ventana completa (<b>F</b>) y deja el cronómetro encendido; las notas internas solo tú deberías verlas durante el ensayo.</p>
+    <div style="text-align:right;margin-top:14px"><button class="btn" id="helpClose">Entendido</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(s,c){return (c||document).querySelector(s)};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function read(k){try{return localStorage.getItem(k)}catch(e){return null}}
+
+var slides=$$(".slide");
+var dotsWrap=$("#dots"),counter=$("#counter"),bar=$("#bar");
+slides.forEach(function(sl,i){
+  var b=document.createElement("button");
+  b.className="dot";b.setAttribute("aria-label","Ir a diapositiva "+(i+1));
+  b.addEventListener("click",function(){go(i)});
+  dotsWrap.appendChild(b);
+});
+var dots=$$(".dot",dotsWrap);
+var idx=0;
+
+function go(n){
+  idx=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach(function(s,i){s.classList.toggle("active",i===idx)});
+  dots.forEach(function(d,i){d.classList.toggle("on",i===idx)});
+  counter.textContent=(idx+1)+" / "+slides.length;
+  bar.style.transform="scaleX("+(idx/(slides.length-1))+")";
+  try{history.replaceState(null,"","#"+(idx+1))}catch(e){}
+  closeTip();
+}
+function next(){go(idx+1)}function prev(){go(idx-1)}
+$("#btnNext").addEventListener("click",next);
+$("#btnPrev").addEventListener("click",prev);
+$("#homeBtn").addEventListener("click",function(){go(0)});
+$$("[data-go]").forEach(function(b){b.addEventListener("click",function(){go(parseInt(b.getAttribute("data-go"),10))})});
+var h0=parseInt(location.hash.replace("#",""),10);
+go(isNaN(h0)?0:h0-1);
+
+/* cronometro */
+var tsec=0,trun=false,tint=null,tEl=$("#timer");
+function fmt(s){var m=Math.floor(s/60),ss=s%60;return(m<10?"0":"")+m+":"+(ss<10?"0":"")+ss}
+function renderT(){
+  tEl.innerHTML=fmt(tsec)+' <span>/ 05:00</span>';
+  tEl.classList.toggle("warn",tsec>=270&&tsec<300);
+  tEl.classList.toggle("over",tsec>=300);
+}
+function tickT(){tsec++;renderT()}
+function toggleT(){
+  trun=!trun;tEl.classList.toggle("run",trun);
+  if(trun){tint=setInterval(tickT,1000)}else{clearInterval(tint)}
+}
+function resetT(){clearInterval(tint);trun=false;tsec=0;renderT();tEl.classList.remove("run","warn","over")}
+tEl.addEventListener("click",toggleT);
+
+/* notas */
+var btnNotes=$("#btnNotes");
+function toggleNotes(){var on=document.body.classList.toggle("notes-on");btnNotes.classList.toggle("on",on);store("ae-notes",on?"1":"0")}
+btnNotes.addEventListener("click",toggleNotes);
+if(read("ae-notes")==="1"){document.body.classList.add("notes-on");btnNotes.classList.add("on")};
+
+/* ayuda */
+var help=$("#help");
+function openH(){help.hidden=false}function closeH(){help.hidden=true}
+$("#btnHelp").addEventListener("click",openH);
+$("#helpClose").addEventListener("click",closeH);
+help.addEventListener("click",function(e){if(e.target===help)closeH()});
+$("#btnFs").addEventListener("click",function(){
+  if(document.fullscreenElement){document.exitFullscreen().catch(function(){})}
+  else{document.documentElement.requestFullscreen().catch(function(){})}
+});
+
+/* checklist persistente */
+$$(".chk").forEach(function(cb){
+  cb.checked=read("ae-"+cb.id)==="1";
+  cb.addEventListener("change",function(){store("ae-"+cb.id,cb.checked?"1":"0")});
+});
+
+/* tarjetas giratorias */
+$$(".flip").forEach(function(f){
+  function tg(){f.classList.toggle("on");f.setAttribute("aria-pressed",f.classList.contains("on")?"true":"false")}
+  f.addEventListener("click",tg);
+  f.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();tg()}});
+});
+
+/* teclado */
+document.addEventListener("keydown",function(e){
+  var t=e.target,tag=t.tagName;
+  var typing=tag==="INPUT"&&t.type!=="range"||tag==="TEXTAREA";
+  if(e.key==="Escape"){
+    if(!help.hidden){closeH();return}
+    closeTip();return;
+  }
+  if(typing)return;
+  if(tag==="INPUT"&&t.type==="range"){
+    if(e.key==="ArrowLeft"||e.key==="ArrowRight")return;
+  }
+  switch(e.key){
+    case"ArrowRight":next();break;
+    case"ArrowLeft":prev();break;
+    case"Home":go(0);break;
+    case"End":go(slides.length-1);break;
+    case"t":case"T":toggleT();break;
+    case"r":case"R":resetT();break;
+    case"n":case"N":toggleNotes();break;
+    case"f":case"F":$("#btnFs").click();break;
+    case"?":case"h":case"H":help.hidden?openH():closeH();break;
+  }
+});
+
+/* swipe */
+var sx=0,sy=0;
+document.addEventListener("touchstart",function(e){
+  if(e.touches.length===1){sx=e.touches[0].clientX;sy=e.touches[0].clientY}
+},{passive:true});
+document.addEventListener("touchend",function(e){
+  if(!sx&&!sy)return;
+  var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)){dx<0?next():prev()}
+  sx=sy=0;
+},{passive:true});
+
+/* tooltips */
+var tip=$("#tip"),tipName=$("#tipName"),tipDef=$("#tipDef"),pinned=null;
+function showTip(el){
+  tipName.textContent=el.getAttribute("data-term")||el.textContent.trim();
+  tipDef.textContent=el.getAttribute("data-def");
+  tip.hidden=false;tip.style.visibility="hidden";tip.classList.remove("below");
+  requestAnimationFrame(function(){
+    var r=el.getBoundingClientRect(),tr=tip.getBoundingClientRect();
+    var x=r.left+r.width/2-tr.width/2;
+    x=Math.max(10,Math.min(x,window.innerWidth-tr.width-10));
+    var spaceUp=r.top,spaceDown=window.innerHeight-r.bottom;
+    var below=spaceDown>spaceUp&&spaceUp<220;
+    var top=below?r.bottom+13:r.top-tr.height-13;
+    top=Math.max(72,top);
+    if(top+tr.height>window.innerHeight-74)top=window.innerHeight-74-tr.height;
+    var ax=r.left+r.width/2-x;
+    ax=Math.max(16,Math.min(ax,tr.width-16));
+    tip.style.left=x+"px";tip.style.top=top+"px";
+    tip.style.setProperty("--ax",ax+"px");
+    tip.classList.toggle("below",below);
+    tip.style.visibility="visible";
+  });
+}
+function closeTip(){pinned=null;tip.hidden=true}
+document.addEventListener("mouseover",function(e){
+  var t=e.target.closest(".term");if(t)showTip(t);
+});
+document.addEventListener("mouseout",function(e){
+  var t=e.target.closest(".term");
+  if(t&&!(e.relatedTarget&&t.contains(e.relatedTarget))&&pinned!==t)tip.hidden=true;
+});
+document.addEventListener("click",function(e){
+  var t=e.target.closest(".term");
+  if(t){if(pinned===t){closeTip()}else{pinned=t;showTip(t)}}
+  else if(!e.target.closest("#tip")){closeTip()}
+});
+document.addEventListener("focusin",function(e){var t=e.target.closest(".term");if(t)showTip(t)});
+document.addEventListener("focusout",function(e){var t=e.target.closest(".term");if(t&&pinned!==t)tip.hidden=true});
+window.addEventListener("scroll",closeTip,true);
+window.addEventListener("resize",closeTip);
+
+/* glosario */
+var seen={},order=[];
+$$(".term").forEach(function(el){
+  var k=el.getAttribute("data-term")||el.textContent.trim();
+  var key=k.toLowerCase();
+  if(!seen[key]){seen[key]=el.getAttribute("data-def");order.push(k)}
+});
+var gl=$("#glossList");
+order.forEach(function(k){
+  var dt=document.createElement("dt");dt.textContent=k;
+  var dd=document.createElement("dd");dd.textContent=seen[k];
+  gl.appendChild(dt);gl.appendChild(dd);
+});
+$("#glossCount").textContent=order.length;
+$("#glossFilter").addEventListener("input",function(){
+  var q=this.value.trim().toLowerCase(),items=gl.children;
+  for(var i=0;i<items.length;i++){
+    items[i].style.display=items[i].textContent.toLowerCase().indexOf(q)>-1?"":"none";
+  }
+});
+
+/* init */
+var idx=0;
+var tip=$("#tip"),tipName=$("#tipName"),tipDef=$("#tipDef"),pinned=null;
+go(isNaN(parseInt(location.hash.replace("#",""),10))?0:-1);
+renderT();
+})();
+</script>
+</body>
+</html>
