@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AetherNet × Estadística — Presentación · 26 ago 2026</title>
+<style>
+:root{
+  --bg:#0a101c; --bg2:#0d1524; --card:#111c2ecc; --line:#23324d; --line2:#2e4166;
+  --tx:#e9eff9; --mut:#9db0cc; --dim:#6b7f9e;
+  --cy:#3fd8f5; --am:#ffc857; --vi:#a78bfa; --gr:#4ade80; --rd:#f87171;
+  --tb:64px; --hb:60px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --disp:"Charter","Bitstream Charter",Georgia,Cambria,"Times New Roman",serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--tx);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;overflow:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -10%,#3fd8f51c,transparent 60%),
+    radial-gradient(800px 520px at 105% 110%,#a78bfa1a,transparent 60%),
+    radial-gradient(600px 400px at 85% -15%,#ffc85710,transparent 55%);
+}
+::selection{background:#3fd8f53d}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:var(--cy)}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--cy);outline-offset:2px;border-radius:6px}
+kbd{border:1px solid var(--line2);border-bottom-width:2px;border-radius:6px;padding:.06rem .45rem;background:#ffffff10;font-family:var(--mono);font-size:.78em;color:var(--tx)}
+
+#bar{position:fixed;top:0;left:0;height:3px;width:100%;background:linear-gradient(90deg,var(--cy),var(--vi));z-index:60;transform:scaleX(0);transform-origin:0 50%;transition:transform .35s ease}
+
+#topbar{position:fixed;top:0;left:0;right:0;height:var(--tb);display:flex;align-items:center;gap:14px;padding:0 18px;background:#0a101cd9;backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:50}
+.brand{display:flex;align-items:center;gap:11px;margin-right:auto}
+.brand:hover{opacity:.9}
+.mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3fd8f5,#5ea0ff 55%,#a78bfa);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#07101d;letter-spacing:-.5px}
+.brand b{font-size:.95rem;letter-spacing:.2px;display:block;line-height:1.15}
+.brand small{color:var(--mut);font-size:.72rem;display:block;letter-spacing:.4px}
+#timer{font-family:var(--mono);font-size:1.05rem;color:var(--mut);padding:.3rem .75rem;border:1px solid var(--line);border-radius:999px;display:flex;gap:.45rem;align-items:baseline;user-select:none;transition:border-color .2s,color .2s}
+#timer span{font-size:.68rem;color:var(--dim)}
+#timer.run{color:var(--cy);border-color:#3fd8f566}
+#timer.warn{color:var(--am);border-color:#ffc85777}
+#timer.over{color:var(--rd);border-color:#f8717177;animation:pulse 1.1s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 5px #f8717122}}
+.tbtn{border:1px solid var(--line);border-radius:9px;padding:.42rem .7rem;color:var(--mut);font-size:.82rem;display:inline-flex;gap:.4rem;align-items:center;transition:.18s}
+.tbtn:hover{color:var(--tx);border-color:var(--line2);background:#ffffff08}
+.tbtn.on{color:var(--am);border-color:#ffc85766;background:#ffc85712}
+.tbtn.sq{width:36px;justify-content:center;padding:.42rem 0}
+
+#deck{position:fixed;top:var(--tb);bottom:var(--hb);left:0;right:0;z-index:1}
+.slide{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .38s ease,transform .38s ease,visibility .38s;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.slide::-webkit-scrollbar{width:8px}
+.slide::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.wrap{max-width:1090px;margin:0 auto;padding:42px 30px 64px}
+
+.kicker{display:flex;align-items:center;gap:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.16em;font-size:.72rem;font-weight:700;margin-bottom:14px}
+.kicker::before{content:"";width:26px;height:2px;background:linear-gradient(90deg,var(--cy),transparent);border-radius:2px}
+h1{font-family:var(--disp);font-size:clamp(2.2rem,4.8vw,3.5rem);font-weight:700;letter-spacing:-.015em;line-height:1.05;margin:.18em 0}
+h2{font-family:var(--disp);font-size:clamp(1.55rem,3.1vw,2.3rem);font-weight:700;letter-spacing:-.01em;line-height:1.14;margin-bottom:18px}
+h1 .x{color:var(--cy);font-weight:300;padding:0 .08em}
+.lead{color:var(--mut);font-size:clamp(1rem,1.6vw,1.16rem);line-height:1.55;max-width:62ch}
+.muted{color:var(--mut)}.dimtxt{color:var(--dim)}
+
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0}
+.chip{display:inline-flex;align-items:center;gap:.45rem;padding:.38rem .8rem;border:1px solid var(--line);border-radius:999px;font-size:.83rem;color:var(--mut);background:#ffffff07}
+.chip b{color:var(--tx);font-weight:650}
+.chip.hl{border-color:#3fd8f54d;color:#bdeef9;background:#3fd8f510}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+.card h3{font-size:1.02rem;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+
+.term{cursor:help;border-bottom:1.5px dotted #3fd8f5b0;padding-bottom:1px;text-decoration:none;transition:background .15s}
+.term:hover,.term:focus-visible{background:#3fd8f518;border-bottom-style:solid;border-radius:3px 3px 0 0}
+
+.tbadge{position:sticky;top:0;z-index:5;display:flex;justify-content:flex-end;pointer-events:none;margin-bottom:-30px}
+.tbadge span{pointer-events:auto;display:inline-flex;gap:8px;align-items:center;font-family:var(--mono);font-size:.72rem;color:var(--mut);background:#0d1626e0;border:1px solid var(--line);padding:.3rem .65rem;border-radius:999px;backdrop-filter:blur(6px)}
+
+.pull{position:relative;margin-top:22px;padding:16px 20px 16px 54px;background:#3fd8f50c;border-radius:12px;font-size:1.05rem;line-height:1.5;color:#d6e5f5;font-style:italic;max-width:70ch}
+.pull::before{content:"“";position:absolute;left:15px;top:0;font-family:var(--disp);font-size:3.1rem;line-height:1.25;color:var(--cy);opacity:.85}
+
+.notes{display:none;margin-top:26px;background:#ffc8570e;border-radius:10px;padding:11px 16px;font-size:.9rem;color:#e8d5a8;line-height:1.5}
+.notes b{display:inline-block;font-size:.68rem;letter-spacing:.14em;color:var(--am);margin-right:10px;text-transform:uppercase}
+body.notes-on .notes{display:block}
+
+.flow{display:flex;gap:12px;align-items:stretch;margin:22px 0 8px}
+.fcol{flex:1;display:flex;flex-direction:column;gap:8px}
+.fcol .card{flex:1}
+.fhead{text-align:center;font-size:.7rem;letter-spacing:.15em;font-weight:700;color:var(--mut);text-transform:uppercase}
+.fhead.c{color:var(--cy)}
+.fitem{font-size:.88rem;color:#cfdaec;background:#ffffff06;border:1px solid var(--line);border-radius:10px;padding:.5rem .7rem;line-height:1.35}
+.fmid{flex:0 0 190px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;border:1px solid #3fd8f54d;border-radius:16px;background:radial-gradient(140px 90px at 50% 40%,#3fd8f51f,transparent),#0e1930;padding:18px 14px;text-align:center}
+.fmid .sig{font-family:Georgia,Cambria,serif;font-size:2.6rem;color:var(--cy);line-height:1}
+.fmid b{font-size:.95rem;letter-spacing:.04em}
+.fmid small{color:var(--mut);font-size:.76rem;line-height:1.4}
+.farrow{align-self:center;color:var(--cy);font-size:1.5rem;flex:0 0 auto;opacity:.85}
+
+.formula-card{margin:20px 0;padding:26px 20px;text-align:center;border:1px solid #3fd8f540;border-radius:16px;background:radial-gradient(420px 130px at 50% 0%,#3fd8f512,transparent),var(--card)}
+.formula{font-family:Georgia,Cambria,"Times New Roman",serif;font-style:italic;font-size:clamp(1.55rem,3.4vw,2.35rem);letter-spacing:.01em;color:#eaf6fb}
+.formula sub{font-size:.55em;font-style:normal;color:var(--cy)}
+.formula .op{color:var(--mut);font-style:normal;padding:0 .18em}
+.fcap{margin-top:12px;color:var(--mut);font-size:.86rem}
+.fcap b{color:var(--tx)}
+
+.demo{margin-top:22px;border:1px solid var(--line2);border-radius:16px;background:#0d1729;overflow:hidden}
+.demo-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--line);background:#ffffff05}
+.demo-head .ttl{font-weight:700;font-size:.9rem;margin-right:auto;display:flex;gap:8px;align-items:center}
+.demo-body{padding:14px 16px 18px}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:10px}
+.toolbar label{font-size:.85rem;color:var(--mut);display:flex;gap:.55rem;align-items:center}
+input[type=range]{accent-color:var(--cy);width:min(220px,40vw)}
+.presets{display:flex;gap:6px}
+.preset{font-family:var(--mono);font-size:.74rem;border:1px solid var(--line);border-radius:7px;padding:.24rem .5rem;color:var(--mut)}
+.preset:hover,.preset.on{color:var(--cy);border-color:#3fd8f566;background:#3fd8f512}
+.btn{border:1px solid var(--line2);border-radius:10px;padding:.5rem .95rem;font-size:.86rem;color:var(--tx);transition:.18s;display:inline-flex;gap:.45rem;align-items:center}
+.btn:hover{background:#ffffff0d;border-color:#3f5480}
+.btn.pri{background:linear-gradient(135deg,var(--cy),#5ea0ff);color:#06121d;font-weight:700;border:none}
+.btn.pri:hover{filter:brightness(1.08)}
+.metrics{display:flex;flex-wrap:wrap;gap:10px;margin-left:auto}
+.metric{font-family:var(--mono);font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:.32rem .7rem;color:var(--mut)}
+.metric b{color:var(--tx)}
+.metric.good b{color:var(--gr)}
+.metric.mid b{color:var(--am)}
+.chartbox{position:relative;height:255px;border-radius:12px;overflow:hidden;background:#0a1322;border:1px solid var(--line)}
+.chartbox canvas{position:absolute;inset:0;width:100%;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:10px;font-size:.78rem;color:var(--mut)}
+.legend i{display:inline-block;width:20px;height:0;border-top:2px solid;border-radius:2px;margin-right:6px;vertical-align:middle}
+.demnote{margin-top:10px;font-size:.8rem;color:var(--dim);line-height:1.5;max-width:75ch}
+
+.qcard{border:1px solid #a78bfa4d;background:radial-gradient(300px 100px at 0% 0%,#a78bfa14,transparent),var(--card);border-radius:16px;padding:18px 22px;margin:18px 0;font-size:clamp(1.02rem,1.9vw,1.22rem);line-height:1.45}
+.methodchips{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 6px}
+
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:start}
+@media(max-width:820px){.split{grid-template-columns:1fr}}
+.kv{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--line);padding:.42rem 2px;font-family:var(--mono);font-size:.83rem;color:var(--mut)}
+.kv b{color:var(--tx);font-weight:600;text-align:right}
+.verdict{margin-top:12px;border-radius:10px;padding:.65rem .9rem;font-size:.87rem;line-height:1.45;border:1px solid transparent}
+.verdict.ok{background:#4ade8012;border-color:#4ade8055;color:#c9f5dc}
+.verdict.warn{background:#ffc85710;border-color:#ffc85755;color:#f3e3ba}
+
+.stepper{display:flex;flex-direction:column;gap:0;margin-top:20px}
+.step{display:grid;grid-template-columns:52px 1fr auto;gap:16px;padding:16px 4px;border-bottom:1px dashed var(--line);align-items:start}
+.step:last-child{border-bottom:none}
+.stepnum{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;border:1px solid var(--line2);background:#ffffff08}
+.step.s1 .stepnum{color:var(--gr);border-color:#4ade8055}
+.step.s2 .stepnum{color:var(--am);border-color:#ffc85755}
+.step.s3 .stepnum{color:var(--vi);border-color:#a78bfa55}
+.step h3{margin-bottom:5px}
+.step p{color:var(--mut);font-size:.9rem;line-height:1.5;max-width:66ch}
+.step p b{color:var(--tx)}
+.pill{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;padding:.3rem .7rem;border:1px solid}
+.pill.now{color:var(--gr);border-color:#4ade8066;background:#4ade8010}
+.pill.next{color:var(--am);border-color:#ffc85766;background:#ffc85710}
+.pill.lab{color:var(--vi);border-color:#a78bfa66;background:#a78bfa10}
+
+.banner{display:flex;gap:14px;align-items:flex-start;border:1px solid #4ade8044;background:radial-gradient(360px 110px at 0% 0%,#4ade8012,transparent),var(--card);border-radius:16px;padding:16px 20px;margin-top:22px;font-size:.95rem;line-height:1.55;color:#dff2e6;max-width:100%}
+.banner .ico{font-size:1.4rem;line-height:1}
+.banner b{color:#fff}
+
+.centerpage{text-align:left;max-width:900px}
+.asklead{color:var(--mut);letter-spacing:.14em;text-transform:uppercase;font-size:.74rem;font-weight:700;margin:26px 0 14px}
+.ask{font-family:var(--disp);font-size:clamp(1.45rem,3.2vw,2.2rem);font-weight:700;line-height:1.32;letter-spacing:-.01em}
+.ask mark{background:linear-gradient(transparent 62%,#ffc85759 0);color:#ffe9bd;padding:0 .08em;border-radius:3px}
+.commit{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin:26px 0 8px}
+.commit .card{padding:14px 16px;font-size:.88rem;color:#cfdaec;line-height:1.45}
+.commit .card b{display:block;color:var(--tx);margin-bottom:4px;font-size:.95rem}
+.finalq{margin-top:30px;border:1px solid #ffc85755;border-radius:16px;padding:22px 26px;background:radial-gradient(420px 140px at 100% 0%,#ffc85714,transparent),var(--card)}
+.finalq p{font-size:clamp(1.15rem,2.4vw,1.55rem);font-weight:700;line-height:1.35}
+.finalq small{display:block;margin-top:8px;color:var(--am);font-size:.82rem}
+
+.flipgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(295px,1fr));gap:14px;margin-top:20px}
+.flip{perspective:1300px;min-height:205px;cursor:pointer}
+.fin{position:relative;width:100%;height:100%;min-height:205px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.7,.25,1)}
+.flip.on .fin{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;border:1px solid var(--line);background:var(--card);padding:18px;display:flex;flex-direction:column;gap:8px}
+.face.front{border-color:#3f5480}
+.face .qtag{font-size:.66rem;letter-spacing:.14em;color:var(--cy);font-weight:700;text-transform:uppercase}
+.face .q{font-weight:700;font-size:1rem;line-height:1.4}
+.face .hint{margin-top:auto;color:var(--dim);font-size:.74rem;display:flex;gap:6px;align-items:center}
+.face.back{transform:rotateY(180deg);border-color:#a78bfa55;background:radial-gradient(260px 110px at 100% 0%,#a78bfa16,transparent),#131430}
+.face.back .qtag{color:var(--vi)}
+.face .a{color:#d9def0;font-size:.87rem;line-height:1.55}
+
+.checklist{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:11px;max-width:720px}
+.checklist li{display:flex;gap:13px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 16px;font-size:.95rem;line-height:1.5;color:#dbe6f5;transition:.18s}
+.checklist input{appearance:none;width:21px;height:21px;flex:0 0 auto;margin-top:2px;border:2px solid var(--line2);border-radius:7px;cursor:pointer;position:relative;transition:.15s;background:#ffffff08}
+.checklist input:checked{background:var(--gr);border-color:var(--gr)}
+.checklist input:checked::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#08251a;font-weight:900;font-size:.85rem}
+.checklist input:checked ~ span{color:var(--dim);text-decoration:line-through;text-decoration-color:#4ade8077}
+
+#glossFilter{width:100%;max-width:380px;background:#0d1729;border:1px solid var(--line2);border-radius:11px;color:var(--tx);padding:.6rem .9rem;font:inherit;font-size:.9rem;margin:14px 0 20px}
+#glossFilter::placeholder{color:var(--dim)}
+#glossList{columns:2;column-gap:34px;max-width:100%}
+@media(max-width:820px){#glossList{columns:1}}
+#glossList dt{break-inside:avoid;font-weight:700;color:var(--cy);font-size:.9rem;margin-top:13px;letter-spacing:.01em}
+#glossList dd{break-inside:avoid;color:var(--mut);font-size:.85rem;line-height:1.55;margin:3px 0 0}
+
+.agenda{margin-top:26px;max-width:560px}
+.arow{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:12px 16px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:#ffffff05;transition:.18s}
+.arow:hover{border-color:#3fd8f566;background:#3fd8f50c;transform:translateX(3px)}
+.arow .n{font-family:var(--mono);color:var(--cy);font-size:.8rem;width:22px}
+.arow .t{flex:1;font-weight:600;font-size:.94rem}
+.arow .d{font-family:var(--mono);color:var(--dim);font-size:.78rem}
+
+.svgbox{background:#0a1322;border:1px solid var(--line);border-radius:12px;padding:10px 6px 4px;margin-top:14px}
+.svgcap{display:flex;flex-wrap:wrap;gap:12px;font-size:.73rem;color:var(--dim);margin-top:8px}
+.svgcap i{display:inline-block;width:16px;border-top:2px solid;border-radius:2px;margin-right:5px;vertical-align:middle}
+
+#hud{position:fixed;left:0;right:0;bottom:0;height:var(--hb);display:flex;align-items:center;gap:12px;padding:0 16px;background:#0a101cd9;backdrop-filter:blur(12px);border-top:1px solid var(--line);z-index:50}
+.navbtn{width:38px;height:38px;border:1px solid var(--line);border-radius:11px;color:var(--mut);font-size:1rem;display:flex;align-items:center;justify-content:center;transition:.15s}
+.navbtn:hover{color:var(--tx);border-color:var(--line2);background:#ffffff08}
+#dots{display:flex;gap:7px;align-items:center;margin:0 4px}
+.dot{width:9px;height:9px;border-radius:99px;background:#33445f;transition:.22s;padding:0}
+.dot:hover{background:var(--dim)}
+.dot.on{width:26px;background:linear-gradient(90deg,var(--cy),var(--vi))}
+#counter{font-family:var(--mono);font-size:.8rem;color:var(--mut);min-width:64px;text-align:center}
+#hudhint{margin-left:auto;color:var(--dim);font-size:.74rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+#tip{position:fixed;z-index:1000;max-width:min(350px,86vw);background:#101c31f6;border:1px solid #3fd8f54d;border-radius:13px;padding:11px 14px;box-shadow:0 16px 50px #000000b0;backdrop-filter:blur(10px);animation:tipin .14s ease}
+@keyframes tipin{from{opacity:0}to{opacity:1}}
+#tip::after{content:"";position:absolute;top:-6px;left:var(--ax,50%);width:11px;height:11px;background:#101c31;border-left:1px solid #3fd8f54d;border-top:1px solid #3fd8f54d;transform:translateX(-50%) rotate(45deg)}
+#tip.below::after{top:auto;bottom:-6px;transform:translateX(-50%) rotate(225deg)}
+#tipName{display:block;color:var(--cy);font-weight:700;font-size:.8rem;letter-spacing:.05em;margin-bottom:4px}
+#tipDef{color:#cdd9ea;font-size:.85rem;line-height:1.5}
+
+#help{position:fixed;inset:0;z-index:900;display:flex;align-items:center;justify-content:center;background:#04080fd0;backdrop-filter:blur(6px);animation:tipin .15s ease}
+.hpanel{background:#101c31;border:1px solid var(--line2);border-radius:18px;padding:26px 30px;max-width:440px;width:calc(100vw - 48px);box-shadow:0 24px 80px #000c}
+.hpanel h3{font-size:1.05rem;margin-bottom:16px}
+.hrow{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px dashed var(--line);color:var(--mut);font-size:.87rem}
+.hrow:last-of-type{border:none}
+.hrow div b{color:var(--tx);font-weight:600}
+
+@media(max-width:700px){
+  .flow{flex-direction:column}.farrow{transform:rotate(90deg);align-self:center}
+  .fmid{flex:auto}
+  #hudhint{display:none}
+  .brand small{display:none}
+  .step{grid-template-columns:44px 1fr}.step .pill{grid-column:2}
+  .metrics{margin-left:0}
+}
+@media print{
+  body{overflow:visible;background:#fff;color:#111}
+  body::before,#bar,#topbar,#hud,#tip,#help{display:none!important}
+  #deck{position:static}
+  .slide{position:relative;inset:auto;opacity:1!important;visibility:visible!important;transform:none!important;overflow:visible;page-break-after:always;height:auto}
+  .notes{display:none}
+  .card,.chartbox,.demo{border-color:#ccc}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<div id="bar"></div>
+
+<header id="topbar">
+  <button class="brand" id="homeBtn" title="Ir al inicio" aria-label="Inicio">
+    <span class="mark">Æ</span>
+    <span><b>AetherNet × Estadística</b><small>TS4D3 · Grupo 402 · UTP Pereira</small></span>
+  </button>
+  <div id="timer" role="timer" aria-label="Cronómetro de la presentación" title="Clic o T: iniciar / pausar · R: reiniciar">00:00 <span>/ 05:00</span></div>
+  <button class="tbtn" id="btnNotes" title="Notas del presentador (N)">📝 Notas</button>
+  <button class="tbtn sq" id="btnFs" title="Pantalla completa (F)" aria-label="Pantalla completa">⛶</button>
+  <button class="tbtn sq" id="btnHelp" title="Ayuda y atajos (?)" aria-label="Ayuda">?</button>
+</header>
+
+<main id="deck">
+
+<!-- 1 · PORTADA -->
+<section class="slide" aria-label="Portada">
+  <div class="wrap">
+    <p class="kicker">Proyecto integrador · Presentación para aval de contingencia</p>
+    <h1>AetherNet<span class="x">×</span>Estadística</h1>
+    <p class="lead">De lecturas crudas a decisiones confiables — <span class="term" tabindex="0" data-term="domótica" data-def="Automatización del hogar: controlar luces, cerraduras y sensores de forma remota o automática.">domótica</span>, control de acceso y un <span class="term" tabindex="0" data-term="rover autónomo" data-def="Vehículo robótico que se mueve y evita obstáculos por sí mismo, sin control humano directo.">rover autónomo</span>, funcionando 100 % en <span class="term" tabindex="0" data-term="red local" data-def="Red de dispositivos conectados entre sí en un mismo lugar (casa o laboratorio), sin depender de internet externo.">red local</span> y sin <span class="term" tabindex="0" data-term="nubes propietarias" data-def="Servicios en la nube de empresas privadas (AWS, Azure, Tuya Cloud): funcionan solo dentro de sus plataformas de pago o cierre.">nubes propietarias</span>.</p>
+    <div class="chips">
+      <span class="chip hl">🎓 TS4D3 Estadística · Grupo 402</span>
+      <span class="chip">👩‍🏫 Profesora María Paula Rodas</span>
+      <span class="chip">📅 Miércoles 26 de agosto de 2026 · 18:20</span>
+      <span class="chip">⏱ ~5 min + 5 min de diálogo</span>
+      <a class="chip" href="https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover" target="_blank" rel="noopener">🔗 github.com/Craos6518/AetherNet-IoT-Autonomous-Rover</a>
+    </div>
+    <div class="agenda card">
+      <h3 style="margin-bottom:12px">Agenda — 5 bloques</h3>
+      <button class="arow" data-go="1"><span class="n">01</span><span class="t">Saludo y contexto personal</span><span class="d">0:00–0:40</span></button>
+      <button class="arow" data-go="2"><span class="n">02</span><span class="t">AetherNet en 30 segundos</span><span class="d">0:40–1:20</span></button>
+      <button class="arow" data-go="3"><span class="n">03</span><span class="t">Tres aplicaciones núcleo ↔ syllabus</span><span class="d">1:20–3:10</span></button>
+      <button class="arow" data-go="6"><span class="n">04</span><span class="t">Plan de avance autónomo en 3 fases</span><span class="d">3:10–4:10</span></button>
+      <button class="arow" data-go="7"><span class="n">05</span><span class="t">Petición formal de contingencia</span><span class="d">4:10–5:00</span></button>
+    </div>
+    <p class="demnote" style="margin-top:18px">💡 Pasa el mouse —o toca— cualquier término <span class="term" tabindex="0" data-term="subrayado punteado" data-def="Los términos con línea punteada cian tienen definición: al pasar el mouse aparece una tarjeta como esta.">subrayado así</span> para ver su significado. Atajos: <kbd>T</kbd> cronómetro · <kbd>N</kbd> notas internas · <kbd>F</kbd> pantalla completa.</p>
+    <aside class="notes"><b>Nota interna</b>Contexto: sismo M 7.4 del 10 de agosto — clases suspendidas indefinidamente en UTP Pereira; regreso progresivo virtual por definir. Empezar agradeciendo el espacio; tono calmado y directo.</aside>
+  </div>
+</section>
+
+<!-- 2 · BLOQUE 1 -->
+<section class="slide" aria-label="Bloque 1 Saludo y contexto">
+  <div class="wrap">
+    <div class="tbadge"><span>⏱ 0:00 – 0:40 · Bloque 1</span></div>
+    <p class="kicker">Bloque 1 · Saludo y contexto personal</p>
+    <h2>Antes de empezar: cómo estoy</h2>
+    <div class="grid g3">
+      <div class="card"><h3>✅ Mi familia y yo estamos bien</h3><p class="muted" style="font-size:.9rem;line-height:1.55">Salimos bien del <span class="term" tabindex="0" data-term="sismo" data-def="Terremoto. El 10 de agosto de 2026, uno de magnitud 7.4 suspendió las clases en la UTP Pereira.">sismo</span>, sin daños mayores que lamentar.</p></div>
+      <div class="card"><h3>🤝 Voluntariado</h3><p class="muted" style="font-size:.9rem;line-height:1.55">He podido ayudar como voluntario en lo que se ha podido estas semanas.</p></div>
+      <div class="card"><h3>🏠 Condiciones para seguir estudiando</h3><p class="muted" style="font-size:.9rem;line-height:1.55">Internet, equipo de trabajo y todos los componentes del proyecto aquí, conmigo.</p></div>
+    </div>
+    <p class="pull">“Justo por eso quise agendar esta llamada: quiero contarle qué estoy haciendo para no perder el hilo de la materia mientras se define el regreso… y al final pedirle algo muy concreto.”</p>
+    <aside class="notes"><b>Nota interna</b>Tono calmado, humano, sin dramatizar. No extenderse en lo personal: el objetivo es llegar rápido al proyecto.</aside>
+  </div>
+</section>
+
+<!-- 3 · BLOQUE 2 -->
+<section class="slide" aria-label="Bloque 2 AetherNet en 30 segundos">
+  <div class="wrap">
+    <div class="tbadge"><span>⏱ 0:40 – 1:20 · Bloque 2</span></div>
+    <p class="kicker">Bloque 2 · El proyecto en 30 segundos</p>
+    <h2>AetherNet: tres frentes, un corazón estadístico</h2>
+    <div class="chips" style="margin-top:4px">
+      <span class="chip hl">🏠 <span class="term" tabindex="0" data-term="Domótica" data-def="Automatización del hogar: controlar luces, cerraduras y sensores de forma remota o automática.">Domótica</span></span>
+      <span class="chip hl">🔐 Control de acceso (PIN + cerradura)</span>
+      <span class="chip hl">🤖 Rover móvil autónomo</span>
+      <span class="chip">todo en <span class="term" tabindex="0" data-term="red local" data-def="Red de dispositivos conectados entre sí en un mismo lugar (casa o laboratorio), sin depender de internet externo.">red local</span>, sin nubes propietarias</span>
+    </div>
+    <div class="flow">
+      <div class="fcol">
+        <p class="fhead">Sensores — datos ruidosos e inciertos</p>
+        <div class="fitem">📡 <span class="term" tabindex="0" data-term="Ultrasónico HC-SR04" data-def="Sensor de distancia por eco: mide cuánto tarda un pulso ultrasónico en rebotar contra un objeto.">Ultrasonido HC-SR04</span> (distancia)</div>
+        <div class="fitem">🎤 Micrófono KY-037 (sonido)</div>
+        <div class="fitem">🔴 Láser de seguridad (intrusión)</div>
+        <div class="fitem">📶 Radio <span class="term" tabindex="0" data-term="radiofrecuencia (RF)" data-def="Comunicación inalámbrica por ondas de radio; aquí módulos nRF24L01 a 2.4 GHz entre placas.">radiofrecuencia</span> 2.4 GHz</div>
+      </div>
+      <div class="farrow">➜</div>
+      <div class="fcol" style="flex:0 0 200px">
+        <div class="fmid" style="flex:1">
+          <span class="sig">Σ</span>
+          <b>ESTADÍSTICA</b>
+          <small>el corazón del sistema:<br>filtra, compara y predice</small>
+        </div>
+      </div>
+      <div class="farrow">➜</div>
+      <div class="fcol">
+        <p class="fhead">Decisiones confiables</p>
+        <div class="fitem">🛑 ¿Cuándo debe frenar el robot?</div>
+        <div class="fitem">⚡ ¿La radio es realmente más rápida que el Wi-Fi?</div>
+        <div class="fitem">🔁 ¿Cada cuánto falla el enlace de comunicación?</div>
+      </div>
+    </div>
+    <p class="pull">“Mi trabajo en esta materia es convertir esas lecturas crudas en decisiones confiables.”</p>
+    <aside class="notes"><b>Nota interna</b>Si pregunta por el resto del proyecto (app Android, firmware): responder en una sola frase y volver a estadística.</aside>
+  </div>
+</section>
+
+<!-- 4 · APLICACIÓN 1 · EMA -->
+<section class="slide" aria-label="Aplicación 1 Filtro EMA">
+  <div class="wrap">
+    <div class="tbadge"><span>⏱ 1:20 – 1:50 · Aplicación 1/3</span></div>
+    <p class="kicker">Aplicación núcleo 1 de 3 · <span class="chip" style="padding:.15rem .6rem;font-size:.68rem;border-color:#3fd8f566;color:#bdeef9">Unidad 1 · Estadística descriptiva</span></p>
+    <h2>Filtro <span class="term" tabindex="0" data-term="media móvil exponencial (EMA)" data-def="Filtro que combina cada nueva lectura con el promedio anterior, dando más peso a lo reciente: suaviza la señal sin necesidad de guardar todo el historial.">EMA</span>: leer el mundo sin “brincos”</h2>
+    <p class="lead">El sensor ultrasónico “brinca” por <span class="term" tabindex="0" data-term="ruido eléctrico" data-def="Fluctuación aleatoria no deseada que contamina una medición y oculta el valor real.">ruido eléctrico</span> y <span class="term" tabindex="0" data-term="ecos fantasma" data-def="Lecturas falsas del sensor ultrasónico causadas por rebotes de la onda en superficies secundarias: mide objetos que no están ahí.">ecos fantasma</span>. Con un filtro exponencial suavizo la señal <b>en tiempo real</b>:</p>
+    <div class="formula-card">
+      <p class="formula">S<sub>t</sub><span class="op">=</span>α · Y<sub>t</sub><span class="op">+</span>(1 − α) · S<sub>t−1</sub></p>
+      <p class="fcap"><b>Y<sub>t</sub></b> lectura actual &nbsp;·&nbsp; <b>S<sub>t</sub></b> valor suavizado &nbsp;·&nbsp; <span class="term" tabindex="0" data-term="α (alfa)" data-def="Factor de suavizado entre 0 y 1. Bajo (ej. 0.05) = muy suave pero responde tarde; alto (ej. 0.8) = sigue la señal rápido pero filtra poco."><b>α</b></span> = factor de suavizado (0 a 1)</p>
+    </div>
+    <div class="chips" style="margin-top:2px">
+      <span class="chip">Parámetro elegido: <b>α = 0.2</b></span>
+      <span class="chip">🎯 Meta del proyecto (<span class="term" tabindex="0" data-term="KPI" data-def="Indicador clave de desempeño: cifra objetivo que define el éxito de algo. Aquí: reducir el ruido al menos 85 %.">KPI</span>): reducción de <span class="term" tabindex="0" data-term="desviación estándar" data-def="Cuánto se alejan típicamente los datos de su promedio: es la medida clásica de dispersión o ruido.">desviación estándar</span> ≥ <b>85 %</b></span>
+      <span class="chip">Validación numérica en Python</span>
+    </div>
+    <div class="demo">
+      <div class="demo-head">
+        <span class="ttl">🧪 Demostración interactiva <span class="dimtxt" style="font-weight:400">— la misma idea que valido en Python (<code style="font-family:var(--mono);font-size:.8em">stats/ema_filter.py</code>)</span></span>
+        <div class="metrics">
+          <span class="metric" id="mRed">Reducción de ruido: <b>—</b></span>
+          <span class="metric" id="mDelay">Retraso de respuesta: <b>—</b></span>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="toolbar">
+          <label>α = <b id="alphaVal" style="color:var(--cy)">0.20</b>
+            <input type="range" id="alphaSlider" min="0.02" max="1" step="0.01" value="0.2" aria-label="Factor de suavizado alfa">
+          </label>
+          <div class="presets" role="group" aria-label="Valores rápidos de alfa">
+            <button class="preset" data-a="0.05">0.05</button>
+            <button class="preset" data-a="0.1">0.1</button>
+            <button class="preset on" data-a="0.2">0.2</button>
+            <button class="preset" data-a="0.5">0.5</button>
+          </div>
+          <button class="btn" id="btnCapture" style="margin-left:auto">🔄 Nueva captura</button>
+        </div>
+        <div class="chartbox"><canvas id="emaCanvas"></canvas></div>
+        <div class="legend">
+          <span><i style="border-color:#f87171"></i>lectura cruda HC-SR04</span>
+          <span><i style="border-color:#3fd8f5"></i>señal filtrada EMA</span>
+          <span><i style="border-color:#94a3b8;border-top-style:dashed"></i>distancia real</span>
+        </div>
+        <p class="demnote">⚠️ Compromiso clave: bajar α suaviza más pero aumenta el <b>retraso</b> — un robot que frena tarde también choca. Por eso α se valida con datos, no “a ojo”. Prueba los valores rápidos y observa ambas métricas.</p>
+      </div>
+    </div>
+    <aside class="notes"><b>Nota interna</b>Las fórmulas se dicen con naturalidad, no se leen. Si interrumpe con preguntas técnicas, es buena señal: hay todo el bloque de diálogo para eso.</aside>
+  </div>
+</section>
+
+<!-- 5 · APLICACIÓN 2 · T-STUDENT -->
+<section class="slide" aria-label="Aplicación 2 prueba t-Student">
+  <div class="wrap">
+    <div class="tbadge"><span>⏱ 1:50 – 2:30 · Aplicación 2/3</span></div>
+    <p class="kicker">Aplicación núcleo 2 de 3 · <span class="chip" style="padding:.15rem .6rem;font-size:.68rem;border-color:#a78bfa66;color:#d9cffc">Unidades 6–7 · Inferencia</span></p>
+    <h2>¿Radio o Wi-Fi? La <span class="term" tabindex="0" data-term="prueba t-Student" data-def="Prueba estadística que compara las medias de dos grupos para decidir si la diferencia observada es real o producto del azar.">prueba t-Student</span> decide</h2>
+    <div class="qcard">❓ <b>Pregunta:</b> ¿un comando enviado por radio a 2.4 GHz responde más rápido que por Wi-Fi vía <span class="term" tabindex="0" data-term="MQTT" data-def="Protocolo ligero de mensajería para IoT: los dispositivos publican y suscriben mensajes a través de un intermediario central llamado broker.">MQTT</span>?</div>
+    <div class="methodchips">
+      <span class="chip"><span class="term" tabindex="0" data-term="t de dos muestras" data-def="Variante de la prueba t que compara dos grupos independientes (aquí: latencias por radio vs. latencias por Wi-Fi).">t de dos muestras</span></span>
+      <span class="chip">supuesto previo: <span class="term" tabindex="0" data-term="normalidad" data-def="Supuesto de que los datos siguen la distribución normal (campana de Gauss); se verifica antes de aplicar pruebas paramétricas como la t.">normalidad</span> verificada antes</span>
+      <span class="chip"><span class="term" tabindex="0" data-term="significancia" data-def="Umbral de decisión (usualmente 0.05): qué tan improbable debe ser un resultado para aceptar que hay un efecto real.">significancia</span> α = 0.05</span>
+    </div>
+    <div class="demo">
+      <div class="demo-head">
+        <span class="ttl">🧪 Comparador interactivo <span class="dimtxt" style="font-weight:400">— aquí con <span class="term" tabindex="0" data-term="muestras simuladas" data-def="Datos generados por software para probar el análisis; en el proyecto usaré mediciones reales capturadas con el hardware.">muestras simuladas</span>; en el proyecto: <b style="color:var(--tx)">mediciones reales</b></span></span>
+        <div class="metrics">
+          <button class="btn pri" id="btnTTest">▶ Ejecutar prueba t</button>
+          <button class="btn" id="btnSamples">🔀 Nuevas muestras</button>
+        </div>
+      </div>
+      <div class="demo-body split">
+        <div>
+          <svg id="tsvg" viewBox="0 0 340 186" role="img" aria-label="Gráfica de puntos de latencia por canal" style="width:100%;height:auto;display:block"></svg>
+        </div>
+        <div>
+          <div class="kv"><span>Media <span class="term" tabindex="0" data-term="radio nRF24L01" data-def="Módulo de radio de 2.4 GHz, económico, usado para comunicar microcontroladores sin Wi-Fi.">radio</span> ± <span class="term" tabindex="0" data-term="desviación estándar" data-def="Cuánto se alejan típicamente los datos de su promedio: mide qué tan dispersos son.">DE</span></span><b id="mrf">—</b></div>
+          <div class="kv"><span>Media Wi-Fi · MQTT ± DE</span><b id="mwf">—</b></div>
+          <div class="kv"><span>Estadístico t (Welch)</span><b id="mt">—</b></div>
+          <div class="kv"><span><span class="term" tabindex="0" data-term="grados de libertad (gl)" data-def="Margen de variación disponible en los datos para estimar la incertidumbre; ajusta la forma de la distribución t.">gl</span></span><b id="mdf">—</b></div>
+          <div class="kv"><span><span class="term" tabindex="0" data-term="valor p" data-def="Probabilidad de observar resultados al menos tan extremos si no existiera diferencia real. Si p &lt; 0.05, el resultado se considera estadísticamente significativo.">valor p</span></span><b id="mp">—</b></div>
+          <div class="verdict" id="verdict">Pulsa <b>Ejecutar prueba t</b> para comparar las dos muestras.</div>
+          <p class="demnote" style="margin-top:12px">“Decisión de arquitectura con datos, no con intuición.”</p>
+        </div>
+      </div>
+    </div>
+    <aside class="notes"><b>Nota interna</b>Ahí aplico las unidades 6 y 7 del syllabus. La conclusión esperada: la radio gana con holgura (RF &lt; 10 ms vs. Wi-Fi &lt; 50 ms según PRD §5).</aside>
+  </div>
+</section>
+
+<!-- 6 · APLICACIÓN 3 · WEIBULL + POISSON -->
+<section class="slide" aria-label="Aplicación 3 confiabilidad Weibull y Poisson">
+  <div class="wrap">
+    <div class="tbadge"><span>⏱ 2:30 – 3:10 · Aplicación 3/3</span></div>
+    <p class="kicker">Aplicación núcleo 3 de 3 · <span class="chip" style="padding:.15rem .6rem;font-size:.68rem;border-color:#ffc85766;color:#f3e3ba">Unidades 4 · 5 · 8</span></p>
+    <h2>Confiabilidad: prever el fallo antes de que ocurra</h2>
+    <div class="grid g2">
+      <div class="card">
+        <h3>📶 Enlace de radio → <span class="term" tabindex="0" data-term="distribución de Weibull" data-def="Modelo estadístico clásico de ingeniería para tiempos hasta el fallo; su parámetro de forma revela si las fallas son tempranas, aleatorias o por desgaste.">Weibull</span></h3>
+        <p class="muted" style="font-size:.9rem;line-height:1.6">Modelar el <span class="term" tabindex="0" data-term="tiempo entre fallos" data-def="Lapso entre una falla y la siguiente; su distribución permite anticipar cuándo volverá a fallar el sistema.">tiempo entre fallos</span> del enlace de radio me permite justificar un <span class="term" tabindex="0" data-term="timeout" data-def="Tiempo máximo de espera: si no llega respuesta dentro del lapso definido, el sistema ejecuta una acción de protección."><i>timeout</i></span> de seguridad del <span class="term" tabindex="0" data-term="fail-safe" data-def="Diseño que, ante cualquier fallo, lleva al sistema a un estado seguro: si el rover pierde señal, se detiene solo."><i>fail-safe</i></span> de <b style="color:var(--am)">300–500 milisegundos</b>.</p>
+        <div class="svgbox">
+          <svg viewBox="0 0 260 112" role="img" aria-label="Formas de la distribución de Weibull" style="width:100%;height:auto;display:block">
+            <line x1="18" y1="98" x2="252" y2="98" stroke="#2e4166" stroke-width="1"/>
+            <line x1="18" y1="98" x2="18" y2="10" stroke="#2e4166" stroke-width="1"/>
+            <path d="M22 20 C40 42 60 64 92 79 C124 89 176 95 248 96.4" fill="none" stroke="#ffc857" stroke-width="2" stroke-dasharray="5 4"/>
+            <path d="M20 72 C34 38 47 27 63 31 C92 40 134 67 204 87 C228 92 242 94 250 94.8" fill="none" stroke="#a78bfa" stroke-width="2"/>
+            <path d="M20 86 C36 62 50 47 72 43 C97 39 113 55 137 74 C169 93 212 95.5 250 96" fill="none" stroke="#3fd8f5" stroke-width="2.4"/>
+            <text x="256" y="108" fill="#6b7f9e" font-size="8" text-anchor="end" font-family="monospace">tiempo →</text>
+          </svg>
+        </div>
+        <p class="svgcap"><span><i style="border-color:#ffc857"></i>β&lt;1 · fallas tempranas</span><span><i style="border-color:#a78bfa"></i>β=1 · al azar</span><span><i style="border-color:#3fd8f5"></i>β&gt;1 · desgaste</span></p>
+      </div>
+      <div class="card">
+        <h3>🔒 Intrusión del láser → <span class="term" tabindex="0" data-term="proceso de Poisson" data-def="Modelo para eventos que ocurren al azar con una tasa promedio constante en el tiempo (llamadas, intrusiones, fallas).">proceso de Poisson</span></h3>
+        <p class="muted" style="font-size:.9rem;line-height:1.6">Las detecciones de <span class="term" tabindex="0" data-term="intrusión" data-def="Intento de acceso no autorizado; en este sistema, cruzar el haz del láser de seguridad.">intrusión</span> del láser se modelan como eventos aleatorios con tasa promedio <span class="term" tabindex="0" data-term="λ (lambda)" data-def="Tasa promedio de eventos por unidad de tiempo (ej.: intrusiones por minuto) en un proceso de Poisson.">λ</span>: permite estimar cuántos eventos esperar por ventana de tiempo.</p>
+        <div class="svgbox">
+          <svg viewBox="0 0 260 112" role="img" aria-label="Eventos de intrusión en el tiempo" style="width:100%;height:auto;display:block">
+            <line x1="18" y1="98" x2="252" y2="98" stroke="#2e4166" stroke-width="1"/>
+            <line x1="18" y1="34" x2="252" y2="34" stroke="#6b7f9e" stroke-width="1" stroke-dasharray="4 4"/>
+            <text x="252" y="28" fill="#9db0cc" font-size="9" text-anchor="end" font-family="monospace">tasa promedio λ</text>
+            <g stroke="#ffc857" stroke-width="2">
+              <line x1="34" y1="98" x2="34" y2="76"/><line x1="58" y1="98" x2="58" y2="58"/><line x1="82" y1="98" x2="82" y2="84"/><line x1="106" y1="98" x2="106" y2="50"/><line x1="130" y1="98" x2="130" y2="70"/><line x1="154" y1="98" x2="154" y2="38"/><line x1="178" y1="98" x2="178" y2="74"/><line x1="202" y1="98" x2="202" y2="56"/><line x1="226" y1="98" x2="226" y2="64"/>
+            </g>
+            <g fill="#ffc857">
+              <circle cx="34" cy="76" r="3.2"/><circle cx="58" cy="58" r="3.2"/><circle cx="82" cy="84" r="3.2"/><circle cx="106" cy="50" r="3.2"/><circle cx="130" cy="70" r="3.2"/><circle cx="154" cy="38" r="3.2"/><circle cx="178" cy="74" r="3.2"/><circle cx="202" cy="56" r="3.2"/><circle cx="226" cy="64" r="3.2"/>
+            </g>
+            <text x="256" y="108" fill="#6b7f9e" font-size="8" text-anchor="end" font-family="monospace">eventos →</text>
+          </svg>
+        </div>
+        <p class="svgcap"><span><i style="border-color:#ffc857"></i>evento de intrusión detectado</span><span><i style="border-color:#6b7f9e"></i>tasa media de referencia</span></p>
+      </div>
+    </div>
+    <aside class="notes"><b>Nota interna</b>Eso cubre las unidades 4, 5 y 8 del syllabus. Frase puente sugerida: “y eso me lleva a cómo voy a avanzar sin laboratorio…”.</aside>
+  </div>
+</section>
+
+<!-- 7 · PLAN 3 FASES -->
+<section class="slide" aria-label="Plan de avance autónomo en tres fases">
+  <div class="wrap">
+    <div class="tbadge"><span>⏱ 3:10 – 4:10 · Bloque 4</span></div>
+    <p class="kicker">Bloque 4 · Plan de avance autónomo</p>
+    <h2>Tres fases: primero valido en Python, luego porto, después mido</h2>
+    <div class="banner"><span class="ico">🏠</span><span><b>Valido primero la estadística con datos reales que capturo yo mismo.</b> Tengo todo el hardware en casa: HC-SR04, micrófono KY-037, módulo láser, radios <span class="term" tabindex="0" data-term="nRF24L01" data-def="Módulo de radio de 2.4 GHz, económico, para comunicación inalámbrica entre placas.">nRF24L01</span> y las tres placas — <span class="term" tabindex="0" data-term="ESP32" data-def="Placa de desarrollo con Wi-Fi y Bluetooth integrados; será la puerta de enlace (gateway) del sistema.">ESP32</span>, <span class="term" tabindex="0" data-term="Arduino MEGA" data-def="Placa con muchos pines de entrada/salida; controlará el acceso (teclado 4×4, servo, LED RGB).">Arduino MEGA</span> y <span class="term" tabindex="0" data-term="Arduino UNO" data-def="Placa básica de desarrollo; será el cerebro del rover (motores y sensores).">UNO</span>. <b>No dependo de <span class="term" tabindex="0" data-term="simulaciones" data-def="Reproducir el comportamiento del sistema solo en software, sin hardware físico.">simulaciones</span> ni del laboratorio.</b></span></div>
+    <div class="stepper">
+      <div class="step s1">
+        <div class="stepnum">1</div>
+        <div><h3>Prototipar en Python <span style="color:var(--dim);font-weight:500">(ahora)</span></h3>
+          <p><span class="term" tabindex="0" data-term="Jupyter Notebooks" data-def="Documentos interactivos que combinan código Python, sus resultados y texto explicativo: ideales para análisis reproducible y verificable.">Jupyter Notebooks</span> con <span class="term" tabindex="0" data-term="Pandas" data-def="Librería de Python para manejar tablas y series de datos.">Pandas</span>, <span class="term" tabindex="0" data-term="SciPy" data-def="Librería de Python con pruebas estadísticas y métodos numéricos listos para usar.">SciPy</span> y <span class="term" tabindex="0" data-term="NumPy" data-def="Librería de Python para cálculo numérico rápido con arreglos y matrices.">NumPy</span>. ✔ Ya tengo un primer <span class="term" tabindex="0" data-term="prototipo" data-def="Primera versión funcional y simplificada, para validar ideas antes de construir lo definitivo.">prototipo</span> del filtro EMA con sus <span class="term" tabindex="0" data-term="tests automatizados" data-def="Código que comprueba por sí solo que otras partes del programa funcionan correctamente.">tests automatizados</span> (<code style="font-family:var(--mono);font-size:.85em">stats/ema_filter.py</code>).</p></div>
+        <span class="pill now">● En curso</span>
+      </div>
+      <div class="step s2">
+        <div class="stepnum">2</div>
+        <div><h3><span class="term" tabindex="0" data-term="portar" data-def="Trasladar una solución ya validada a otra plataforma o lenguaje (aquí: de Python a C++).">Portar</span> la fórmula validada a <span class="term" tabindex="0" data-term="firmware" data-def="Programa grabado directamente en el microcontrolador que controla el hardware en tiempo real.">firmware</span> C++</h3>
+          <p>La misma ecuación EMA ya validada estadísticamente, implementada sobre el <span class="term" tabindex="0" data-term="microcontrolador" data-def="Computador diminuto en un chip (Arduino, ESP32) que lee sensores y controla actuadores en tiempo real.">microcontrolador</span> del rover.</p></div>
+        <span class="pill next">○ Siguiente</span>
+      </div>
+      <div class="step s3">
+        <div class="stepnum">3</div>
+        <div><h3>Medir <span class="term" tabindex="0" data-term="end-to-end" data-def="«Extremo a extremo»: medir todo el recorrido del dato, desde el sensor hasta la aplicación final.">end-to-end</span> y cerrar <span style="color:var(--dim);font-weight:500">(laboratorio)</span></h3>
+          <p>Cuando volvamos al laboratorio: latencias del sistema completo e informe final.</p></div>
+        <span class="pill lab">◇ Laboratorio</span>
+      </div>
+    </div>
+    <div class="chips" style="margin-top:18px">
+      <span class="chip">🗂 Backlog trazable: <b>EST-01 → EST-07</b> <span class="term dimtxt" tabindex="0" data-term="EST-01…EST-07" data-def="Código de mis siete tareas del área estadística en el backlog del repositorio, numeradas para seguimiento.">(¿qué son?)</span></span>
+      <span class="chip">📋 Requisitos: <b>RNF-2.1 · RNF-2.2</b> <span class="term dimtxt" tabindex="0" data-term="RNF (requisito no funcional)" data-def="Requisito de calidad del sistema (rendimiento, seguridad, confiabilidad) más que una función específica.">(¿qué son?)</span></span>
+      <span class="chip">👤 Historia de usuario: <b>HU-03</b> <span class="term dimtxt" tabindex="0" data-term="HU (historia de usuario)" data-def="Formato de requisito centrado en la necesidad del usuario: «como … quiero … para …».">(¿qué es?)</span></span>
+    </div>
+    <aside class="notes"><b>Nota interna</b>Enfatizar «datos reales» y «no dependo del laboratorio»: es el argumento clave de viabilidad. Todo queda trazado en el backlog del repositorio.</aside>
+  </div>
+</section>
+
+<!-- 8 · PETICIÓN FORMAL -->
+<section class="slide" aria-label="Petición formal de contingencia">
+  <div class="wrap centerpage">
+    <div class="tbadge"><span>⏱ 4:10 – 5:00 · Bloque 5</span></div>
+    <p class="kicker">Bloque 5 · Petición formal</p>
+    <p class="asklead">Lo que vengo a pedir hoy</p>
+    <p class="ask">¿Contaría con su <mark>aval</mark> para adelantar la parte estadística del proyecto como <mark>esquema de <span class="term" tabindex="0" data-term="contingencia" data-def="Plan alternativo que se activa ante un imprevisto; aquí: continuar el proceso académico mientras se define el regreso a clases.">contingencia</span></mark> de mi proceso académico?</p>
+    <div class="commit">
+      <div class="card"><b>🗓 Me adapto a su cronograma</b>Fechas y ritmo que usted indique; la directriz de la universidad manda sobre cualquier plan propio.</div>
+      <div class="card"><b>📦 Entregables a su medida</b>Notebooks, informes parciales por unidad del syllabus, o lo que considere pertinente evaluar.</div>
+      <div class="card"><b>🎯 Avances medibles y verificables</b>Cada fase cierra con evidencia concreta: gráficas, conclusiones y código revisable.</div>
+    </div>
+    <div class="finalq">
+      <p>«En síntesis: ¿qué condiciones pondría usted para aprobar este esquema?»</p>
+      <small>⏸ pausa después de preguntar — escuchar y tomar notas</small>
+    </div>
+    <aside class="notes"><b>Nota interna</b>Tras la pregunta: silencio y escucha activa. Si duda, ofrecer enviar hoy mismo por escrito el plan por fases con entregables por unidad del syllabus. Entregarables = productos concretos evaluables (notebooks, informes).</aside>
+  </div>
+</section>
+
+<!-- 9 · POSIBLES PREGUNTAS -->
+<section class="slide" aria-label="Posibles preguntas y respuestas preparadas">
+  <div class="wrap">
+    <p class="kicker">Preparación · Diálogo con la docente</p>
+    <h2>Respuestas listas <span class="dimtxt" style="font-size:.62em;font-weight:500">— clic para girar cada tarjeta</span></h2>
+    <div class="flipgrid">
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="fin">
+        <div class="face front"><span class="qtag">Pregunta probable</span><p class="q">“¿Cómo capturas datos sin clases?”</p><p class="hint">🔄 clic o Enter para ver la respuesta</p></div>
+        <div class="face back"><span class="qtag">Respuesta</span><p class="a">Todos los sensores y <span class="term" tabindex="0" data-term="microcontroladores" data-def="Computadores diminutos en un chip (Arduino, ESP32) que leen sensores y controlan actuadores.">microcontroladores</span> están en casa: las mediciones son <b>reales, no simuladas</b>. Solo la integración completa requiere el laboratorio.</p></div>
+      </div></div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="fin">
+        <div class="face front"><span class="qtag">Pregunta probable</span><p class="q">“La asignatura no tiene enfoque en programación, ¿no?”</p><p class="hint">🔄 clic o Enter para ver la respuesta</p></div>
+        <div class="face back"><span class="qtag">Respuesta</span><p class="a">Correcto. Python/<span class="term" tabindex="0" data-term="Jupyter Notebooks" data-def="Documentos interactivos que combinan código Python, resultados y texto: herramienta típica de análisis de datos.">Jupyter</span> es solo la herramienta de análisis que manejamos en clase (Pandas, SciPy). El C++ es únicamente la aplicación final de la fórmula que yo valide: <b>el análisis y la interpretación siguen siendo de estadística</b>.</p></div>
+      </div></div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="fin">
+        <div class="face front"><span class="qtag">Pregunta probable</span><p class="q">“¿Cómo puedo verificar tu avance?”</p><p class="hint">🔄 clic o Enter para ver la respuesta</p></div>
+        <div class="face back"><span class="qtag">Respuesta</span><p class="a">Notebooks compartidos por unidad del syllabus, informes parciales con gráficas y conclusiones, y un <span class="term" tabindex="0" data-term="backlog" data-def="Lista priorizada y trazable de tareas pendientes del proyecto, mantenida en el repositorio.">backlog</span> trazable (EST-01 → EST-07). <b>Puedo enviar un cronograma escrito hoy mismo.</b></p></div>
+      </div></div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="fin">
+        <div class="face front"><span class="qtag">Pregunta probable</span><p class="q">“¿Y si el calendario académico cambia?”</p><p class="hint">🔄 clic o Enter para ver la respuesta</p></div>
+        <div class="face back"><span class="qtag">Respuesta</span><p class="a">El plan es <b>modular</b>: cada fase cierra un <span class="term" tabindex="0" data-term="entregable" data-def="Producto concreto que se presenta para evaluación: notebook, informe, código.">entregable</span> independiente; se ajusta sin perder lo avanzado.</p></div>
+      </div></div>
+      <div class="flip" tabindex="0" role="button" aria-pressed="false"><div class="fin">
+        <div class="face front"><span class="qtag">Pregunta probable</span><p class="q">“¿Qué necesitas de mí?”</p><p class="hint">🔄 clic o Enter para ver la respuesta</p></div>
+        <div class="face back"><span class="qtag">Respuesta</span><p class="a">Su <span class="term" tabindex="0" data-term="aval" data-def="Respaldo o aprobación oficial de la docente a un plan de trabajo.">aval</span> al esquema de contingencia, y que usted defina las evidencias y fechas de chequeo que considere adecuadas.</p></div>
+      </div></div>
+    </div>
+    <aside class="notes"><b>Nota interna</b>Repasar estas cinco tarjetas antes de la llamada. Si surge una sexta pregunta fuera de guion: responder honesto y ofrecer detallarlo por escrito.</aside>
+  </div>
+</section>
+
+<!-- 10 · RECORDATORIOS -->
+<section class="slide" aria-label="Recordatorios antes de colgar">
+  <div class="wrap">
+    <p class="kicker">Antes de colgar</p>
+    <h2>Recordatorios rápidos</h2>
+    <ul class="checklist">
+      <li><input type="checkbox" class="chk" id="c1"><span>Agradecer su tiempo y su preocupación por el grupo.</span></li>
+      <li><input type="checkbox" class="chk" id="c2"><span>Confirmar canal de entrega de evidencias (correo, repositorio, notebook compartido).</span></li>
+      <li><input type="checkbox" class="chk" id="c3"><span>Preguntar fecha tentativa del próximo chequeo, si ella lo desea.</span></li>
+      <li><input type="checkbox" class="chk" id="c4"><span>No prometer fechas que dependan de decisiones de la universidad.</span></li>
+    </ul>
+    <div class="banner" style="max-width:720px"><span class="ico">📨</span><span><b>Si duda sobre el esquema:</b> ofrecer enviar hoy mismo el plan escrito por fases con entregables por unidad del syllabus → <a href="https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover" target="_blank" rel="noopener">repositorio del proyecto</a>.</span></div>
+    <p class="demnote" style="margin-top:14px">✔ Tu lista se guarda automáticamente en este navegador para el día de la llamada.</p>
+    <aside class="notes"><b>Nota interna</b>Última impresión cuenta: cerrar agradeciendo y confirmando un siguiente paso concreto (canal + fecha de chequeo).</aside>
+  </div>
+</section>
+
+<!-- 11 · GLOSARIO -->
+<section class="slide" aria-label="Glosario de términos">
+  <div class="wrap">
+    <p class="kicker">Soporte · Consulta rápida</p>
+    <h2>Glosario de términos <span class="dimtxt" style="font-size:.6em;font-weight:500">(<span id="glossCount">0</span> definiciones)</span></h2>
+    <input id="glossFilter" type="search" placeholder="Filtrar términos… (ej.: poisson, alfa, mqtt)">
+    <dl id="glossList"></dl>
+    <p class="demnote" style="margin-top:22px">Todos estos términos aparecen subrayados en las diapositivas: pasa el mouse sobre ellos para ver su definición sin salir de la presentación.</p>
+  </div>
+</section>
+
+</main>
+
+<footer id="hud">
+  <button class="navbtn" id="btnPrev" title="Anterior (←)" aria-label="Diapositiva anterior">←</button>
+  <div id="dots" role="tablist" aria-label="Ir a diapositiva"></div>
+  <span id="counter">1 / 11</span>
+  <button class="navbtn" id="btnNext" title="Siguiente (→)" aria-label="Diapositiva siguiente">→</button>
+  <span id="hudhint">← → navegar · <b>T</b> cronómetro · <b>N</b> notas · <b>?</b> ayuda · pasa el mouse sobre los términos punteados</span>
+</footer>
+
+<div id="tip" role="tooltip" hidden><strong id="tipName"></strong><p id="tipDef"></p></div>
+
+<div id="help" hidden>
+  <div class="hpanel" role="dialog" aria-modal="true" aria-label="Ayuda y atajos de teclado">
+    <h3>⌨️ Atajos y funciones</h3>
+    <div class="hrow"><div><b>← / →</b> · navegar diapositivas</div><span><kbd>◀</kbd> <kbd>▶</kbd></span></div>
+    <div class="hrow"><div><b>T</b> iniciar / pausar cronómetro</div><span><kbd>T</kbd></span></div>
+    <div class="hrow"><div><b>R</b> reiniciar cronómetro</div><span><kbd>R</kbd></span></div>
+    <div class="hrow"><div><b>N</b> mostrar / ocultar notas internas</div><span><kbd>N</kbd></span></div>
+    <div class="hrow"><div><b>F</b> pantalla completa (ideal para compartir)</div><span><kbd>F</kbd></span></div>
+    <div class="hrow"><div><b>?</b> abrir / cerrar esta ayuda</div><span><kbd>?</kbd></span></div>
+    <div class="hrow"><div><b>Esc</b> cerrar ventanas y definiciones</div><span><kbd>Esc</kbd></span></div>
+    <div class="hrow"><div><b>Términos punteados</b> · mouse o toque = definición</div><span>🖱️</span></div>
+    <p class="demnote" style="margin-top:14px">Consejo: en la videollamada comparte esta ventana completa (<b>F</b>) y deja el cronómetro encendido; las notas internas solo tú deberías verlas durante el ensayo.</p>
+    <div style="text-align:right;margin-top:14px"><button class="btn" id="helpClose">Entendido</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(s,c){return (c||document).querySelector(s)};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function read(k){try{return localStorage.getItem(k)}catch(e){return null}}
+
+var slides=$$(".slide");
+var dotsWrap=$("#dots"),counter=$("#counter"),bar=$("#bar");
+slides.forEach(function(sl,i){
+  var b=document.createElement("button");
+  b.className="dot";b.setAttribute("aria-label","Ir a diapositiva "+(i+1));
+  b.addEventListener("click",function(){go(i)});
+  dotsWrap.appendChild(b);
+});
+var dots=$$(".dot",dotsWrap);
+var idx=0;
+var tip=$("#tip"),tipName=$("#tipName"),tipDef=$("#tipDef"),pinned=null;
+
+function go(n){
+  idx=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach(function(s,i){s.classList.toggle("active",i===idx)});
+  dots.forEach(function(d,i){d.classList.toggle("on",i===idx)});
+  counter.textContent=(idx+1)+" / "+slides.length;
+  bar.style.transform="scaleX("+(idx/(slides.length-1))+")";
+  try{history.replaceState(null,"","#"+(idx+1))}catch(e){}
+  closeTip();
+}
+function next(){go(idx+1)}function prev(){go(idx-1)}
+$("#btnNext").addEventListener("click",next);
+$("#btnPrev").addEventListener("click",prev);
+$("#homeBtn").addEventListener("click",function(){go(0)});
+$$("[data-go]").forEach(function(b){b.addEventListener("click",function(){go(parseInt(b.getAttribute("data-go"),10))})});
+var h0=parseInt(location.hash.replace("#",""),10);
+go(isNaN(h0)?0:h0-1);
+
+/* cronometro */
+var tsec=0,trun=false,tint=null,tEl=$("#timer");
+function fmt(s){var m=Math.floor(s/60),ss=s%60;return(m<10?"0":"")+m+":"+(ss<10?"0":"")+ss}
+function renderT(){
+  tEl.innerHTML=fmt(tsec)+' <span>/ 05:00</span>';
+  tEl.classList.toggle("warn",tsec>=270&&tsec<300);
+  tEl.classList.toggle("over",tsec>=300);
+}
+function tickT(){tsec++;renderT()}
+function toggleT(){
+  trun=!trun;tEl.classList.toggle("run",trun);
+  if(trun){tint=setInterval(tickT,1000)}else{clearInterval(tint)}
+}
+function resetT(){clearInterval(tint);trun=false;tsec=0;renderT();tEl.classList.remove("run","warn","over")}
+tEl.addEventListener("click",toggleT);
+
+/* notas */
+var btnNotes=$("#btnNotes");
+function toggleNotes(){var on=document.body.classList.toggle("notes-on");btnNotes.classList.toggle("on",on);store("ae-notes",on?"1":"0")}
+btnNotes.addEventListener("click",toggleNotes);
+if(read("ae-notes")==="1"){document.body.classList.add("notes-on");btnNotes.classList.add("on")}
+
+/* ayuda */
+var help=$("#help");
+function openH(){help.hidden=false}function closeH(){help.hidden=true}
+$("#btnHelp").addEventListener("click",openH);
+$("#helpClose").addEventListener("click",closeH);
+help.addEventListener("click",function(e){if(e.target===help)closeH()});
+$("#btnFs").addEventListener("click",function(){
+  if(document.fullscreenElement){document.exitFullscreen().catch(function(){})}
+  else{document.documentElement.requestFullscreen().catch(function(){})}
+});
+
+/* checklist persistente */
+$$(".chk").forEach(function(cb){
+  cb.checked=read("ae-"+cb.id)==="1";
+  cb.addEventListener("change",function(){store("ae-"+cb.id,cb.checked?"1":"0")});
+});
+
+/* tarjetas giratorias */
+$$(".flip").forEach(function(f){
+  function tg(){f.classList.toggle("on");f.setAttribute("aria-pressed",f.classList.contains("on")?"true":"false")}
+  f.addEventListener("click",tg);
+  f.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();tg()}});
+});
+
+/* teclado */
+document.addEventListener("keydown",function(e){
+  var t=e.target,tag=t.tagName;
+  var typing=tag==="INPUT"&&t.type!=="range"||tag==="TEXTAREA";
+  if(e.key==="Escape"){
+    if(!help.hidden){closeH();return}
+    closeTip();return;
+  }
+  if(typing)return;
+  if(tag==="INPUT"&&t.type==="range"){
+    if(e.key==="ArrowLeft"||e.key==="ArrowRight")return;
+  }
+  switch(e.key){
+    case"ArrowRight":next();break;
+    case"ArrowLeft":prev();break;
+    case"Home":go(0);break;
+    case"End":go(slides.length-1);break;
+    case"t":case"T":toggleT();break;
+    case"r":case"R":resetT();break;
+    case"n":case"N":toggleNotes();break;
+    case"f":case"F":$("#btnFs").click();break;
+    case"?":case"h":case"H":help.hidden?openH():closeH();break;
+  }
+});
+
+/* swipe */
+var sx=0,sy=0;
+document.addEventListener("touchstart",function(e){
+  if(e.touches.length===1){sx=e.touches[0].clientX;sy=e.touches[0].clientY}
+},{passive:true});
+document.addEventListener("touchend",function(e){
+  if(!sx&&!sy)return;
+  var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)){dx<0?next():prev()}
+  sx=sy=0;
+},{passive:true});
+
+/* tooltips */
+function showTip(el){
+  tipName.textContent=el.getAttribute("data-term")||el.textContent.trim();
+  tipDef.textContent=el.getAttribute("data-def");
+  tip.hidden=false;tip.style.visibility="hidden";tip.classList.remove("below");
+  requestAnimationFrame(function(){
+    var r=el.getBoundingClientRect(),tr=tip.getBoundingClientRect();
+    var x=r.left+r.width/2-tr.width/2;
+    x=Math.max(10,Math.min(x,window.innerWidth-tr.width-10));
+    var spaceUp=r.top,spaceDown=window.innerHeight-r.bottom;
+    var below=spaceDown>spaceUp&&spaceUp<220;
+    var top=below?r.bottom+13:r.top-tr.height-13;
+    top=Math.max(72,top);
+    if(top+tr.height>window.innerHeight-74)top=window.innerHeight-74-tr.height;
+    if(top<72)top=72;
+    var ax=r.left+r.width/2-x;
+    ax=Math.max(16,Math.min(ax,tr.width-16));
+    tip.style.left=x+"px";tip.style.top=top+"px";
+    tip.style.setProperty("--ax",ax+"px");
+    tip.classList.toggle("below",below);
+    tip.style.visibility="visible";
+  });
+}
+function closeTip(){pinned=null;tip.hidden=true}
+document.addEventListener("mouseover",function(e){
+  var t=e.target.closest(".term");if(t)showTip(t);
+});
+document.addEventListener("mouseout",function(e){
+  var t=e.target.closest(".term");
+  if(t&&!(e.relatedTarget&&t.contains(e.relatedTarget))&&pinned!==t)tip.hidden=true;
+});
+document.addEventListener("click",function(e){
+  var t=e.target.closest(".term");
+  if(t){if(pinned===t){closeTip()}else{pinned=t;showTip(t)}}
+  else if(!e.target.closest("#tip")){closeTip()}
+});
+document.addEventListener("focusin",function(e){var t=e.target.closest(".term");if(t)showTip(t)});
+document.addEventListener("focusout",function(e){var t=e.target.closest(".term");if(t&&pinned!==t)tip.hidden=true});
+window.addEventListener("scroll",closeTip,true);
+window.addEventListener("resize",closeTip);
+
+/* glosario */
+var seen={},order=[];
+$$(".term").forEach(function(el){
+  var k=el.getAttribute("data-term")||el.textContent.trim();
+  var key=k.toLowerCase();
+  if(!seen[key]){seen[key]=el.getAttribute("data-def");order.push(k)}
+});
+var gl=$("#glossList");
+order.forEach(function(k){
+  var dt=document.createElement("dt");dt.textContent=k;
+  var dd=document.createElement("dd");dd.textContent=seen[k];
+  gl.appendChild(dt);gl.appendChild(dd);
+});
+$("#glossCount").textContent=order.length;
+$("#glossFilter").addEventListener("input",function(){
+  var q=this.value.trim().toLowerCase(),items=gl.children;
+  for(var i=0;i<items.length;i++){
+    items[i].style.display=items[i].textContent.toLowerCase().indexOf(q)>-1?"":"none";
+  }
+});
+
+/* ===== utilidades aleatorias ===== */
+function mulberry32(seed){
+  return function(){
+    seed|=0;seed=seed+0x6D2B79F5|0;
+    var t=Math.imul(seed^seed>>>15,1|seed);
+    t=t+Math.imul(t^t>>>7,61|t)^t;
+    return((t^t>>>14)>>>0)/4294967296;
+  };
+}
+function gaussMaker(r){
+  var spare=null;
+  return function(){
+    if(spare!==null){var s=spare;spare=null;return s}
+    var u,v,m;
+    do{u=r()*2-1;v=r()*2-1;m=u*u+v*v}while(m>=1||m===0);
+    var f=Math.sqrt(-2*Math.log(m)/m);
+    spare=v*f;return u*f;
+  };
+}
+
+/* ===== demo EMA ===== */
+var cv=$("#emaCanvas"),box=cv.parentElement,ctx=cv.getContext("2d");
+var NB=140,dpr=window.devicePixelRatio||1;
+var seedE=20260826,truth=[],raw=[];
+function genData(){
+  var r=mulberry32(seedE),g=gaussMaker(r),walk=0;
+  truth=new Array(NB);raw=new Array(NB);
+  for(var i=0;i<NB;i++){
+    walk+=g()*0.45;walk=Math.max(-3,Math.min(3,walk));
+    var base=30+7*Math.sin(i/16)+walk;
+    var v=base+2.9*g();
+    if(r()<0.05)v+=(r()<0.5?-1:1)*(9+10*r());
+    truth[i]=base;raw[i]=v;
+  }
+}
+function emaArr(a){
+  var s=new Array(NB);s[0]=raw[0];
+  for(var i=1;i<NB;i++)s[i]=a*raw[i]+(1-a)*s[i-1];
+  return s;
+}
+function rmsErr(arr,burn){
+  var acc=0,n=0;
+  for(var i=burn;i<NB;i++){var d=arr[i]-truth[i];acc+=d*d;n++}
+  return Math.sqrt(acc/n);
+}
+function sizeCanvas(){
+  dpr=window.devicePixelRatio||1;
+  var b=box.getBoundingClientRect();
+  cv.width=Math.max(50,b.width*dpr);cv.height=Math.max(50,b.height*dpr);
+}
+function drawEMA(a){
+  var s=emaArr(a);
+  var w=cv.width/dpr,hgt=cv.height/dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,hgt);
+  var pad={l:44,r:12,t:12,b:26};
+  var mn=Infinity,mx=-Infinity,i;
+  for(i=0;i<NB;i++){
+    mn=Math.min(mn,truth[i],raw[i],s[i]);
+    mx=Math.max(mx,truth[i],raw[i],s[i]);
+  }
+  mn-=3;mx+=3;
+  var X=function(i){return pad.l+i/(NB-1)*(w-pad.l-pad.r)};
+  var Y=function(v){return pad.t+(1-(v-mn)/(mx-mn))*(hgt-pad.t-pad.b)};
+  ctx.font="10px ui-monospace,Menlo,monospace";
+  ctx.fillStyle="#5b6f8e";
+  ctx.strokeStyle="#1b2a44";ctx.lineWidth=1;
+  var step=mx-mn>40?10:5,v0=Math.ceil(mn/step)*step;
+  for(var gv=v0;gv<mx;gv+=step){
+    ctx.beginPath();ctx.moveTo(pad.l,Y(gv));ctx.lineTo(w-pad.r,Y(gv));ctx.stroke();
+    ctx.fillText(gv+" cm",6,Y(gv)+3);
+  }
+  ctx.strokeStyle="#94a3b8";ctx.setLineDash([5,5]);ctx.lineWidth=1.4;
+  ctx.beginPath();
+  for(i=0;i<NB;i++){i?ctx.lineTo(X(i),Y(truth[i])):ctx.moveTo(X(0),Y(truth[0]))}
+  ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle="rgba(248,113,113,.5)";ctx.lineWidth=1.1;
+  ctx.beginPath();
+  for(i=0;i<NB;i++){i?ctx.lineTo(X(i),Y(raw[i])):ctx.moveTo(X(0),Y(raw[0]))}
+  ctx.stroke();
+  ctx.strokeStyle="#3fd8f5";ctx.lineWidth=2.6;ctx.lineJoin="round";
+  ctx.beginPath();
+  for(i=0;i<NB;i++){i?ctx.lineTo(X(i),Y(s[i])):ctx.moveTo(X(0),Y(s[0]))}
+  ctx.stroke();
+  ctx.fillStyle="#5b6f8e";
+  ctx.fillText("lecturas →",w-pad.r-58,hgt-8);
+}
+var alphaSlider=$("#alphaSlider"),alphaVal=$("#alphaVal"),mRed=$("#mRed"),mDelay=$("#mDelay");
+var curA=0.2;
+function updateMetrics(a,s){
+  var burn=20,eRaw=rmsErr(raw,burn),eEma=rmsErr(s,burn);
+  var red=eRaw>0?(1-eEma/eRaw)*100:0;
+  var delay=(1-a)/a;
+  mRed.innerHTML="Reducción de ruido: <b>"+(red>=0?red.toFixed(1):"0.0")+" %</b>";
+  mRed.className="metric"+(red>=85?" good":red>=60?" mid":"");
+  mDelay.innerHTML="Retraso de respuesta: <b>"+delay.toFixed(1)+" muestras</b>";
+}
+function refresh(){
+  curA=parseFloat(alphaSlider.value);
+  alphaVal.textContent=curA.toFixed(2);
+  $$(".preset").forEach(function(p){p.classList.toggle("on",parseFloat(p.dataset.a)===curA)});
+  var s=emaArr(curA);
+  sizeCanvas();drawEMA(curA);updateMetrics(curA,s);
+}
+alphaSlider.addEventListener("input",refresh);
+$$(".preset").forEach(function(p){
+  p.addEventListener("click",function(){alphaSlider.value=p.dataset.a;refresh()});
+});
+$("#btnCapture").addEventListener("click",function(){seedE=Math.floor(Math.random()*2147483647);genData();refresh()});
+if(typeof ResizeObserver!=="undefined"){
+  new ResizeObserver(function(){sizeCanvas();drawEMA(curA)}).observe(box);
+}else{
+  window.addEventListener("resize",function(){sizeCanvas();drawEMA(curA)});
+}
+genData();
+
+/* ===== demo t-Student ===== */
+var NSVG="http://www.w3.org/2000/svg";
+var tsvg=$("#tsvg"),seedT=20260826,rfS=[],wfS=[];
+function genSamples(){
+  var r=mulberry32(seedT),g=gaussMaker(r),i;
+  rfS=new Array(30);wfS=new Array(30);
+  for(i=0;i<30;i++){rfS[i]=8+2.1*g();wfS[i]=42+9*g();}
+}
+function el(n,at){
+  var e=document.createElementNS(NSVG,n);
+  for(var k in at)e.setAttribute(k,at[k]);
+  return e;
+}
+function drawStrips(){
+  while(tsvg.firstChild)tsvg.removeChild(tsvg.firstChild);
+  var r=mulberry32(seedT+7);
+  var X=function(v){return 18+v*(304)/60};
+  tsvg.appendChild(el("line",{x1:18,y1:166,x2:322,y2:166,stroke:"#2e4166","stroke-width":1}));
+  for(var ms=0;ms<=60;ms+=15){
+    tsvg.appendChild(el("line",{x1:X(ms),y1:164,x2:X(ms),y2:168,stroke:"#2e4166"}));
+    var lb=el("text",{x:X(ms),y:180,fill:"#5b6f8e","font-size":9,"text-anchor":"middle"});
+    lb.setAttribute("font-family","ui-monospace,Menlo,monospace");
+    lb.textContent=ms+" ms";tsvg.appendChild(lb);
+  }
+  function lane(arr,cy,color,name,yLab){
+    arr.forEach(function(v){
+      var jy=cy+(r()-0.5)*30;
+      tsvg.appendChild(el("circle",{cx:X(Math.max(0,v)),cy:jy,r:3.1,fill:color,"fill-opacity":0.55}));
+    });
+    var mean=arr.reduce(function(a,b){return a+b},0)/arr.length;
+    tsvg.appendChild(el("line",{x1:X(mean),y1:cy-24,x2:X(mean),y2:cy+24,stroke:color,"stroke-width":2.4}));
+    var t=el("text",{x:320,y:yLab,fill:color,"font-size":10,"text-anchor":"end"});
+    t.setAttribute("font-family","ui-monospace,Menlo,monospace");
+    t.textContent=name;tsvg.appendChild(t);
+  }
+  lane(rfS,54,"#3fd8f5","Radio nRF24L01 · 2.4 GHz",22);
+  lane(wfS,122,"#a78bfa","Wi-Fi · MQTT",146);
+}
+function gammaln(x){
+  var g=7,C=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if(x<0.5)return Math.log(Math.PI/Math.sin(Math.PI*x))-gammaln(1-x);
+  x-=1;var a=C[0],t=x+g+0.5,i;
+  for(i=1;i<g+2;i++)a+=C[i]/(x+i);
+  return 0.5*Math.log(2*Math.PI)+(x+0.5)*Math.log(t)-t+Math.log(a);
+}
+function betacf(a,b,x){
+  var MAXIT=220,EPS=3e-14,FPMIN=1e-300,qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap,i,m2,aa,del;
+  if(Math.abs(d)<FPMIN)d=FPMIN;d=1/d;var h=d;
+  for(i=1;i<=MAXIT;i++){
+    m2=2*i;
+    aa=i*(b-i)*x/((qam+m2)*(a+m2));
+    d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;
+    c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;
+    d=1/d;h*=d*c;
+    aa=-(a+i)*(qab+i)*x/((a+m2)*(qap+m2));
+    d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;
+    c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;
+    d=1/d;del=d*c;h*=del;
+    if(Math.abs(del-1)<EPS)break;
+  }
+  return h;
+}
+function ibeta(a,b,x){
+  if(x<=0)return 0;if(x>=1)return 1;
+  var bt=Math.exp(gammaln(a+b)-gammaln(a)-gammaln(b)+a*Math.log(x)+b*Math.log(1-x));
+  if(x<(a+1)/(a+b+2))return bt*betacf(a,b,x)/a;
+  return 1-bt*betacf(b,a,1-x)/b;
+}
+function tpval(t,df){return ibeta(df/2,0.5,df/(df+t*t))}
+function stats(arr){
+  var n=arr.length,m=arr.reduce(function(a,b){return a+b},0)/n,i;
+  var v=0;for(i=0;i<n;i++)v+=(arr[i]-m)*(arr[i]-m);
+  return{m:m,v:v/(n-1),n:n};
+}
+function fmtP(p){return p<1e-4?"&lt; 0.0001":p.toFixed(4)}
+function runTest(){
+  var A=stats(rfS),B=stats(wfS);
+  var seA=A.v/A.n,seB=B.v/B.n;
+  var se=Math.sqrt(seA+seB),t=(A.m-B.m)/se;
+  var df=(seA+seB)*(seA+seB)/((seA*seA)/(A.n-1)+(seB*seB)/(B.n-1));
+  var p=tpval(Math.abs(t),df);
+  $("#mrf").innerHTML=A.m.toFixed(1)+" ms ± "+Math.sqrt(A.v).toFixed(1);
+  $("#mwf").innerHTML=B.m.toFixed(1)+" ms ± "+Math.sqrt(B.v).toFixed(1);
+  $("#mt").textContent=t.toFixed(2);
+  $("#mdf").textContent=df.toFixed(1);
+  $("#mp").innerHTML=fmtP(p);
+  var vd=$("#verdict");
+  if(p<0.05&&A.m<B.m){
+    vd.className="verdict ok";
+    vd.innerHTML="✔ <b>p &lt; 0.05 → rechazamos la hipótesis nula:</b> la radio es <b>significativamente más rápida</b> que el Wi-Fi. Arquitectura: comandos críticos por RF.";
+  }else if(p<0.05){
+    vd.className="verdict ok";
+    vd.innerHTML="✔ Diferencia significativa a favor del Wi-Fi con estos datos.";
+  }else{
+    vd.className="verdict warn";
+    vd.innerHTML="✖ Con estas muestras no hay evidencia suficiente de diferencia (p ≥ 0.05): habría que capturar más datos.";
+  }
+}
+$("#btnTTest").addEventListener("click",runTest);
+$("#btnSamples").addEventListener("click",function(){seedT++;genSamples();drawStrips();runTest()});
+
+/* init demos */
+genData();refresh();
+genSamples();drawStrips();runTest();
+renderT();
+})();
+</script>
+</body>
+</html>
