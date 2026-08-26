@@ -29,7 +29,9 @@
 #define MQTT_PASS ""
 
 // Backend HTTP (RF-2.2/HU-01) — FastAPI en LAN, registro rápido vía HTTP POST
-#define BACKEND_HOST "192.168.1.100"
+// NOTA: tu host actual es 192.168.1.14 (wlp1s0). Cambia a 192.168.1.100 si asignas IP estática.
+// Se deja .14 para prueba local sin reasignar IP.
+#define BACKEND_HOST "192.168.1.14"
 #define BACKEND_PORT 8000
 #define BACKEND_ACCESS_PATH "/api/access-events"
 
