@@ -3,18 +3,21 @@
 ```
 firmware/
 ├── gateway-esp32/          # ESP32 Central Gateway
-│   ├── src/
-│   │   └── gateway.ino     # Main firmware
-│   ├── platformio.ini      # PlatformIO config
-│   └── lib/                # Custom libraries (if any)
-├── mega-access/            # Arduino MEGA - Access Control
-│   ├── src/
-│   │   └── access_control.ino
-│   ├── platformio.ini
+│   ├── gateway-esp32.ino   # Main firmware (HTTP POST access a backend)
+│   ├── platformio.ini      # ArduinoJson 6.21.3 pinneado
+│   └── src/                # vacío en Sprint 2 (reservado)
+├── mega-access/            # Arduino MEGA — Cerrojo RF-2.2/HU-01
+│   ├── mega-access.ino     # Wrapper setup/loop
+│   ├── src/config.h        # VALID_PIN="1234", pins, timeouts (sin relés)
+│   ├── src/led.{h,cpp}     # LED no bloqueante, verde 5s sincronizado
+│   ├── src/door.{h,cpp}    # Servo MG90S, auto-lock 5000
+│   ├── src/keypad_control.{h,cpp} # Buffer 6, isDigit ignora A-D
+│   ├── src/uart_protocol.{h,cpp} # ACCESS/STATUS, throttled 5s
+│   ├── platformio.ini      # Keypad, Servo, ArduinoJson@6.21.3
 │   └── lib/
 └── rover-uno/              # Arduino UNO - Autonomous Rover
-    ├── src/
-    │   └── rover.ino
+    ├── rover-uno.ino
+    ├── src/rover.ino       # duplicado legacy
     ├── platformio.ini
     └── lib/
 ```
@@ -71,15 +74,15 @@ pio run -t upload -d firmware/rover-uno
 | nRF24L01 (SPI) | CE=5, CSN=18, SCK=18, MOSI=23, MISO=19 |
 | UART to MEGA | RX=16 (GPIO16), TX=17 (GPIO17) |
 
-### MEGA Access Control
-| Component | Pins |
-|-----------|------|
-| Keypad 4x4 | Rows: 22,24,26,28 | Cols: 30,32,34,36 |
-| Servo MG90S | 9 (PWM) |
-| Laser KY-008 | TX=8, RX=7 |
-| LED RGB | R=44, G=45, B=46 (PWM) |
-| Relays (8ch) | 40-47 |
-| UART to ESP32 | RX=16, TX=17 |
+### MEGA Access Control (RF-2.2 / HU-01 — `feature/firmware-mega-cerrojo`)
+| Component | Pins | Estado |
+|-----------|------|--------|
+| Keypad 4x4 | Rows: 22,24,26,28 | Cols: 30,32,34,36 | Activo |
+| Servo MG90S | 9 (PWM) `0°` lock / `90°` unlock | Activo |
+| LED RGB | R=44, G=45, B=46 (PWM) verde sincronizado a `DOOR_AUTO_LOCK_MS=5000` | Activo |
+| Láser KY-008 | TX=8, RX=7 | Reservado — implementado en `feature/firmware-mega-laser` |
+| Relés 8ch | — | **Eliminado** (sin hardware inventario 2026-08-26) |
+| UART a ESP32 | RX=16, TX=17, 115200 `Serial2` | Activo |
 
 ### Rover UNO
 | Component | Pins |
@@ -125,17 +128,15 @@ struct RoverTelemetry {
 - **Baud**: 115200
 - **Format**: `TYPE:JSON_PAYLOAD\n`
 
-**MEGA → Gateway:**
-- `ACCESS:{"user_id":"...","pin_hash":"...","success":true,"timestamp":12345,"source":"keypad"}`
-- `SECURITY:{"event_type":"intrusion","sensor":"laser-01","location":"entrance","severity":"high","timestamp":12345}`
-- `RELAY:{"id":0,"state":true}`
-- `STATUS:{"door_locked":true,"laser_armed":true,"laser_beam_intact":true,"relays":[false,...],"uptime_ms":12345}`
+**MEGA → Gateway (RF-2.2/HU-01, Sprint 2):**
+- `ACCESS:{"user_id":"keypad_user","pin_hash":"<djb2 hex>","success":bool,"timestamp":millis,"source":"keypad"}` → Gateway hace `HTTP POST http://<backend>:8000/api/access-events`
+- `STATUS:{"door_locked":bool,"laser_armed":false,"free_ram":int,"uptime_ms":ulong}` (cada `STATUS_INTERVAL_MS=5000`, sin `relays`)
+- `SECURITY:` reservado para `feature/firmware-mega-laser` (HU-02)
 
 **Gateway → MEGA:**
-- `CMD:ACCESS:{"pin":"1234"}`
-- `CMD:RELAY:0:true`
-- `CMD:LASER:true`
-- `CMD:STATUS`
+- `CMD:ACCESS:{"pin":"1234"}` (validado, reenvía a `processPinAttempt`)
+- `CMD:STATUS` (poll)
+- `CMD:RELAY` / `RELAY:` / `CMD:LASER` **eliminados en esta rama**
 
 ### MQTT Topics (Gateway ↔ Backend/App/Node-RED)
 | Topic | Direction | Description |
@@ -143,10 +144,8 @@ struct RoverTelemetry {
 | `aethernet/rover/command` | App → Rover | Joystick commands |
 | `aethernet/rover/telemetry` | Rover → App | Telemetry data |
 | `aethernet/access/command` | App → MEGA | PIN commands |
-| `aethernet/access/event` | MEGA → App | Access granted/denied |
-| `aethernet/seguridad/intrusion` | MEGA → Node-RED | Laser intrusion |
-| `aethernet/relay/+` | App ↔ MEGA | Relay control |
-| `aethernet/relay/event` | MEGA → App | Relay state changes |
+| `aethernet/access/event` | MEGA → App (fallback) | Access granted/denied — flujo principal ahora HTTP POST directo a `POST /api/access-events` |
+| `aethernet/seguridad/intrusion` | MEGA → Node-RED | Laser intrusion (reservado laser) |
 | `aethernet/system/status` | Gateway → All | System health |
 | `aethernet/system/command` | All → Gateway | System commands |
 

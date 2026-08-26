@@ -11,6 +11,7 @@
 
 #include <Arduino.h>
 #include <WiFi.h>
+#include <HTTPClient.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include <RF24.h>
@@ -27,6 +28,11 @@
 #define MQTT_USER ""
 #define MQTT_PASS ""
 
+// Backend HTTP (RF-2.2/HU-01) — FastAPI en LAN, registro rápido vía HTTP POST
+#define BACKEND_HOST "192.168.1.100"
+#define BACKEND_PORT 8000
+#define BACKEND_ACCESS_PATH "/api/access-events"
+
 // nRF24L01 pins
 #define NRF_CE_PIN 5
 #define NRF_CSN_PIN 18
@@ -39,9 +45,8 @@
 #define TOPIC_ROVER_CMD "aethernet/rover/command"
 #define TOPIC_ROVER_TELEMETRY "aethernet/rover/telemetry"
 #define TOPIC_ACCESS_CMD "aethernet/access/command"
-#define TOPIC_ACCESS_EVENT "aethernet/access/event"
+#define TOPIC_ACCESS_EVENT "aethernet/access/event" // solo para debug/fallback, el flujo principal es HTTP POST
 #define TOPIC_SECURITY_EVENT "aethernet/seguridad/intrusion"
-#define TOPIC_RELAY_CMD "aethernet/relay/+"
 #define TOPIC_SYSTEM_STATUS "aethernet/system/status"
 
 // ============================================================================
@@ -154,8 +159,11 @@ void loop() {
 // MQTT CALLBACKS
 // ============================================================================
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
+    // Construir payloadStr con length explícito (sin asumir null-terminated)
     String topicStr = String(topic);
-    String payloadStr = String((char*)payload);
+    String payloadStr;
+    payloadStr.reserve(length + 1);
+    for (unsigned int i = 0; i < length; i++) payloadStr += (char)payload[i];
 
     Serial.printf("MQTT RX: %s -> %s\n", topicStr.c_str(), payloadStr.c_str());
 
@@ -163,8 +171,6 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
         handleRoverCommand(payloadStr);
     } else if (topicStr == TOPIC_ACCESS_CMD) {
         handleAccessCommand(payloadStr);
-    } else if (topicStr.startsWith("aethernet/relay/")) {
-        handleRelayCommand(topicStr, payloadStr);
     }
 }
 
@@ -173,10 +179,9 @@ void mqttReconnect() {
     while (!mqttClient.connected()) {
         if (mqttClient.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_PASS)) {
             Serial.println("connected");
-            // Subscribe to topics
+            // Subscribe solo a topics vigentes (relés eliminados)
             mqttClient.subscribe(TOPIC_ROVER_CMD);
             mqttClient.subscribe(TOPIC_ACCESS_CMD);
-            mqttClient.subscribe("aethernet/relay/+");
             mqttClient.subscribe("aethernet/system/command");
         } else {
             Serial.printf("failed, rc=%d retry in 5s\n", mqttClient.state());
@@ -258,11 +263,13 @@ void handleMegaUart() {
     }
 }
 
+void forwardAccessToBackend(String payload);
+
 void processMegaMessage(String msg) {
     // Expected format: TYPE:PAYLOAD
-    // e.g., ACCESS:{"user":"admin","success":true}
-    //       SECURITY:{"type":"intrusion","sensor":"laser-01"}
-    //       RELAY:{"id":1,"state":true}
+    // e.g., ACCESS:{"user_id":"keypad_user","pin_hash":"abc","success":true,"source":"keypad"}
+    //       SECURITY:{"event_type":"intrusion","sensor":"laser-01"} (reservado mega-laser)
+    //       STATUS:{"door_locked":true,...}
 
     int colonIdx = msg.indexOf(':');
     if (colonIdx < 0) return;
@@ -271,11 +278,13 @@ void processMegaMessage(String msg) {
     String payload = msg.substring(colonIdx + 1);
 
     if (type == "ACCESS") {
-        mqttClient.publish(TOPIC_ACCESS_EVENT, payload.c_str());
+        forwardAccessToBackend(payload);
+        // Fallback debug: también publica por MQTT si hay listeners
+        if (mqttClient.connected()) {
+            mqttClient.publish(TOPIC_ACCESS_EVENT, payload.c_str());
+        }
     } else if (type == "SECURITY") {
         mqttClient.publish(TOPIC_SECURITY_EVENT, payload.c_str());
-    } else if (type == "RELAY") {
-        mqttClient.publish("aethernet/relay/event", payload.c_str());
     } else if (type == "STATUS") {
         // Forward MEGA status
         mqttClient.publish("aethernet/mega/status", payload.c_str());
@@ -283,22 +292,60 @@ void processMegaMessage(String msg) {
 }
 
 void handleAccessCommand(String payload) {
-    // Forward to MEGA via UART
+    // Forward to MEGA via UART — payload debe contener {"pin":"1234"}
+    // Validación mínima antes de reenviar
+    StaticJsonDocument<128> tmp;
+    if (deserializeJson(tmp, payload) || !tmp.containsKey("pin")) {
+        Serial.printf("CMD:ACCESS bad payload (sin pin): %s\n", payload.c_str());
+        return;
+    }
     MEGA_SERIAL.println("CMD:ACCESS:" + payload);
 }
 
-void handleRelayCommand(String topic, String payload) {
-    // Extract relay ID from topic: aethernet/relay/1
-    int lastSlash = topic.lastIndexOf('/');
-    String relayId = topic.substring(lastSlash + 1);
-
-    StaticJsonDocument<128> doc;
-    doc["id"] = relayId.toInt();
-    DeserializationError err = deserializeJson(doc, payload);
-    if (!err && doc.containsKey("state")) {
-        String cmd = "CMD:RELAY:" + String(doc["id"].as<int>()) + ":" + String(doc["state"].as<bool>());
-        MEGA_SERIAL.println(cmd);
+void forwardAccessToBackend(String payload) {
+    // Flujo principal HU-01: HTTP POST directo a FastAPI — más rápido que MQTT bridge
+    // Si WiFi caído, solo se encola por MQTT fallback (arriba)
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("Backend POST skipped — WiFi down (MQTT fallback only)");
+        return;
     }
+
+    // Normaliza payload al schema AccessEventCreate (user_id, pin_hash, success, source)
+    // El payload del MEGA ya trae esos campos; si viene incompleto se descarta
+    StaticJsonDocument<256> doc;
+    DeserializationError err = deserializeJson(doc, payload);
+    if (err) {
+        Serial.printf("ACCESS payload JSON error: %s\n", err.c_str());
+        return;
+    }
+    if (!doc.containsKey("user_id") || !doc.containsKey("pin_hash") || !doc.containsKey("success")) {
+        Serial.printf("ACCESS payload missing fields: %s\n", payload.c_str());
+        return;
+    }
+
+    // Construir body mínimo permitido por backend (ignora timestamp/source extra)
+    StaticJsonDocument<256> body;
+    body["user_id"] = doc["user_id"].as<const char*>();
+    body["pin_hash"] = doc["pin_hash"].as<const char*>();
+    body["success"] = doc["success"].as<bool>();
+    body["source"] = doc.containsKey("source") ? doc["source"].as<const char*>() : "keypad";
+
+    String jsonBody;
+    serializeJson(body, jsonBody);
+
+    HTTPClient http;
+    String url = String("http://") + BACKEND_HOST + ":" + String(BACKEND_PORT) + BACKEND_ACCESS_PATH;
+    http.begin(url);
+    http.addHeader("Content-Type", "application/json");
+    http.setTimeout(3000);
+    int code = http.POST(jsonBody);
+    if (code == 200 || code == 201) {
+        Serial.printf("Backend ACCESS POST ok (%d): %s\n", code, jsonBody.c_str());
+    } else {
+        Serial.printf("Backend ACCESS POST fail code=%d url=%s body=%s\n", code, url.c_str(), jsonBody.c_str());
+        if (code > 0) Serial.println(http.getString());
+    }
+    http.end();
 }
 
 // ============================================================================

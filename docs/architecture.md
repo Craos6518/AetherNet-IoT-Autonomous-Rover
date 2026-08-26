@@ -52,7 +52,7 @@ AetherNet es un sistema distribuido de 3 capas que vive completo dentro de una m
 | Subsistema | Responsabilidad | No es responsable de |
 |---|---|---|
 | **Gateway ESP32** (`firmware/gateway-esp32/`) | Servidor MQTT/WebSockets; traduce MQTT↔UART hacia el MEGA; traduce MQTT↔RF hacia el Rover | Lógica de negocio (vive en backend/Node-RED); persistencia |
-| **MEGA — Acceso/Potencia** (`firmware/mega-access/`) | Teclado 4x4, servo de cerrojo, láser, LED RGB local, matriz de relés — todo con procesamiento **Edge**, sin depender de red | Notificaciones remotas (eso es Node-RED, vía el evento que reporta al Gateway) |
+| **MEGA — Acceso/Potencia** (`firmware/mega-access/`) | Teclado 4x4, servo MG90S, LED RGB local (láser KY-008 reservado para `feature/firmware-mega-laser`), **sin matriz de relés** (eliminada 2026-08-26 — no hay hardware) — todo con procesamiento **Edge**, sin depender de red | Notificaciones remotas (eso es Node-RED, vía el evento que reporta al Gateway) |
 | **Rover UNO** (`firmware/rover-uno/`) | Tracción (L298N), evasión de obstáculos (HC-SR04), anti-caída (TCRT5000), recepción de comandos RF | Decisión de "modo patrullaje" a alto nivel (eso llega como comando desde la app vía Gateway) |
 | **Backend** (`backend/`) | FastAPI (API REST + WebSockets), Mosquitto (bus de eventos pub/sub), PostgreSQL (histórico de accesos/eventos) | Reglas de automatización (eso es Node-RED); UI |
 | **App AetherControl** (`app/`) | Dashboard en tiempo real, joystick virtual, envío de PIN, fallback Bluetooth SPP | Almacenamiento persistente (consume el histórico vía backend, no lo posee) |
@@ -65,6 +65,7 @@ AetherNet es un sistema distribuido de 3 capas que vive completo dentro de una m
 |---|---|---|---|
 | Gateway ↔ Rover | RF 2.4GHz (nRF24L01), SPI | Sin dependencia de Wi-Fi; baja latencia para control de motores en tiempo real | < 10 ms |
 | Gateway ↔ MEGA | UART (serial) | Enlace punto a punto simple, confiable a corta distancia física (mismo panel) | — |
+| Gateway ↔ Backend (HU-01) | HTTP POST (`POST /api/access-events`) | Flujo cerrojo: MEGA→UART→Gateway→HTTP directo a FastAPI, más rápido que MQTT bridge (decisión `feature/firmware-mega-cerrojo` 2026-08-26); fallback MQTT `aethernet/access/event` solo debug | — |
 | Gateway ↔ Backend ↔ App/Node-RED | MQTT (Mosquitto) + WebSockets | Pub/sub desacopla productores (sensores) de consumidores (app, Node-RED); WebSockets para push en tiempo real al dashboard | < 50 ms |
 | App ↔ nodos críticos (fallback) | Bluetooth SPP | Contingencia si cae el Wi-Fi (RF-1.3); no reemplaza MQTT, es solo respaldo | — |
 | Node-RED ↔ Bombillo Tuya | `tuya-local` (LAN, sin nube) | Cumplir RNF-3.1 (100% FOSS) evitando Tuya Cloud | — |
