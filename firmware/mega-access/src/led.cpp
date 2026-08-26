@@ -17,9 +17,16 @@ void ledInit() {
 }
 
 void setLedColor(uint8_t r, uint8_t g, uint8_t b) {
+#ifdef LED_COMMON_ANODE
+    // Ánodo común: invertir PWM (0 = brillo máximo, 255 = apagado)
+    analogWrite(LED_R_PIN, 255 - r);
+    analogWrite(LED_G_PIN, 255 - g);
+    analogWrite(LED_B_PIN, 255 - b);
+#else
     analogWrite(LED_R_PIN, r);
     analogWrite(LED_G_PIN, g);
     analogWrite(LED_B_PIN, b);
+#endif
 }
 
 static void applyMode(LedMode m) {

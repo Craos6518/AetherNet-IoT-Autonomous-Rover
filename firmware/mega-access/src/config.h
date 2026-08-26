@@ -24,9 +24,12 @@ static const int SERVO_LOCKED = 0;     // 0° = bloqueada
 static const int SERVO_UNLOCKED = 90;  // 90° = desbloqueada (HU-01)
 
 // LED RGB local — feedback inmediato sin red (hardware-inventory.md:9)
+// Hardware real: ánodo común (common anode) — cátodos a 44/45/46 vía 220Ω a GND
+// Lógica invertida: LOW enciende, HIGH apaga (255 - valor)
 #define LED_R_PIN 44
 #define LED_G_PIN 45
 #define LED_B_PIN 46
+#define LED_COMMON_ANODE true
 
 // Láser KY-008 — reservado para feature/firmware-mega-laser (RF-2.3, HU-02)
 // Se define para no perder el pinout, pero NO se usa en esta rama.
