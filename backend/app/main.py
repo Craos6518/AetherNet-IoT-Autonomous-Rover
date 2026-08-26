@@ -19,7 +19,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # Importar modelos para que Base.metadata conozca las tablas
-import app.models  # noqa: F401  # mypy: ignore import side-effect
+import app.models  # type: ignore[import]  # side-effect: registra Base.metadata
 from app.config import get_settings
 from app.database import Base, engine, get_db
 from app.routers.events import router as events_router
