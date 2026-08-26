@@ -114,13 +114,13 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker-compose build --no-cache
+          docker compose build --no-cache
 
       - name: Test Docker Compose up (background)
         run: |
-          docker-compose up -d
+          docker compose up -d
           sleep 10
-          docker-compose ps
+          docker compose ps
 
       - name: Test FastAPI health endpoint
         run: |
@@ -128,7 +128,7 @@ jobs:
 
       - name: Cleanup
         run: |
-          docker-compose down -v
+          docker compose down -v
 
   # =============================================================================
   # Stats - Python Tests
