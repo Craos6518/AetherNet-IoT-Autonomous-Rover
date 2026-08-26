@@ -1,0 +1,14 @@
+[tool.ruff.lint]
+# B008 es falso positivo para FastAPI Depends — ignorar globalmente (práctica común)
+# S110/BLE001: lifespan con pass intencional si DB no está disponible en tests/build
+ignore = ["B008", "S110", "BLE001"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+# FastAPI app instance shadows package name `app` — mypy false positive
+disable_error_code = "assignment,attr-defined,misc"

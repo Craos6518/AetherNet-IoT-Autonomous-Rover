@@ -5,7 +5,7 @@ Fuente base: matriz de la sección 2 del documento académico (PDF Proyecto Inte
 | Sub-sistema | Hardware Asignado | Función y Protocolos |
 |---|---|---|
 | Gateway Central | ESP32-WROOM-32U + Antena U.FL + nRF24L01 (#1) | Servidor WebSockets/MQTT, comunicación UART con MEGA, enlace RF 2.4 GHz con el Rover. |
-| Controlador de Potencia & Acceso | Arduino MEGA 2560 + Teclado 4x4 + Servomotor MG90S + Láser KY-008 + Relés | Manejo directo de matriz de relés, cerrojo de puerta con clave PIN y trampa láser de seguridad. |
+| Controlador de Potencia & Acceso | Arduino MEGA 2560 + Teclado 4x4 + Servomotor MG90S + Láser KY-008 | Cerrojo de puerta con clave PIN y trampa láser de seguridad. |
 | **Indicador Visual Local** | **LED RGB (ánodo/cátodo común) conectado a Arduino MEGA, pines PWM junto al teclado 4x4/servo** | **Feedback físico inmediato del estado de acceso, sin depender de red: verde al desbloquear (HU-01), rojo al detectar intrusión vía láser (HU-02). Es el indicador local; no requiere Wi-Fi ni MQTT para funcionar.** |
 | Rover Tanque Autónomo | Arduino UNO (#1) + Chasis Oruga Aluminio + L298N + nRF24L01 (#2) + HC-SR04 + 3x TCRT5000 + TP4056 + StepUp 5V | Navegación teledirigida o autónoma, anti-caída por bordes (TCRT5000), evasión de obstáculos y telemetría por RF. |
 | Nodo Ambiental Remoto | ESP8266MOD + Tira LED + Sensor KY-037 (Sonido) | Iluminación ambiental reactiva al sonido y monitoreo acústico del cuarto. |

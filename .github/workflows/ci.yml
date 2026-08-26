@@ -79,17 +79,17 @@ jobs:
         if: matrix.firmware == 'gateway-esp32'
         run: |
           arduino-cli core install esp32:esp32
-          arduino-cli lib install "PubSubClient" "ArduinoJson" "RF24"
+          arduino-cli lib install "PubSubClient" "ArduinoJson@6.21.3" "RF24"
 
       - name: Install AVR core (for mega-access, rover-uno)
         if: matrix.firmware != 'gateway-esp32'
         run: |
           arduino-cli core install arduino:avr
-          arduino-cli lib install "Keypad" "Servo" "RF24" "NewPing"
+          arduino-cli lib install "Keypad" "Servo" "RF24" "NewPing" "ArduinoJson@6.21.3" "PubSubClient"
 
       - name: Compile firmware
         run: |
-          arduino-cli compile --fqbn ${{ matrix.firmware == 'gateway-esp32' && 'esp32:esp32:esp32' || 'arduino:avr:mega' }} ./firmware/${{ matrix.firmware }}
+          if [ "${{ matrix.firmware }}" = "gateway-esp32" ]; then FQBN="esp32:esp32:esp32"; elif [ "${{ matrix.firmware }}" = "rover-uno" ]; then FQBN="arduino:avr:uno"; else FQBN="arduino:avr:mega"; fi; echo "Compiling ${{ matrix.firmware }} with $FQBN"; arduino-cli compile --fqbn $FQBN ./firmware/${{ matrix.firmware }}
 
   # =============================================================================
   # Docker Build Test

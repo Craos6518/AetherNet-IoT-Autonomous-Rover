@@ -1,7 +1,19 @@
-from sqlalchemy import Column, String, Boolean, DateTime, Numeric, Text, JSON, SmallInteger, Index
+import uuid
+
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    Index,
+    Numeric,
+    SmallInteger,
+    String,
+    Text,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
-import uuid
+
 from app.database import Base
 
 
@@ -31,7 +43,8 @@ class SensorEvent(Base):
     filtered_value = Column(Numeric(10, 4))
     unit = Column(String(16), nullable=False)
     timestamp = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
-    metadata = Column(JSON, nullable=False, default=dict)
+    # 'metadata' es palabra reservada en DeclarativeBase -> usar atributo event_metadata mapeado a columna "metadata"
+    event_metadata = Column("metadata", JSON, nullable=False, default=dict)
 
     __table_args__ = (
         Index("idx_sensor_events_timestamp_desc", timestamp.desc()),

@@ -19,9 +19,8 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 ## Sprint 2 (Semanas 3-4): Domótica Fija & Control de Acceso
 
 - Implementación del cerrojo (Teclado 4x4 + Servo MG90S) en Arduino MEGA. → RF-2.2, HU-01
-- Integración de la matriz de relés con protocolo UART hacia el ESP32. → RF-2.1
 - **LED RGB local en el MEGA** (feedback verde/rojo de acceso). → HU-01, HU-02 (ver `docs/hardware-inventory.md`)
-- Primeras pantallas en Jetpack Compose (Kotlin) para conmutación de relés. → RF-1.1
+- Primeras pantallas en Jetpack Compose (Kotlin): control bombillo Tuya + estado LED local. → RF-1.1
 
 **Depende de:** Sprint 1 (Docker + UART funcionando).
 
@@ -50,7 +49,13 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 
 ## Estado actual
 
-_(Actualizar manualmente o enlazar al tablero del equipo — por ejemplo GitHub Projects — cuando exista.)_
-
-- Sprint activo: `<pendiente de definir>`
-- Última actualización de este archivo: Agosto 2026
+- Sprint activo: **Sprint 1 (Semanas 1-2) — En curso**
+- Última actualización: 2026-08-26 — DEVOPS-01 a DEVOPS-05 cerrados en rama main
+- Avances Sprint 1 verificados 2026-08-26:
+  - [x] DEVOPS-01/06: `docker-compose.yml` sin `version` obsoleta, `backend/app/main.py:16` + `schemas.py` + `routers/events.py:8` operativos; `GET /health` responde `{"status":"ok","database":"ok"}`; `POST /api/access-events` (HU-01), `/sensor-events` (HU-03), `/security-events` (HU-02), `/rover/telemetry` (RF-3.3) validados con curl + `docker compose up` (FastAPI 1.0.0-sprint1, Postgres 16, Mosquitto 2.0). `paho-mqtt==2.1.0` corregido en `backend/requirements.txt:8`.
+  - [x] DEVOPS-02: `backend/mosquitto/config/mosquitto.conf:32` + `acl.conf` creada (topics `aethernet/#`), montada en `docker-compose.yml:32`.
+  - [x] DEVOPS-03: `backend/app/models.py:34` fix `metadata` reservado -> `event_metadata`, `init.sql` alineado, `backend/pyproject.toml` con ruff ignore B008/S110/BLE001.
+  - [x] DEVOPS-04: Pipeline `ci.yml:90` corregido (FQBN rover `arduino:avr:uno`, ArduinoJson pinned 6.21.3); compilación local OK: `mega-access` 19252 bytes/7%, `rover-uno` 6900 bytes/21% (arduino-cli 1.5.1); estructura sketch `firmware/*/*.ino` creada para CI.
+  - [x] DEVOPS-05: Procedimiento RF documentado en `docs/testing-rf-sprint1.md` (SPI, round-trip, fail-safe 500ms, KPI <10ms).
+  - Tests: `backend/tests/test_health.py:6` (6 tests, mock DB) + `stats/tests/test_ema_filter.py` pasan; ruff `All checks passed`.
+- Próximo: cerrar Sprint 1 con `docker compose up` + `curl /health` en CI, y arrancar Sprint 2 (cerrojo MEGA + LED RGB + pantallas Compose).

@@ -16,17 +16,17 @@ Cada ítem referencia su RF/HU de origen y el sprint donde debe quedar cerrado s
 | ID | Tarea | Prioridad | Sprint | Depende de | Origen |
 |---|---|---|---|---|---|
 | MOV-01 | Setup proyecto Android (Kotlin + Compose + arquitectura MVVM base) | M | 1 | DEVOPS-01 (para saber endpoints) | RF-1.1 |
-| MOV-02 | Pantallas de conmutación de relés (encender/apagar, listar estado) | M | 2 | LOW-02, MEGA firmware básico | RF-1.1 |
+| MOV-02 | Pantallas de control: bombillo Tuya (color/brillo), LED local (solo lectura) | M | 2 | LOW-02, MEGA firmware básico | RF-1.1 |
 | MOV-03 | Cliente MQTT/WebSocket en la app, suscripción a topics de telemetría | M | 2 | DEVOPS-02 (broker corriendo) | RF-1.1 |
 | MOV-04 | Módulo de PIN/clave para envío de comandos de cerrojo desde la app | S | 2 | MOV-03 | HU-01 |
 | MOV-05 | Joystick virtual en Compose (captura de vectores X,Y) | M | 3 | — | RF-1.2 |
 | MOV-06 | Envío de comandos del joystick con baja latencia (throttling/debounce) | M | 3 | MOV-05, RF-2.1 operativo | RF-1.2 |
 | MOV-07 | Fallback Bluetooth SPP para nodos críticos si cae el Wi-Fi | S | 3 | Nodo Acceso Compacto (HC-06) | RF-1.3 |
-| MOV-08 | Dashboard consolidado (estado de relés, telemetría, alertas) | S | 4 | MOV-02, MOV-03 | RF-1.1 |
+| MOV-08 | Dashboard consolidado (estado bombillo, LED local, telemetría, alertas) | S | 4 | MOV-02, MOV-03 | RF-1.1 |
 | MOV-09 | Manejo de errores de red / reconexión automática MQTT | C | 4 | MOV-03 | — |
 | MOV-10 | Pruebas unitarias (JUnit) de ViewModels críticos | S | 4 | MOV-02 a MOV-06 | RNF (calidad) |
 
-**Riesgo del área:** MOV-06 (latencia del joystick) depende de que el enlace RF del Rover (Área DevOps/Firmware) ya esté probado — si Sprint 1 se atrasa, este ítem se atrasa en cascada.
+**Riesgo del área:** MOV-06 (latencia del joystick) depende de que el enlace RF del Rover (Área DevOps/Firmware) ya esté probado — si Sprint 1 se atrasa, este ítem se atrasa en cascada. MOV-02 ya no incluye relés (no hay hardware), solo bombillo Tuya + LED local.
 
 ---
 
