@@ -49,8 +49,8 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 
 ## Estado actual
 
-- Sprint activo: **Sprint 1 (Semanas 1-2) — En curso**
-- Última actualización: 2026-08-26 — DEVOPS-01 a DEVOPS-05 cerrados en rama main
+- Sprint activo: **Sprint 2 (Semanas 3-4): Domótica Fija & Control de Acceso — En curso**
+- Última actualización: 2026-08-26 — Sprint 1 cerrado y mergeado a `develop` vía PR #1 (`sprint/1-infra-firmware-base` → `develop`: `9eac686` merge + `5781791` docker-build); `sprint/2-domotica-acceso` y sus 7 features sincronizados a `develop`
 - Avances Sprint 1 verificados 2026-08-26:
   - [x] DEVOPS-01/06: `docker-compose.yml` sin `version` obsoleta, `backend/app/main.py:16` + `schemas.py` + `routers/events.py:8` operativos; `GET /health` responde `{"status":"ok","database":"ok"}`; `POST /api/access-events` (HU-01), `/sensor-events` (HU-03), `/security-events` (HU-02), `/rover/telemetry` (RF-3.3) validados con curl + `docker compose up` (FastAPI 1.0.0-sprint1, Postgres 16, Mosquitto 2.0). `paho-mqtt==2.1.0` corregido en `backend/requirements.txt:8`.
   - [x] DEVOPS-02: `backend/mosquitto/config/mosquitto.conf:32` + `acl.conf` creada (topics `aethernet/#`), montada en `docker-compose.yml:32`.
@@ -58,4 +58,4 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
   - [x] DEVOPS-04: Pipeline `ci.yml:90` corregido (FQBN rover `arduino:avr:uno`, ArduinoJson pinned 6.21.3); compilación local OK: `mega-access` 19252 bytes/7%, `rover-uno` 6900 bytes/21% (arduino-cli 1.5.1); estructura sketch `firmware/*/*.ino` creada para CI.
   - [x] DEVOPS-05: Procedimiento RF documentado en `docs/testing-rf-sprint1.md` (SPI, round-trip, fail-safe 500ms, KPI <10ms).
   - Tests: `backend/tests/test_health.py:6` (6 tests, mock DB) + `stats/tests/test_ema_filter.py` pasan; ruff `All checks passed`.
-- Próximo: cerrar Sprint 1 con `docker compose up` + `curl /health` en CI, y arrancar Sprint 2 (cerrojo MEGA + LED RGB + pantallas Compose).
+- Próximo (Sprint 2): `feature/firmware-mega-cerrojo` (RF-2.2/HU-01 teclado 4x4+MG90S), `feature/firmware-mega-laser` (RF-2.3/KY-008), LED RGB `hardware-inventory.md:9` (HU-01 verde / HU-02 rojo), `feature/app-pantallas-domotica` (MOV-02), `feature/app-mqtt-telemetria` (MOV-03), `feature/app-pin-cerrojo` (MOV-04), `feature/backend-endpoints` (DEVOPS-06/07), `feature/automation-mqtt-sub` (LOW-02).
