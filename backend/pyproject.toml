@@ -7,6 +7,7 @@ ignore = ["B008", "S110", "BLE001", "RUF100"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+pythonpath = ["."]
 
 [tool.mypy]
 python_version = "3.12"
