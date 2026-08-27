@@ -20,7 +20,8 @@
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
-#define WIFI_SSID "FELIPE.-5GHz"
+// ESP32 es solo 2.4GHz -> FELIPE. es la banda 2.4GHz (FELIPE.-5GHz es 5GHz, no conecta)
+#define WIFI_SSID "FELIPE."
 #define WIFI_PASSWORD "2516f751"
 #define MQTT_BROKER "192.168.1.100"
 #define MQTT_PORT 1883
