@@ -14,9 +14,10 @@
 // ---------------------------------------------------------------------------
 // PINOUT — Arduino MEGA 2560
 // ---------------------------------------------------------------------------
-// Keypad 4x4
-static const byte ROW_PINS[4] = {22, 24, 26, 28};
-static const byte COL_PINS[4] = {30, 32, 34, 36};
+// Keypad 4x4 — transpose fix 2026-08-26: cableado físico invierte filas/columnas
+// Observado: (0,1)=2 -> '4' etc = transpose, se corrige invirtiendo ROW/COL
+static const byte ROW_PINS[4] = {30, 32, 34, 36};
+static const byte COL_PINS[4] = {22, 24, 26, 28};
 
 // Servo MG90S — cerrojo
 #define SERVO_PIN 9
@@ -36,10 +37,9 @@ static const int SERVO_UNLOCKED = 90;  // 90° = desbloqueada (HU-01)
 // #define LASER_TX_PIN 8
 // #define LASER_RX_PIN 7
 
-// UART hacia Gateway ESP32
+// UART hacia Gateway ESP32 — MEGA Serial2: TX=16, RX=17 (baud 38400 estable, divisor 5V->3.3V en TX)
 #define GATEWAY_SERIAL Serial2
-#define GATEWAY_BAUD 115200
-// MEGA Serial2: RX=16, TX=17 (mega-access.ino:13)
+#define GATEWAY_BAUD 38400
 
 // ---------------------------------------------------------------------------
 // PARÁMETROS LÓGICOS — RF-2.2 / HU-01

@@ -23,7 +23,7 @@
 // ESP32 es solo 2.4GHz -> FELIPE. es la banda 2.4GHz (FELIPE.-5GHz es 5GHz, no conecta)
 #define WIFI_SSID "FELIPE."
 #define WIFI_PASSWORD "2516f751"
-#define MQTT_BROKER "192.168.1.100"
+#define MQTT_BROKER "192.168.1.14"
 #define MQTT_PORT 1883
 #define MQTT_CLIENT_ID "gateway-esp32"
 #define MQTT_USER ""
@@ -40,9 +40,9 @@
 #define NRF_CE_PIN 5
 #define NRF_CSN_PIN 18
 
-// UART to MEGA
+// UART to MEGA — 38400 + divisor 1k/2k MEGA16->ESP32_16, GND común (HU-01)
 #define MEGA_SERIAL Serial2
-#define MEGA_BAUD 115200
+#define MEGA_BAUD 38400
 
 // Topics
 #define TOPIC_ROVER_CMD "aethernet/rover/command"
@@ -264,11 +264,19 @@ void publishRoverTelemetry(const RoverTelemetry& telem) {
 // MEGA UART COMMUNICATION
 // ============================================================================
 void handleMegaUart() {
-    if (MEGA_SERIAL.available()) {
+    while (MEGA_SERIAL.available()) {
         String line = MEGA_SERIAL.readStringUntil('\n');
         line.trim();
-        if (line.length() > 0) {
-            processMegaMessage(line);
+        if (line.length() == 0) continue;
+        Serial.printf("[MEGA UART RX] %s\n", line.c_str());
+        processMegaMessage(line);
+    }
+    // Heartbeat si no hay datos 10s (debug cableado)
+    static unsigned long lastDbg = 0;
+    if (millis() - lastDbg > 10000) {
+        lastDbg = millis();
+        if (!MEGA_SERIAL.available()) {
+            // Serial.printf("[MEGA UART] idle — verifica TX 17↔RX16, GND común, 115200\n");
         }
     }
 }

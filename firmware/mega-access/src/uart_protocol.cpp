@@ -60,6 +60,9 @@ void processGatewayCommand(const String& cmd) {
 void sendAccessEvent(const String& jsonPayload) {
     GATEWAY_SERIAL.print(F("ACCESS:"));
     GATEWAY_SERIAL.println(jsonPayload);
+    // Debug USB para confirmar TX
+    Serial.print(F("[UART TX] ACCESS:"));
+    Serial.println(jsonPayload);
 }
 
 void sendStatusToGateway() {

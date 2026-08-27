@@ -27,7 +27,20 @@ void handleKeypad() {
     char key = keypad.getKey();
     if (!key) return;
 
+    // DEBUG mapeo: imprime crudo siempre para validar cableado
+    Serial.print(F("[KEY RAW] '"));
+    Serial.print(key);
+    Serial.print(F("' code="));
+    Serial.print((int)key);
+    Serial.println(F(""));
+
     if (key == '#') {
+        // DEBUG: muestra buffer antes de procesar (temporal para validar mapeo)
+        Serial.print(F("[PIN DBG] buffer='"));
+        Serial.print(inputBuffer);
+        Serial.print(F("' len="));
+        Serial.print(inputBuffer.length());
+        Serial.println(F(""));
         processPinAttempt(inputBuffer);
         inputBuffer = "";
     } else if (key == '*') {
@@ -38,7 +51,6 @@ void handleKeypad() {
         if (inputBuffer.length() < PIN_MAX_LEN) {
             inputBuffer += key;
             setLedMode(LedMode::BLUE_TAP);
-            // No log del PIN por seguridad; solo longitud
             Serial.print(F("Key pressed: * (len="));
             Serial.print(inputBuffer.length());
             Serial.println(F(")"));
