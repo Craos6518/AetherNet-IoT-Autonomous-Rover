@@ -20,8 +20,8 @@
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
-#define WIFI_SSID "AetherNet-LAN"
-#define WIFI_PASSWORD "changeme"
+#define WIFI_SSID "FELIPE.-5GHz"
+#define WIFI_PASSWORD "2516f751"
 #define MQTT_BROKER "192.168.1.100"
 #define MQTT_PORT 1883
 #define MQTT_CLIENT_ID "gateway-esp32"
@@ -98,29 +98,36 @@ void setup() {
     MEGA_SERIAL.begin(MEGA_BAUD, SERIAL_8N1, 16, 17); // RX=16, TX=17
     Serial.println("UART to MEGA initialized");
 
-    // Initialize nRF24L01
+    // Initialize nRF24L01 — no bloqueante para HU-01 (cerrojo) sin rover
     if (!radio.begin()) {
-        Serial.println("ERROR: nRF24L01 not detected!");
-        while (1) delay(1000);
+        Serial.println("WARN: nRF24L01 not detected! RF rover deshabilitado, HU-01 sigue via UART/HTTP");
+        // no while(1) — permite que WiFi/MQTT/HTTP sigan para cerrojo
+    } else {
+        radio.setPALevel(RF24_PA_HIGH);
+        radio.setDataRate(RF24_2MBPS);
+        radio.setChannel(76);
+        radio.openWritingPipe(roverAddress);
+        radio.openReadingPipe(1, gatewayAddress);
+        radio.enableAckPayload();
+        radio.startListening();
+        Serial.println("nRF24L01 initialized");
     }
-    radio.setPALevel(RF24_PA_HIGH);
-    radio.setDataRate(RF24_2MBPS);
-    radio.setChannel(76);
-    radio.openWritingPipe(roverAddress);
-    radio.openReadingPipe(1, gatewayAddress);
-    radio.enableAckPayload();
-    radio.startListening();
-    Serial.println("nRF24L01 initialized");
 
-    // Connect WiFi
+    // Connect WiFi — no bloqueante para prueba (timeout 10s)
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    Serial.print("Connecting to WiFi");
-    while (WiFi.status() != WL_CONNECTED) {
+    Serial.print("Connecting to WiFi ");
+    Serial.print(WIFI_SSID);
+    unsigned long wifiStart = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - wifiStart < 10000) {
         delay(500);
         Serial.print(".");
     }
     Serial.println();
-    Serial.printf("WiFi connected: %s\n", WiFi.localIP().toString().c_str());
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.printf("WiFi connected: %s\n", WiFi.localIP().toString().c_str());
+    } else {
+        Serial.println("WiFi NOT connected — continuando sin WiFi (HU-01 via UART seguirá, HTTP reintentará en loop)");
+    }
 
     // MQTT setup
     mqttClient.setServer(MQTT_BROKER, MQTT_PORT);
