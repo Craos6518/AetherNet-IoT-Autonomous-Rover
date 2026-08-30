@@ -19,7 +19,7 @@
   - `ed557b7 fix(gateway): WiFi FELIPE.-5GHz + timeout 10s` — cambia `AetherNet-LAN/changeme` → `FELIPE.-5GHz/2516f751` (2026-08-26)
   - `ddebd48 fix(gateway): WiFi 2.4GHz FELIPE.` — corrige a `FELIPE./2516f751` (2026-08-26)
   - `c06bc94` HEAD aún contiene ambos valores en claro.
-- **Impacto:** password de router doméstico real queda en historial git público si el repo es público; cualquier clon del historial lo conserva aunque se borre del HEAD. Severidad **Alta** (R-12 a crear en `docs/risk-register.md`).
+- **Impacto:** password de router de laboratorio local `FELIPE.` queda en historial git; el lab reinicia la red cada semana (aclaración 2026-08-29), por lo que no requiere rotación urgente ni rewrite de 35 ramas — basta con no volver a hardcodear y usar `secrets.h` local. Si el repo es público, el historial viejo sigue expuesto pero expira con el reinicio semanal. Severidad **Alta** lab → **Media** tras mitigación (R-12).
 - **LAN IP también hardcodeada:** `gateway-esp32.ino:26,35` `MQTT_BROKER 192.168.1.14` y `BACKEND_HOST 192.168.1.14` (commits `4ac71f1`, `ed557b7`). No es secreto pero acopla despliegue a IP del host `wlp1s0`.
 
 ### H-02 — Ausencia de `.env` real es correcta, pero falta `backend/.env.example`
@@ -41,7 +41,7 @@
 1. **Extraer a `secrets.h`:** crear `firmware/gateway-esp32/secrets.h.example` + `secrets.h` (gitignored) y mover `WIFI_SSID/PASSWORD/MQTT_BROKER/BACKEND_HOST/PORT` de `gateway-esp32.ino:24-37` a `#include "secrets.h"` con `#ifndef WIFI_SSID #error`. Misma para `firmware/mega-access/src/config.h:48 VALID_PIN` si aplica.
 2. **Alternativa PlatformIO:** `firmware/gateway-esp32/platformio.ini:19 build_flags = -DWIFI_SSID=\"${sysenv.WIFI_SSID}\" ...` si se prefiere env sobre header.
 3. **Crear `backend/.env.example`** espejo de `env.example:8-48` pero scoped a backend.
-4. **Rotación:** si `FELIPE./2516f751` es red doméstica productiva, rotar password en router antes o junto con ACT-02. Si es red de prueba aislada, basta con purgar del HEAD y documentar que el historial previo queda contaminado (decidir si `git filter-repo --replace-text` + `push --force-with-lease` a las 35 ramas de `docs/branching-strategy.md:27` compensa el coste).
+4. **Rotación:** `FELIPE./2516f751` es red doméstica de laboratorio local que se reinicia cada semana (2026-08-29) — no se exige `filter-repo` ni rotación inmediata; historial viejo expira con el reinicio. Mantener `secrets.h` local sin commitear y documentar en `secrets.h.example`.
 
 ---
 
