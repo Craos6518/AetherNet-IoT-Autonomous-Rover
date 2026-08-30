@@ -10,10 +10,10 @@
 | ACT-02 | DEVOPS-11 | Rotar/asegurar credenciales (`secrets.h` + `.env.example`) | - [x] | DevOps | `firmware/gateway-esp32/secrets.h.example`, `backend/.env.example`, `gateway-esp32.ino` sin hardcoded |
 | ACT-03 | DEVOPS-10 | Pipeline CI en verde | - [x] | DevOps | `gh run list` / `ci.yml` verde en `develop` |
 | ACT-04 | PM-03 | Matriz de riesgos actualizada (R-12/R-13) | - [x] | Gestión | `docs/risk-register.md` con R-12/R-13 |
-| ACT-05 | MOV-01 | Cierre formal setup Android MVVM base | - [ ] | Móviles | `app/` compila `./gradlew tasks`, `MainActivity.kt` MVVM ok |
-| ACT-06 | MOV-12 | Build Android pendiente (fusionado con ACT-05) | - [ ] | Móviles | `ci.yml` `android-build` condicional habilitado |
-| ACT-07 | PM-02 | Tablero Scrum | - [ ] | Gestión | Link GitHub Projects en `docs/sprints.md:51` |
-| ACT-08 | PM-04 | Diagrama Gantt | - [ ] | Gestión | `docs/gantt.md` (Mermaid) exportado |
+| ACT-05 | MOV-01 | Cierre formal setup Android MVVM base | - [x] | Móviles | `app/` compila `./gradlew tasks`, `MainActivity.kt` MVVM ok |
+| ACT-06 | MOV-12 | Build Android pendiente (fusionado con ACT-05) | - [x] | Móviles | `ci.yml` `android-build` condicional habilitado |
+| ACT-07 | PM-02 | Tablero Scrum | - [x] | Gestión | Link GitHub Projects en `docs/sprints.md:51` |
+| ACT-08 | PM-04 | Diagrama Gantt | - [x] | Gestión | `docs/gantt.md` (Mermaid) exportado |
 
 ## Dependencias
 
@@ -36,6 +36,9 @@ ACT-04 (PM-03) ─────────────────────�
 - 2026-08-29 — ACT-02 DEVOPS-11 completada: `gateway-esp32.ino:20-51` sin hardcoded FELIPE/2516f751, `__has_include("secrets.h")` + defaults `AetherNet-LAN/changeme/192.168.1.100`; `firmware/gateway-esp32/secrets.h.example` trackeado, `secrets.h` gitignored y compilable (`arduino-cli compile esp32:esp32:esp32 80% OK`); `backend/.env.example` creado (DEVOPS-08); `.gitignore:219` con `firmware/**/secrets.h`. Pendiente rotación física de password router si FELIPE es red productiva.
 - 2026-08-29 — ACT-03 DEVOPS-10 completada: `ci.yml:14` ARDUINO_CLI 1.0.4→1.5.1, `ci.yml:99-107` fallback `secrets.h` en CI, `ci.yml:241` android-build condicional `hashFiles(...)`, `.gitignore:68-69` removido `*.gradle.kts` (causa MOV-12); verificado `ruff OK`, `pytest 6 passed`, `mypy Success` (backend/pyproject.toml:13), `arduino-cli compile mega 7%/gateway 79%/rover 21%`.
 - 2026-08-29 — ACT-04 PM-03 completada: `docs/risk-register.md:32` R-12 (WiFi leak) + R-13 (IP hardcodeada) añadidos, resumen actualizado a 5 riesgos Alta.
+- 2026-08-29 — ACT-05/06 MOV-01/MOV-12 completadas: `app/build.gradle.kts:4` KSP 1.9.22-1.0.17, `app/gradlew` 9.5.0 + `gradle-wrapper.jar` + `.gitignore:90-93` whitelist, `app/gradlew tasks` OK (ksp warning corregido), `docs/cierre-mov01.md` formal; MOV-12 fusionado (CI `ci.yml:241` condicional, `assembleDebug` requiere SDK en CI).
+- 2026-08-29 — ACT-07 PM-02 completada: `docs/tablero-scrum.md` 6 columnas Kanban + 8 tarjetas deuda/Sprint2, guía GitHub Projects.
+- 2026-08-29 — ACT-08 PM-04 completada: `docs/gantt.md` Mermaid con Sprints 1-4 + deuda 1→2 (8 ACT done) y ruta crítica.
 
 ## Notas App Android (aclaración 2026-08-29)
 
