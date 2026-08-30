@@ -89,10 +89,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttp_version")
 
-    // MQTT (Eclipse Paho)
-    val paho_version = "1.2.5"
-    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:$paho_version")
-    implementation("org.eclipse.paho:org.eclipse.paho.android.service:$paho_version")
+    // MQTT (Eclipse Paho) — client 1.2.5 en Maven Central, android.service solo publicado hasta 1.1.1 (1.2.5 no existe)
+    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
+    implementation("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
 
     // Moshi (JSON)
     val moshi_version = "1.15.1"
