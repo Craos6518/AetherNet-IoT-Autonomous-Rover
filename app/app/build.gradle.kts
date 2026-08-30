@@ -49,7 +49,7 @@ android {
         kotlinCompilerExtensionVersion = "1.5.11"
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += listOf("META-INF/*.kotlin_module")
         }
