@@ -87,8 +87,12 @@ signing.properties
 *.store
 *.ks
 *.key
-# Gradle wrapper (keep gradlew, gradlew.bat, but ignore jar)
+# Gradle wrapper — conservar wrapper de app/ para CI reproducible (MOV-12)
+# gradle-wrapper.jar en repo raíz se ignora, pero app/gradle/wrapper/ se trackea
 gradle/wrapper/gradle-wrapper.jar
+!app/gradle/wrapper/gradle-wrapper.jar
+!app/gradlew
+!app/gradlew.bat
 
 # =============================================================================
 # C++ / Arduino / Firmware
