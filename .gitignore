@@ -64,15 +64,13 @@ docker-compose.override.yml
 *.store
 *.ks
 *.key
-*.properties
-*.gradle
-*.gradle.kts
 .gradle/
 build/
 out/
 local.properties
 signing.properties
-gradle.properties
+# gradle.properties global is ignored, pero build scripts sí se trackean (FIX MOV-12: no ignorar *.gradle.kts)
+# *.gradle y *.gradle.kts removidos — eran la causa de que app/build.gradle.kts no estuviera trackeado
 *.iml
 .idea/
 *.iws
@@ -214,6 +212,10 @@ secrets/
 *.secret
 *.credentials
 *.token
+# Firmware secrets — DEVOPS-11 / PM-08 (docs/auditoria-secretos-sprint1.md)
+firmware/gateway-esp32/secrets.h
+firmware/mega-access/src/secrets.h
+firmware/**/secrets.h
 
 # =============================================================================
 # Project-specific

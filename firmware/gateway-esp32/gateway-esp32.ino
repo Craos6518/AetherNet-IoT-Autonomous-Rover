@@ -18,23 +18,43 @@
 #include <SPI.h>
 
 // ============================================================================
-// CONFIGURATION
+// CONFIGURATION — credenciales en secrets.h (DEVOPS-11, PM-08)
+// Ver firmware/gateway-esp32/secrets.h.example; secrets.h está gitignoreado.
+// CI compila sin secrets.h usando defaults sanos (AetherNet-LAN/changeme).
 // ============================================================================
-// ESP32 es solo 2.4GHz -> FELIPE. es la banda 2.4GHz (FELIPE.-5GHz es 5GHz, no conecta)
-#define WIFI_SSID "FELIPE."
-#define WIFI_PASSWORD "2516f751"
-#define MQTT_BROKER "192.168.1.14"
+#if __has_include("secrets.h")
+#include "secrets.h"
+#endif
+#ifndef WIFI_SSID
+#define WIFI_SSID "AetherNet-LAN"
+#endif
+#ifndef WIFI_PASSWORD
+#define WIFI_PASSWORD "changeme"
+#endif
+#ifndef MQTT_BROKER
+#define MQTT_BROKER "192.168.1.100"
+#endif
+#ifndef MQTT_PORT
 #define MQTT_PORT 1883
+#endif
+#ifndef MQTT_CLIENT_ID
 #define MQTT_CLIENT_ID "gateway-esp32"
+#endif
+#ifndef MQTT_USER
 #define MQTT_USER ""
+#endif
+#ifndef MQTT_PASS
 #define MQTT_PASS ""
-
-// Backend HTTP (RF-2.2/HU-01) — FastAPI en LAN, registro rápido vía HTTP POST
-// NOTA: tu host actual es 192.168.1.14 (wlp1s0). Cambia a 192.168.1.100 si asignas IP estática.
-// Se deja .14 para prueba local sin reasignar IP.
-#define BACKEND_HOST "192.168.1.14"
+#endif
+#ifndef BACKEND_HOST
+#define BACKEND_HOST "192.168.1.100"
+#endif
+#ifndef BACKEND_PORT
 #define BACKEND_PORT 8000
+#endif
+#ifndef BACKEND_ACCESS_PATH
 #define BACKEND_ACCESS_PATH "/api/access-events"
+#endif
 
 // nRF24L01 pins
 #define NRF_CE_PIN 5
