@@ -11,7 +11,7 @@ permissions:
   security-events: write
 
 env:
-  ARDUINO_CLI_VERSION: 1.0.4
+  ARDUINO_CLI_VERSION: 1.5.1
 
 jobs:
   # =============================================================================
@@ -95,6 +95,15 @@ jobs:
           export PATH="$(pwd)/bin:$HOME/bin:$PATH"
           arduino-cli core install arduino:avr
           arduino-cli lib install "Keypad" "Servo" "RF24" "NewPing" "ArduinoJson@6.21.3" "PubSubClient"
+
+      - name: Prepare secrets fallback (DEVOPS-11 — gateway sin secrets.h usa defaults)
+        if: matrix.firmware == 'gateway-esp32'
+        run: |
+          if [ ! -f firmware/gateway-esp32/secrets.h ] && [ -f firmware/gateway-esp32/secrets.h.example ]; then
+            echo "secrets.h missing — copying from secrets.h.example for CI (defaults AetherNet-LAN/changeme)"
+            cp firmware/gateway-esp32/secrets.h.example firmware/gateway-esp32/secrets.h
+          fi
+          cat firmware/gateway-esp32/secrets.h || echo "using __has_include fallback defaults in gateway-esp32.ino:28-51"
 
       - name: Compile firmware
         run: |
@@ -241,7 +250,9 @@ jobs:
   android-build:
     name: Android Build Check
     runs-on: ubuntu-latest
-    if: false  # Enable when app/ structure exists with gradle
+    # MOV-12: habilitado condicional — solo corre si app/ tiene Gradle (fix .gitignore MOV-12)
+    # Mientras app solo esté "abierta en Studio" sin código, el job se skipea pero el pipeline sigue verde
+    if: hashFiles('app/build.gradle.kts', 'app/settings.gradle.kts', 'app/gradlew') != ''
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

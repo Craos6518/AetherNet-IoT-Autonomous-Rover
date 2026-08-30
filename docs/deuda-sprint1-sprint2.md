@@ -7,7 +7,7 @@
 | # | Ítem backlog | Actividad | Estado | Dueño | Evidencia al cerrar |
 |---|---|---|---|---|---|
 | ACT-01 | PM-08 | Auditoría historial commits (secretos) | - [x] | Gestión/DevOps | `docs/auditoria-secretos-sprint1.md` + `gitleaks/truffleHog` 0 leaks nuevos |
-| ACT-02 | DEVOPS-11 | Rotar/asegurar credenciales (`secrets.h` + `.env.example`) | - [ ] | DevOps | `firmware/gateway-esp32/secrets.h.example`, `backend/.env.example`, `gateway-esp32.ino` sin hardcoded |
+| ACT-02 | DEVOPS-11 | Rotar/asegurar credenciales (`secrets.h` + `.env.example`) | - [x] | DevOps | `firmware/gateway-esp32/secrets.h.example`, `backend/.env.example`, `gateway-esp32.ino` sin hardcoded |
 | ACT-03 | DEVOPS-10 | Pipeline CI en verde | - [ ] | DevOps | `gh run list` / `ci.yml` verde en `develop` |
 | ACT-04 | PM-03 | Matriz de riesgos actualizada (R-12/R-13) | - [ ] | Gestión | `docs/risk-register.md` con R-12/R-13 |
 | ACT-05 | MOV-01 | Cierre formal setup Android MVVM base | - [ ] | Móviles | `app/` compila `./gradlew tasks`, `MainActivity.kt` MVVM ok |
@@ -33,6 +33,7 @@ ACT-04 (PM-03) ─────────────────────�
 
 - 2026-08-29 — checkpoint creado en rama `feature/firmware-mega-cerrojo`. Pendiente ACT-01.
 - 2026-08-29 — ACT-01 PM-08 completada: `docs/auditoria-secretos-sprint1.md` generado, H-01 (`gateway-esp32.ino:24-25` FELIPE./2516f751 en `ed557b7/ddebd48`) y H-02 (`backend/.env.example` faltante) documentados. Siguiente: ACT-02 DEVOPS-11.
+- 2026-08-29 — ACT-02 DEVOPS-11 completada: `gateway-esp32.ino:20-51` sin hardcoded FELIPE/2516f751, `__has_include("secrets.h")` + defaults `AetherNet-LAN/changeme/192.168.1.100`; `firmware/gateway-esp32/secrets.h.example` trackeado, `secrets.h` gitignored y compilable (`arduino-cli compile esp32:esp32:esp32 80% OK`); `backend/.env.example` creado (DEVOPS-08); `.gitignore:219` con `firmware/**/secrets.h`. Pendiente rotación física de password router si FELIPE es red productiva.
 
 ## Notas App Android (aclaración 2026-08-29)
 
