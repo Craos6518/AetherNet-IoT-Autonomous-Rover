@@ -3,7 +3,9 @@ package com.aethernet.aethercontrol
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelProvider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -48,7 +50,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun DashboardScreen(viewModel: DashboardViewModel) {
-    val uiState by viewModel.uiState.observeAsState()
+    val connectionStatus by viewModel.connectionStatus.observeAsState("Desconectado")
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -61,7 +63,7 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
             color = MaterialTheme.colorScheme.primary
         )
         Text(
-            text = "Dashboard - ${uiState?.connectionStatus ?? "Desconectado"}",
+            text = "Dashboard - $connectionStatus",
             fontSize = 18.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

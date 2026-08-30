@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop]
+    branches: ['**']
   pull_request:
     branches: [main, develop]
 
@@ -250,23 +250,33 @@ jobs:
   android-build:
     name: Android Build Check
     runs-on: ubuntu-latest
-    # MOV-12: habilitado condicional — solo corre si app/ tiene Gradle (fix .gitignore MOV-12)
-    # Mientras app solo esté "abierta en Studio" sin código, el job se skipea pero el pipeline sigue verde
-    if: hashFiles('app/build.gradle.kts', 'app/settings.gradle.kts', 'app/gradlew') != ''
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check if Android project exists (MOV-12 — skip si app solo está vacía)
+        id: check
+        run: |
+          if [ -f "app/build.gradle.kts" ] || [ -f "app/settings.gradle.kts" ] || [ -f "app/gradlew" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No Android Gradle files found — skipping build."
+          fi
+
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        if: steps.check.outputs.exists == 'true'
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Setup Android SDK
+        if: steps.check.outputs.exists == 'true'
         uses: android-actions/setup-android@v3
 
       - name: Build Debug APK
+        if: steps.check.outputs.exists == 'true'
         run: |
           cd app
           ./gradlew assembleDebug

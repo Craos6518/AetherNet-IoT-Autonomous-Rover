@@ -49,7 +49,7 @@ android {
         kotlinCompilerExtensionVersion = "1.5.11"
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += listOf("META-INF/*.kotlin_module")
         }
@@ -65,6 +65,7 @@ dependencies {
     implementation("androidx.core:core-ktx:$core_ktx_version")
     implementation("androidx.activity:activity-compose:$activity_version")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
 
     // Material 3 / Compose
@@ -72,8 +73,10 @@ dependencies {
     val material3_version = "1.2.1"
     implementation(platform("androidx.compose:compose-bom:$compose_bom_version"))
     implementation("androidx.compose.material3:material3:$material3_version")
+    implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.compose.foundation:foundation")
 
     // Coroutines & Flow
@@ -89,10 +92,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttp_version")
 
-    // MQTT (Eclipse Paho)
-    val paho_version = "1.2.5"
-    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:$paho_version")
-    implementation("org.eclipse.paho:org.eclipse.paho.android.service:$paho_version")
+    // MQTT (Eclipse Paho) — client 1.2.5 en Maven Central, android.service solo publicado hasta 1.1.1 (1.2.5 no existe)
+    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
+    implementation("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
 
     // Moshi (JSON)
     val moshi_version = "1.15.1"
@@ -111,7 +113,7 @@ dependencies {
 
     // Testing
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.22")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.23")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
