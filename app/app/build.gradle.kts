@@ -65,6 +65,7 @@ dependencies {
     implementation("androidx.core:core-ktx:$core_ktx_version")
     implementation("androidx.activity:activity-compose:$activity_version")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
 
     // Material 3 / Compose
@@ -72,8 +73,10 @@ dependencies {
     val material3_version = "1.2.1"
     implementation(platform("androidx.compose:compose-bom:$compose_bom_version"))
     implementation("androidx.compose.material3:material3:$material3_version")
+    implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.compose.foundation:foundation")
 
     // Coroutines & Flow
