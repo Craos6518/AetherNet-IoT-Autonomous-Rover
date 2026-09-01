@@ -239,13 +239,18 @@ firmware/*/build/
 firmware/*/.build/
 firmware/*/.pio/
 
-# Stats output
+# Stats output (forzados con git add -f para evidencia EST-08: alpha_sweep.json/png, ema_demo.json, ema-real-531.csv)
 stats/output/
 stats/data/
 stats/*.csv
 stats/*.json
 stats/*.png
 stats/*.pdf
+
+# Fritzing — fuentes binarias pesadas no versionadas (versionar solo .md/.png exportados ema-*.md/png)
+docs/fritzing/*.fzz
+docs/fritzing/*.fz
+docs/fritzing/Filtro*
 
 # Documentation builds
 docs/_build/
