@@ -10,8 +10,8 @@
 | ACT-02 | DEVOPS-11 | Rotar/asegurar credenciales (`secrets.h` + `.env.example`) | - [x] | DevOps | `firmware/gateway-esp32/secrets.h.example`, `backend/.env.example`, `gateway-esp32.ino` sin hardcoded |
 | ACT-03 | DEVOPS-10 | Pipeline CI en verde | - [x] | DevOps | `gh run list` / `ci.yml` verde en `develop` |
 | ACT-04 | PM-03 | Matriz de riesgos actualizada (R-12/R-13) | - [x] | Gestión | `docs/risk-register.md` con R-12/R-13 |
-| ACT-05 | MOV-01 | Cierre formal setup Android MVVM base | - [x] ⚠️ plantilla-only (sincerado 2026-08-31) | Móviles | `app/` compila `./gradlew tasks` pero `MainActivity.kt:22`/`DashboardViewModel.kt:32` son plantilla wizard sin código propio — ver `docs/cierre-mov01.md:4`; lógica real queda para `feature/app-setup-mvvm` Sprint 2 |
-| ACT-06 | MOV-12 | Build Android pendiente (fusionado con ACT-05) | - [x] | Móviles | `ci.yml` `android-build` condicional habilitado — infra verde, no código |
+| ACT-05 | MOV-01 | Cierre formal setup Android MVVM base | - [x] ✅ Done `f03190b` 2026-09-01 | Móviles | `feature/app-setup-mvvm` `f03190b` — `AetherControlApp`+`ServiceLocator` DI manual, `Retrofit`+DTOs, `PreferencesManager` `updateBaseUrl`, `DashboardViewModel` `StateFlow`+`NavGraph`, `assembleDebug`/`testDebugUnitTest` verdes, `curl 192.168.1.14:8000/health` ok SM-X620 — cierra plantilla-only, ver `docs/cierre-mov01.md:4` |
+| ACT-06 | MOV-12 | Build Android pendiente (fusionado con ACT-05) | - [x] ✅ Done `f03190b` | Móviles | `ci.yml` `android-build` condicional + `assembleDebug` verde `f03190b` — infra + código |
 | ACT-07 | PM-02 | Tablero Scrum | - [x] | Gestión | `https://github.com/users/Craos6518/projects/14` (PM-02 completado 2026-08-31) |
 | ACT-08 | PM-04 | Diagrama Gantt | - [x] | Gestión | `docs/gantt.md` (Mermaid) exportado — actualizar LOW-01 a bloqueado 2026-08-31 |
 
