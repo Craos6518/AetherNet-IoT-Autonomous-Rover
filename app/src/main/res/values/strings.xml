@@ -8,11 +8,6 @@
     <string name="connection_status_disconnected">Desconectado</string>
     <string name="connection_status_connecting">Conectando…</string>
 
-    <!-- Relays -->
-    <string name="relay_on">Encendido</string>
-    <string name="relay_off">Apagado</string>
-    <string name="relay_toggle">Conmutar</string>
-
     <!-- Access -->
     <string name="access_title">Control de Acceso</string>
     <string name="pin_hint">Ingrese PIN</string>

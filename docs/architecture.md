@@ -52,7 +52,7 @@ AetherNet es un sistema distribuido de 3 capas que vive completo dentro de una m
 | Subsistema | Responsabilidad | No es responsable de |
 |---|---|---|
 | **Gateway ESP32** (`firmware/gateway-esp32/`) | Servidor MQTT/WebSockets; traduce MQTT↔UART hacia el MEGA; traduce MQTT↔RF hacia el Rover | Lógica de negocio (vive en backend/Node-RED); persistencia |
-| **MEGA — Acceso/Potencia** (`firmware/mega-access/`) | Teclado 4x4, servo de cerrojo, láser, LED RGB local, matriz de relés — todo con procesamiento **Edge**, sin depender de red | Notificaciones remotas (eso es Node-RED, vía el evento que reporta al Gateway) |
+| **MEGA — Acceso/Potencia** (`firmware/mega-access/`) | Teclado 4x4, servo de cerrojo, láser, LED RGB local — todo con procesamiento **Edge**, sin depender de red | Notificaciones remotas (eso es Node-RED, vía el evento que reporta al Gateway) |
 | **Rover UNO** (`firmware/rover-uno/`) | Tracción (L298N), evasión de obstáculos (HC-SR04), anti-caída (TCRT5000), recepción de comandos RF | Decisión de "modo patrullaje" a alto nivel (eso llega como comando desde la app vía Gateway) |
 | **Backend** (`backend/`) | FastAPI (API REST + WebSockets), Mosquitto (bus de eventos pub/sub), PostgreSQL (histórico de accesos/eventos) | Reglas de automatización (eso es Node-RED); UI |
 | **App AetherControl** (`app/`) | Dashboard en tiempo real, joystick virtual, envío de PIN, fallback Bluetooth SPP | Almacenamiento persistente (consume el histórico vía backend, no lo posee) |

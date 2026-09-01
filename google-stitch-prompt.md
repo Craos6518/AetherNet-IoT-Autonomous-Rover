@@ -37,7 +37,6 @@
 | **Room Light (Tuya)** | Color picker + brightness slider + power toggle, "Intrusion Flash" indicator | Node-RED → `tuya-local` → MQTT `aethernet/light/tuya` |
 | **Local LED (MEGA)** | RGB color indicator (Green=unlocked, Red=intrusion), read-only | MEGA PWM → ESP32 → MQTT `aethernet/light/local` |
 | **Sound Level** | Real-time VU meter bar (0-100%), peak hold | ESP8266 KY-037 → MQTT `aethernet/env/sound` |
-| **Relay Bank** | 4-8 toggle switches with labels (configurable), all-on/off | MEGA Relays → ESP32 → MQTT `aethernet/relay/{1..8}` |
 
 **Bottom Navigation Bar (5 tabs):**
 1. 🏠 Dashboard (this screen)
@@ -228,7 +227,7 @@ Tap: opens Network Diagnostics bottom sheet
 2. **Intrusion Alert:** Laser breached → Dashboard alarm banner → Tuya bulb flashes red → Telegram notification → User taps → Access Control screen shows log
 3. **Rover Manual Drive:** Dashboard → Rover tab → Joystick active → RF latency <10ms → Telemetry overlay updates real-time
 4. **RF Fail-Safe:** Rover moving → RF packets stop → 300ms timeout → Rover stops → Red banner "FAIL-SAFE ACTIVE" → Joystick disabled until reconnect
-5. **Bluetooth Fallback:** Wi-Fi lost → Auto-switch to HC-06 → Purple chip "Bluetooth Fallback" → Limited control (relays, unlock only)
+5. **Bluetooth Fallback:** Wi-Fi lost → Auto-switch to HC-06 → Purple chip "Bluetooth Fallback" → Limited control (unlock only, no Tuya)
 6. **Remote Unlock:** Access screen → Enter PIN → Biometric confirm → MQTT unlock command → MEGA servo rotates → Local LED green → Success toast
 
 ---

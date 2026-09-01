@@ -1,6 +1,6 @@
 /*
  * AetherNet - MEGA Access Control
- * Handles: 4x4 Keypad, Servo MG90S (door lock), KY-008 Laser, LED RGB, Relays
+ * Handles: 4x4 Keypad, Servo MG90S (door lock), KY-008 Laser, LED RGB
  * Communicates with Gateway ESP32 via UART
  * 
  * Hardware: Arduino MEGA 2560
@@ -9,7 +9,6 @@
  * Servo: Pin 9 (PWM)
  * Laser KY-008: Pin 8 (digital out), Pin 7 (digital in - receiver)
  * LED RGB: Pins 44(R), 45(G), 46(B) - PWM
- * Relays: Pins 40-47 (8 relays)
  * UART to ESP32: Serial2 (RX=16, TX=17)
  */
 
@@ -47,10 +46,6 @@ const int SERVO_UNLOCKED = 90; // 90 degrees = unlocked
 #define LED_G_PIN 45
 #define LED_B_PIN 46
 
-// Relay matrix (8 channels)
-#define RELAY_START_PIN 40
-const int RELAY_PINS[8] = {40, 41, 42, 43, 44, 45, 46, 47}; // Note: 44-46 conflict with LED, adjust if needed
-
 // UART to ESP32 Gateway
 #define GATEWAY_SERIAL Serial2
 #define GATEWAY_BAUD 115200
@@ -73,7 +68,6 @@ bool laserArmed = true;
 bool lastLaserState = true; // HIGH = beam intact
 unsigned long lastLaserCheck = 0;
 unsigned long lastUartSend = 0;
-bool relayStates[8] = {false};
 
 // ============================================================================
 // SETUP
@@ -92,11 +86,6 @@ void setup() {
     pinMode(LED_G_PIN, OUTPUT);
     pinMode(LED_B_PIN, OUTPUT);
     setLedColor(0, 0, 0); // Off initially
-
-    for (int i = 0; i < 8; i++) {
-        pinMode(RELAY_PINS[i], OUTPUT);
-        digitalWrite(RELAY_PINS[i], HIGH); // Relays active LOW
-    }
 
     // Initialize servo
     doorServo.attach(SERVO_PIN);
@@ -286,31 +275,6 @@ void setLedColor(int r, int g, int b) {
 }
 
 // ============================================================================
-// RELAY CONTROL
-// ============================================================================
-void setRelay(int index, bool state) {
-    if (index < 0 || index >= 8) return;
-    relayStates[index] = state;
-    digitalWrite(RELAY_PINS[index], state ? LOW : HIGH); // Active LOW
-    Serial.print("Relay ");
-    Serial.print(index);
-    Serial.print(" -> ");
-    Serial.println(state ? "ON" : "OFF");
-
-    // Report to Gateway
-    StaticJsonDocument<128> doc;
-    doc["id"] = index;
-    doc["state"] = state;
-    String payload;
-    serializeJson(doc, payload);
-    GATEWAY_SERIAL.println("RELAY:" + payload);
-}
-
-void toggleRelay(int index) {
-    setRelay(index, !relayStates[index]);
-}
-
-// ============================================================================
 // GATEWAY UART COMMUNICATION
 // ============================================================================
 void handleGatewayUart() {
@@ -326,7 +290,6 @@ void handleGatewayUart() {
 void processGatewayCommand(String cmd) {
     // Expected: CMD:TYPE:PARAMS
     // CMD:ACCESS:{"pin":"1234"}
-    // CMD:RELAY:1:true
     // CMD:LASER:true
     // CMD:STATUS
 
@@ -346,10 +309,6 @@ void processGatewayCommand(String cmd) {
         if (doc.containsKey("pin")) {
             processPinAttempt(doc["pin"].as<String>());
         }
-    } else if (type == "RELAY") {
-        int relayId = params.substring(0, params.indexOf(':')).toInt();
-        bool state = params.substring(params.indexOf(':') + 1) == "true";
-        setRelay(relayId, state);
     } else if (type == "LASER") {
         setLaserArmed(params == "true");
     } else if (type == "STATUS") {
@@ -358,17 +317,12 @@ void processGatewayCommand(String cmd) {
 }
 
 void sendStatusToGateway() {
-    StaticJsonDocument<512> doc;
+    StaticJsonDocument<256> doc;
     doc["door_locked"] = !doorUnlocked;
     doc["laser_armed"] = laserArmed;
     doc["laser_beam_intact"] = lastLaserState;
     doc["free_ram"] = (int)freeMemory(); // AVR-compatible
     doc["uptime_ms"] = millis();
-
-    JsonArray relays = doc.createNestedArray("relays");
-    for (int i = 0; i < 8; i++) {
-        relays.add(relayStates[i]);
-    }
 
     String payload;
     serializeJson(doc, payload);

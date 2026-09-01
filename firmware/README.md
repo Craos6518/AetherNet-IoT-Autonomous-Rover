@@ -78,7 +78,6 @@ pio run -t upload -d firmware/rover-uno
 | Servo MG90S | 9 (PWM) |
 | Laser KY-008 | TX=8, RX=7 |
 | LED RGB | R=44, G=45, B=46 (PWM) |
-| Relays (8ch) | 40-47 |
 | UART to ESP32 | RX=16, TX=17 |
 
 ### Rover UNO
@@ -128,12 +127,10 @@ struct RoverTelemetry {
 **MEGA → Gateway:**
 - `ACCESS:{"user_id":"...","pin_hash":"...","success":true,"timestamp":12345,"source":"keypad"}`
 - `SECURITY:{"event_type":"intrusion","sensor":"laser-01","location":"entrance","severity":"high","timestamp":12345}`
-- `RELAY:{"id":0,"state":true}`
-- `STATUS:{"door_locked":true,"laser_armed":true,"laser_beam_intact":true,"relays":[false,...],"uptime_ms":12345}`
+- `STATUS:{"door_locked":true,"laser_armed":true,"laser_beam_intact":true,"uptime_ms":12345}`
 
 **Gateway → MEGA:**
 - `CMD:ACCESS:{"pin":"1234"}`
-- `CMD:RELAY:0:true`
 - `CMD:LASER:true`
 - `CMD:STATUS`
 
@@ -145,8 +142,6 @@ struct RoverTelemetry {
 | `aethernet/access/command` | App → MEGA | PIN commands |
 | `aethernet/access/event` | MEGA → App | Access granted/denied |
 | `aethernet/seguridad/intrusion` | MEGA → Node-RED | Laser intrusion |
-| `aethernet/relay/+` | App ↔ MEGA | Relay control |
-| `aethernet/relay/event` | MEGA → App | Relay state changes |
 | `aethernet/system/status` | Gateway → All | System health |
 | `aethernet/system/command` | All → Gateway | System commands |
 
