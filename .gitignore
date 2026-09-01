@@ -87,12 +87,17 @@ signing.properties
 *.store
 *.ks
 *.key
-# Gradle wrapper — conservar wrapper de app/ para CI reproducible (MOV-12)
-# gradle-wrapper.jar en repo raíz se ignora, pero app/gradle/wrapper/ se trackea
-gradle/wrapper/gradle-wrapper.jar
+# Gradle wrapper — conservar wrapper raíz y app/ para CI reproducible (MOV-12)
+# Root wrapper trackeado para build reproducible; app/ también si existe (legado)
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!gradlew
+!gradlew.bat
 !app/gradle/wrapper/gradle-wrapper.jar
 !app/gradlew
 !app/gradlew.bat
+# Daemon JVM auto-generado por foojay toolchains — no versionar
+gradle/gradle-daemon-jvm.properties
 
 # =============================================================================
 # C++ / Arduino / Firmware
