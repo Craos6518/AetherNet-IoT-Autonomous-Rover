@@ -68,7 +68,7 @@ pio run -t upload -d firmware/rover-uno
 ### Gateway ESP32
 | Component | Pins |
 |-----------|------|
-| nRF24L01 (SPI) | CE=5, CSN=18, SCK=18, MOSI=23, MISO=19 |
+| nRF24L01 (SPI) | CE=5, CSN=15 (corrige 18 colisión SCK), SCK=18, MOSI=23, MISO=19 |
 | UART to MEGA | RX=16 (GPIO16), TX=17 (GPIO17) |
 
 ### MEGA Access Control
