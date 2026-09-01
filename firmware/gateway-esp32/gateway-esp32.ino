@@ -41,7 +41,6 @@
 #define TOPIC_ACCESS_CMD "aethernet/access/command"
 #define TOPIC_ACCESS_EVENT "aethernet/access/event"
 #define TOPIC_SECURITY_EVENT "aethernet/seguridad/intrusion"
-#define TOPIC_RELAY_CMD "aethernet/relay/+"
 #define TOPIC_SYSTEM_STATUS "aethernet/system/status"
 
 // ============================================================================
@@ -163,8 +162,6 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
         handleRoverCommand(payloadStr);
     } else if (topicStr == TOPIC_ACCESS_CMD) {
         handleAccessCommand(payloadStr);
-    } else if (topicStr.startsWith("aethernet/relay/")) {
-        handleRelayCommand(topicStr, payloadStr);
     }
 }
 
@@ -176,7 +173,6 @@ void mqttReconnect() {
             // Subscribe to topics
             mqttClient.subscribe(TOPIC_ROVER_CMD);
             mqttClient.subscribe(TOPIC_ACCESS_CMD);
-            mqttClient.subscribe("aethernet/relay/+");
             mqttClient.subscribe("aethernet/system/command");
         } else {
             Serial.printf("failed, rc=%d retry in 5s\n", mqttClient.state());
@@ -262,7 +258,6 @@ void processMegaMessage(String msg) {
     // Expected format: TYPE:PAYLOAD
     // e.g., ACCESS:{"user":"admin","success":true}
     //       SECURITY:{"type":"intrusion","sensor":"laser-01"}
-    //       RELAY:{"id":1,"state":true}
 
     int colonIdx = msg.indexOf(':');
     if (colonIdx < 0) return;
@@ -274,8 +269,6 @@ void processMegaMessage(String msg) {
         mqttClient.publish(TOPIC_ACCESS_EVENT, payload.c_str());
     } else if (type == "SECURITY") {
         mqttClient.publish(TOPIC_SECURITY_EVENT, payload.c_str());
-    } else if (type == "RELAY") {
-        mqttClient.publish("aethernet/relay/event", payload.c_str());
     } else if (type == "STATUS") {
         // Forward MEGA status
         mqttClient.publish("aethernet/mega/status", payload.c_str());
@@ -285,20 +278,6 @@ void processMegaMessage(String msg) {
 void handleAccessCommand(String payload) {
     // Forward to MEGA via UART
     MEGA_SERIAL.println("CMD:ACCESS:" + payload);
-}
-
-void handleRelayCommand(String topic, String payload) {
-    // Extract relay ID from topic: aethernet/relay/1
-    int lastSlash = topic.lastIndexOf('/');
-    String relayId = topic.substring(lastSlash + 1);
-
-    StaticJsonDocument<128> doc;
-    doc["id"] = relayId.toInt();
-    DeserializationError err = deserializeJson(doc, payload);
-    if (!err && doc.containsKey("state")) {
-        String cmd = "CMD:RELAY:" + String(doc["id"].as<int>()) + ":" + String(doc["state"].as<bool>());
-        MEGA_SERIAL.println(cmd);
-    }
 }
 
 // ============================================================================

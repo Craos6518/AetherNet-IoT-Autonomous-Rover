@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 
 sealed interface DashboardUiState {
     data class Connected(
-        val relayStates: Map<String, Boolean> = emptyMap(),
         val roverTelemetry: RoverTelemetry? = null,
         val lastAccessEvent: AccessEvent? = null
     ) : DashboardUiState
@@ -68,9 +67,5 @@ class DashboardViewModel : ViewModel() {
 
     fun sendPinCommand(pin: String) {
         // TODO: Publish to MQTT topic aethernet/access/pin
-    }
-
-    fun toggleRelay(relayId: String, state: Boolean) {
-        // TODO: Publish to MQTT topic aethernet/relay/{relayId}
     }
 }
