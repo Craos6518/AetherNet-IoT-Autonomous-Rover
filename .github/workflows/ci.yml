@@ -257,7 +257,7 @@ jobs:
       - name: Check if Android project exists (MOV-12 — skip si app solo está vacía)
         id: check
         run: |
-          if [ -f "app/build.gradle.kts" ] || [ -f "app/settings.gradle.kts" ] || [ -f "app/gradlew" ]; then
+          if [ -f "app/build.gradle.kts" ] || [ -f "app/settings.gradle.kts" ] || [ -f "gradlew" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
@@ -278,8 +278,8 @@ jobs:
       - name: Build Debug APK
         if: steps.check.outputs.exists == 'true'
         run: |
-          cd app
-          ./gradlew assembleDebug
+          chmod +x ./gradlew
+          ./gradlew :app:assembleDebug --stacktrace
 
   # =============================================================================
   # Security Scan (Trivy)

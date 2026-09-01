@@ -18,7 +18,7 @@ Solo tuvimos **una semana de clases** antes del sismo. Dado que su asignatura **
 | **Backend** | Python (FastAPI) + PostgreSQL + Mosquitto MQTT (Docker) | API, Base de datos, Broker de mensajes tiempo real |
 | **Automatización** | Node-RED (LowCode visual) + Telegram Bot + `tuya-local` | Reglas: "si intrusión → Telegram + luz roja" |
 | **Gateway ESP32** | C++ (Arduino CLI) | Puente Wi-Fi/MQTT ↔ Radio 2.4GHz (nRF24L01) ↔ Puerto serie (UART) |
-| **Controlador MEGA** | C++ (Arduino IDE) | Cerrojo (teclado 4x4 + servo), Láser KY-008, LED RGB, Relés |
+| **Controlador MEGA** | C++ (Arduino IDE) | Cerrojo (teclado 4x4 + servo), Láser KY-008, LED RGB |
 | **Rover UNO** | C++ (Arduino IDE) | Robot oruga: motores L298N, Ultrasonido HC-SR04, IR TCRT5000, Radio nRF24L01 |
 | **Estadística** | Python (Pandas, SciPy) | Filtro EMA, t-Student, Weibull — aplicados a sensores reales |
 

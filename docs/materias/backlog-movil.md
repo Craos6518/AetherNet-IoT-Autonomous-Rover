@@ -30,21 +30,21 @@ Backlog operativo detallado del Área 1. IDs MOV-01..10 provienen de `docs/backl
 - [ ] Mensaje publicado desde `mosquitto_pub -t aethernet/app/test` llega al Flow suscrito
 - [ ] Apagar broker 10 s → app pasa a Disconnected y se reconecta sola
 
-### MOV-02 — Pantalla de conmutación de relés
+### MOV-02 — Pantallas de control: bombillo Tuya + LED local
 | M · Sprint 2 · Depende de MOV-11, LOW-02/MEGA básico · Origen RF-1.1 |
 **Qué hacer exactamente:**
-1. `ui/screens/RelaysScreen.kt`: grid (LazyVerticalGrid 2 col) de tarjetas switch por relé (id, nombre, estado).
-2. ViewModel feature `RelaysViewModel`: expone `Map<String,Boolean>` desde suscripción retained `aethernet/relay/+`; toggle publica a `aethernet/relay/{id}` payload `{"on":true}`.
+1. `ui/screens/LightControlScreen.kt`: control bombillo Tuya vía `aethernet/tuya/command` (color/brillo) + indicador solo-lectura LED RGB local (`aethernet/access/event` → verde/rojo).
+2. ViewModel `LightControlViewModel`: expone `TuyaState` y `LedLocalState` desde suscripciones MQTT retained.
 3. Optimistic update + rollback si el gateway confirma error (o timeout 2 s).
 
 **Alcance OUT:** escenas/agrupados, programación horaria.
 **Criterios:**
-- [ ] Toggle refleja estado físico real del relé (validado contra banco DEVOPS-14)
-- [ ] Estados intermedios visibles (enviando/error) usando UiState sellado
+- [ ] Control Tuya refleja estado real del bombillo (validado vía `tuya-local`)
+- [ ] LED local refleja verde (HU-01) / rojo (HU-02) desde MEGA
 
 ### MOV-03 — Suscripción telemetría en dashboard ✅ ESQUELETO → completar
 | M · Sprint 2 · Depende de MOV-11 · Origen RF-1.1 |
-**Qué hacer exactamente:** reemplazar los stubs de `DashboardViewModel` (hoy `Disconnected("MQTT no configurado")` fijo): conectar `init{}` al MqttClientManager; suscribir `aethernet/rover/telemetry` y mapear JSON→`RoverTelemetry` (data class YA existe); exponer `lastAccessEvent` desde `aethernet/access/event`. Implementar los métodos vacíos `sendJoystickCommand/sendPinCommand/toggleRelay` delegando al manager.
+**Qué hacer exactamente:** reemplazar los stubs de `DashboardViewModel` (hoy `Disconnected("MQTT no configurado")` fijo): conectar `init{}` al MqttClientManager; suscribir `aethernet/rover/telemetry` y mapear JSON→`RoverTelemetry` (data class YA existe); exponer `lastAccessEvent` desde `aethernet/access/event`. Implementar los métodos vacíos `sendJoystickCommand/sendPinCommand` delegando al manager.
 **Criterios:**
 - [ ] Ningún TODO restante en DashboardViewModel
 - [ ] Telemetría simulada con mosquitto_pub se ve en el estado de UI (verificado con test MOV-12)
@@ -89,7 +89,7 @@ Backlog operativo detallado del Área 1. IDs MOV-01..10 provienen de `docs/backl
 
 ### MOV-08 — Dashboard consolidado
 | S · Sprint 4 · Depende de MOV-02/03 · Origen RF-1.1 |
-**Qué hacer exactamente:** navegación inferior (Compose Navigation) con 3 pestañas: Relés | Rover | Acceso; cabecera persistente con estado de conexión (usa `connectionStatus` ya expuesto); pestaña Acceso lista últimos eventos desde Room (offline-first: insertar cada evento recibido en BD vía repository).
+**Qué hacer exactamente:** navegación inferior (Compose Navigation) con 3 pestañas: Luces | Rover | Acceso; cabecera persistente con estado de conexión (usa `connectionStatus` ya expuesto); pestaña Acceso lista últimos eventos desde Room (offline-first: insertar cada evento recibido en BD vía repository).
 **Criterios:**
 - [ ] Rotación de pantalla no pierde estado (ViewModel sobrevive)
 - [ ] Eventos vistos siguen disponibles sin conexión (Room)
@@ -100,7 +100,7 @@ Backlog operativo detallado del Área 1. IDs MOV-01..10 provienen de `docs/backl
 
 ### MOV-10 — Tests unitarios de ViewModels
 | S · Sprint 4 · Depende de MOV-03/06 · Origen calidad |
-**Qué hacer exactamente:** `app/src/test/`: fake `MqttClientManager` (interface extraída para permitir mock); tests con `kotlinx-coroutines-test`: (1) telemetría entrante actualiza UiState.Connected, (2) throttling del joystick emite máx 20/s, (3) desconexión → Disconnected(reason), (4) toggle relay optimista + rollback en timeout.
+**Qué hacer exactamente:** `app/src/test/`: fake `MqttClientManager` (interface extraída para permitir mock); tests con `kotlinx-coroutines-test`: (1) telemetría entrante actualiza UiState.Connected, (2) throttling del joystick emite máx 20/s, (3) desconexión → Disconnected(reason), (4) comando luces optimista + rollback en timeout.
 **Criterios:**
 - [ ] `./gradlew test` verde en CI (job android-build activo)
 - [ ] ≥4 casos correspondientes a la lista
