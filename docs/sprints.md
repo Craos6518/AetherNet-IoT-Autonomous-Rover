@@ -50,20 +50,26 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 ## Estado actual
 
 - Sprint activo: **Sprint 2 (Semanas 3-4): Domótica Fija & Control de Acceso — En curso**
-- Última actualización: **2026-08-29 — Deuda Sprint 1→2 saldada 8/8 ACT en `feature/firmware-mega-cerrojo`** (ver `docs/deuda-sprint1-sprint2.md:7`); Sprint 1 cerrado 2026-08-26 vía PR #1 (`sprint/1-infra-firmware-base` → `develop`: `9eac686` merge + `5781791` docker-build); `sprint/2-domotica-acceso` y sus 7 features sincronizados a `develop`
-- Avances Sprint 1 verificados 2026-08-26:
+- Última actualización: **2026-09-01 — MOV-01 real ✅ Done `f03190b` `feature/app-setup-mvvm` (RF-1.1, RNF-3.1) — verificado `192.168.1.14:8000/health` en SM-X620 + `assembleDebug`/`testDebugUnitTest` verdes** (ver `docs/cierre-mov01.md:4`, `docs/deuda-sprint1-sprint2.md:36`); `develop` al día con `a051dd4` EMA bench 531 + `f1ffcaa` stats + `f03190b` MOV-01
+  - **MOV-01 real (2026-09-01):** `f03190b` implementa MVVM base real — `AetherControlApp.kt`, `ServiceLocator` DI manual, `Retrofit`+`kotlinx.serialization`, DTOs espejo `schemas.py`, `PreferencesManager` `DataStore` con `updateBaseUrl()` dinámico, `network_security_config` cleartext, `DashboardViewModel` `StateFlow` + `NavGraph` + `DashboardScreen` con editor `Backend URL`, `MainActivity` refactor + tests `turbine`. Verificado `docker 0.0.0.0:8000` + `curl 192.168.1.14:8000/health 200 ok` + App `ok` (antes `CLEARTEXT/SocketTimeout` fix). Cierra deuda `ACT-05` plantilla-only.
+  - **Sinceramiento MOV-01 (2026-08-31):** dueño confirma 0 líneas Kotlin propias — `app/app/src/main/java/.../MainActivity.kt:22` y `DashboardViewModel.kt:32` son plantilla wizard `Empty Activity + Compose` con `TODO MQTT` sin implementación. Infra verde (`app/gradlew` 9.5.0 `tasks` OK, KSP 1.9.22-1.0.17, `ci.yml:241` condicional) pero **MOV-01 pasa a ⚠️ plantilla-only** — ver `docs/cierre-mov01.md:4`. Lógica MVVM real queda para `feature/app-setup-mvvm` en Sprint 2.
+  - **LOW-01 pivot (2026-08-31):** `tuya-local` bloqueado por acceso difícil a `local_key` (R-01). Alternativa oficial en evaluación: **retirar o reemplazar por skill Alexa / Google Home** (ver `docs/risk-register.md:16` R-01). Si se confirma incompatibilidad, LOW-04 migrará a skill y se documentará excepción a `RNF-3.1` FOSS.
+  - **Rotación cerrada (2026-08-31):** producción rotada (password prod cambiado); AP lab `FELIPE./2516f751` recreado idéntico para compatibilidad local — `R-12` Resuelto (ver `docs/auditoria-secretos-sprint1.md:15` §5 + `docs/risk-register.md:35`).
+  - **PM-02 completado (2026-08-31):** `https://github.com/users/Craos6518/projects/14` — ver `docs/tablero-scrum.md:49`.
+- Avances Sprint 1 verificados 2026-08-26 (base) + deltas 2026-08-31:
   - [x] DEVOPS-01/06: `docker-compose.yml` sin `version` obsoleta, `backend/app/main.py:16` + `schemas.py` + `routers/events.py:8` operativos; `GET /health` responde `{"status":"ok","database":"ok"}`; `POST /api/access-events` (HU-01), `/sensor-events` (HU-03), `/security-events` (HU-02), `/rover/telemetry` (RF-3.3) validados con curl + `docker compose up` (FastAPI 1.0.0-sprint1, Postgres 16, Mosquitto 2.0). `paho-mqtt==2.1.0` corregido en `backend/requirements.txt:8`.
   - [x] DEVOPS-02: `backend/mosquitto/config/mosquitto.conf:32` + `acl.conf` creada (topics `aethernet/#`), montada en `docker-compose.yml:32`.
   - [x] DEVOPS-03: `backend/app/models.py:34` fix `metadata` reservado -> `event_metadata`, `init.sql` alineado, `backend/pyproject.toml` con ruff ignore B008/S110/BLE001.
   - [x] DEVOPS-04: Pipeline `ci.yml:90` corregido (FQBN rover `arduino:avr:uno`, ArduinoJson pinned 6.21.3); compilación local OK: `mega-access` 19252 bytes/7%, `rover-uno` 6900 bytes/21% (arduino-cli 1.5.1); estructura sketch `firmware/*/*.ino` creada para CI.
   - [x] DEVOPS-05: Procedimiento RF documentado en `docs/testing-rf-sprint1.md` (SPI, round-trip, fail-safe 500ms, KPI <10ms).
   - Tests: `backend/tests/test_health.py:6` (6 tests, mock DB) + `stats/tests/test_ema_filter.py` pasan; ruff `All checks passed`.
-- Deuda Sprint 1→2 saldada 2026-08-29 (8/8):
-  - [x] PM-08: `docs/auditoria-secretos-sprint1.md:10` H-01/H-02 (FELIPE./2516f751 en `ed557b7/ddebd48`)
+- Deuda Sprint 1→2 saldada 2026-08-29 (8/8) — deltas 2026-08-31:
+  - [x] PM-08: `docs/auditoria-secretos-sprint1.md:10` H-01/H-02 (FELIPE./2516f751 en `ed557b7/ddebd48`) — H-01 **Cerrado 2026-08-31** prod rotada + AP lab recreado
   - [x] DEVOPS-11/08: `gateway-esp32.ino:20-51` sin hardcode + `secrets.h.example` + `backend/.env.example` + `.gitignore:219` (`firmware/**/secrets.h`)
   - [x] DEVOPS-10: `ci.yml:14` 1.5.1, `ci.yml:99-107` fallback secrets, `ci.yml:241` android-build condicional, `.gitignore:72-73` (MOV-12); verificado ruff/pytest/mypy/arduino-cli verde
-  - [x] PM-03: `risk-register.md:32` R-12/R-13
-  - [x] MOV-01/MOV-12: `docs/cierre-mov01.md` + `app/build.gradle.kts:4` KSP 1.9.22-1.0.17 + `app/gradlew` 9.5.0 `tasks` OK
-  - [x] PM-02: `docs/tablero-scrum.md` (Kanban 6 cols) — crear Project en GitHub y pegar link aquí
-  - [x] PM-04: `docs/gantt.md` (Mermaid Sprints 1-4 + deuda)
-- Próximo (Sprint 2): `feature/firmware-mega-cerrojo` (RF-2.2/HU-01 teclado 4x4+MG90S), `feature/firmware-mega-laser` (RF-2.3/KY-008), LED RGB `hardware-inventory.md:9` (HU-01 verde / HU-02 rojo), `feature/app-pantallas-domotica` (MOV-02), `feature/app-mqtt-telemetria` (MOV-03), `feature/app-pin-cerrojo` (MOV-04), `feature/backend-endpoints` (DEVOPS-06/07), `feature/automation-mqtt-sub` (LOW-02).
+  - [x] PM-03: `risk-register.md:32` R-12 Resuelto / R-13 + R-01 pivot skill Alexa/Google Home
+  - [x] MOV-01/MOV-12: `docs/cierre-mov01.md:4` ✅ Done `f03190b` 2026-09-01 — `AetherControlApp`+`ServiceLocator` DI manual, `Retrofit`+DTOs, `PreferencesManager` `updateBaseUrl`, `network_security_config` cleartext, `DashboardViewModel` `StateFlow`+`NavGraph`+`DashboardScreen` editor URL, `assembleDebug`+`testDebugUnitTest` verdes + `curl 192.168.1.14:8000/health` ok en SM-X620 — cierra plantilla-only
+  - [x] PM-02: `docs/tablero-scrum.md:49` `https://github.com/users/Craos6518/projects/14` (Kanban 6 cols)
+  - [x] PM-04: `docs/gantt.md:7` Mermaid Sprints 1-4 + deuda — actualizar LOW-01 a bloqueado 2026-08-31
+  - [x] EST-01: `stats/ema_filter.py` + bench `a051dd4` 531 muestras (adelantado Sprint 1-2)
+- Próximo (Sprint 2): `feature/firmware-mega-cerrojo` (RF-2.2/HU-01 teclado 4x4+MG90S), `feature/firmware-mega-laser` (RF-2.3/KY-008), LED RGB `hardware-inventory.md:9` (HU-01 verde / HU-02 rojo), `feature/app-pantallas-domotica` (MOV-02), `feature/app-mqtt-telemetria` (MOV-03), `feature/app-pin-cerrojo` (MOV-04), `feature/app-setup-mvvm` (**MOV-01 real**), `feature/backend-endpoints` (DEVOPS-06/07), `feature/automation-mqtt-sub` (LOW-02). LOW-01 pivot a skill si se confirma bloqueo.
