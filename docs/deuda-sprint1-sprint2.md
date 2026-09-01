@@ -2,7 +2,7 @@
 
 > **Rama activa:** `feature/firmware-mega-cerrojo` (Sprint 2 Domótica, `docs/sprints.md:52`).
 > **Uso:** cada entrada del agente lee este archivo + `docs/sprints.md` + `docs/backlog.md` + `docs/auditoria-secretos-sprint1.md` para saber qué actividad toca. Al terminar una actividad, el humano marca `- [x]` en la casilla correspondiente. No avanzar a la siguiente sin esa marca.
-> **App Android:** solo abierta en Android Studio, sin desarrollo — `MOV-01` es setup base, `MOV-12` queda fusionado con `MOV-01` (no es "fix build roto" sino "primer build verde").
+> **App Android:** solo abierta en Android Studio, sin desarrollo — `MOV-01` es setup base, `MOV-12` queda fusionado con `MOV-01` (no es "fix build roto" sino "primer build verde"). **Sincerado 2026-08-31:** dueño confirma 0 líneas Kotlin propias — `MainActivity.kt:22`/`DashboardViewModel.kt:32` son plantilla wizard, `MOV-01` pasa a `plantilla-only` (ver `docs/cierre-mov01.md:4`).
 
 | # | Ítem backlog | Actividad | Estado | Dueño | Evidencia al cerrar |
 |---|---|---|---|---|---|
@@ -10,10 +10,10 @@
 | ACT-02 | DEVOPS-11 | Rotar/asegurar credenciales (`secrets.h` + `.env.example`) | - [x] | DevOps | `firmware/gateway-esp32/secrets.h.example`, `backend/.env.example`, `gateway-esp32.ino` sin hardcoded |
 | ACT-03 | DEVOPS-10 | Pipeline CI en verde | - [x] | DevOps | `gh run list` / `ci.yml` verde en `develop` |
 | ACT-04 | PM-03 | Matriz de riesgos actualizada (R-12/R-13) | - [x] | Gestión | `docs/risk-register.md` con R-12/R-13 |
-| ACT-05 | MOV-01 | Cierre formal setup Android MVVM base | - [x] | Móviles | `app/` compila `./gradlew tasks`, `MainActivity.kt` MVVM ok |
-| ACT-06 | MOV-12 | Build Android pendiente (fusionado con ACT-05) | - [x] | Móviles | `ci.yml` `android-build` condicional habilitado |
-| ACT-07 | PM-02 | Tablero Scrum | - [x] | Gestión | Link GitHub Projects en `docs/sprints.md:51` |
-| ACT-08 | PM-04 | Diagrama Gantt | - [x] | Gestión | `docs/gantt.md` (Mermaid) exportado |
+| ACT-05 | MOV-01 | Cierre formal setup Android MVVM base | - [x] ⚠️ plantilla-only (sincerado 2026-08-31) | Móviles | `app/` compila `./gradlew tasks` pero `MainActivity.kt:22`/`DashboardViewModel.kt:32` son plantilla wizard sin código propio — ver `docs/cierre-mov01.md:4`; lógica real queda para `feature/app-setup-mvvm` Sprint 2 |
+| ACT-06 | MOV-12 | Build Android pendiente (fusionado con ACT-05) | - [x] | Móviles | `ci.yml` `android-build` condicional habilitado — infra verde, no código |
+| ACT-07 | PM-02 | Tablero Scrum | - [x] | Gestión | `https://github.com/users/Craos6518/projects/14` (PM-02 completado 2026-08-31) |
+| ACT-08 | PM-04 | Diagrama Gantt | - [x] | Gestión | `docs/gantt.md` (Mermaid) exportado — actualizar LOW-01 a bloqueado 2026-08-31 |
 
 ## Dependencias
 
@@ -39,7 +39,9 @@ ACT-04 (PM-03) ─────────────────────�
 - 2026-08-29 — ACT-05/06 MOV-01/MOV-12 completadas: `app/build.gradle.kts:4` KSP 1.9.22-1.0.17, `app/gradlew` 9.5.0 + `gradle-wrapper.jar` + `.gitignore:90-93` whitelist, `app/gradlew tasks` OK (ksp warning corregido), `docs/cierre-mov01.md` formal; MOV-12 fusionado (CI `ci.yml:241` condicional, `assembleDebug` requiere SDK en CI).
 - 2026-08-29 — ACT-07 PM-02 completada: `docs/tablero-scrum.md` 6 columnas Kanban + 8 tarjetas deuda/Sprint2, guía GitHub Projects.
 - 2026-08-29 — ACT-08 PM-04 completada: `docs/gantt.md` Mermaid con Sprints 1-4 + deuda 1→2 (8 ACT done) y ruta crítica.
+- 2026-08-31 — Sinceramiento MOV-01: dueño confirma 0 líneas Kotlin propias — `docs/cierre-mov01.md:4` pasa a plantilla-only; PM-02 link real `https://github.com/users/Craos6518/projects/14`; rotación FELIPE./2516f751 cerrada (red prod rotada + AP lab FELIPE./2516f751 recreado); LOW-01 bloqueado — 2da opción skill Alexa/Google Home en evaluación (R-01).
 
-## Notas App Android (aclaración 2026-08-29)
+## Notas App Android (aclaración 2026-08-29 — sincerada 2026-08-31)
 
 > "No he comenzado con el desarrollo de la app, solo la abrí con Android Studio" — `MOV-01`/`MOV-12` no son fix de build roto sino setup inicial. `app/build.gradle.kts:1` y `app/src/main/java/com/aethernet/aethercontrol/MainActivity.kt:22` están en estado plantilla. ACT-05/06 validarán primer `./gradlew tasks` / `assembleDebug` local sin exigir CI Android verde completo hasta que exista código Compose real.
+> **2026-08-31:** confirmación formal — `MainActivity.kt:52` `DashboardScreen` y `DashboardViewModel.kt:41` son scaffold wizard con `TODO MQTT` sin implementación. Infra (`gradlew 9.5.0`, KSP, `ci.yml:241`) verde, pero `MOV-01` no es Done hasta escribir lógica MVVM real en Sprint 2.

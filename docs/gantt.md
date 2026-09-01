@@ -2,7 +2,7 @@
 
 Resuelve deuda Sprint 1→2 PM-04. Fuente: `docs/sprints.md:9-48` + `docs/backlog.md:9-79` + `docs/branching-strategy.md:122-131` + `docs/deuda-sprint1-sprint2.md`.
 
-> Sprint 1 fechado 2026-08-26 (merge `9eac686` a `develop`), Sprint 2 activo. Deuda 1→2 saldada 2026-08-29 en `feature/firmware-mega-cerrojo`. Fuera de alcance (W) omitido.
+> Sprint 1 fechado 2026-08-26 (merge `9eac686` a `develop`), Sprint 2 activo. Deuda 1→2 saldada 2026-08-29 en `feature/firmware-mega-cerrojo`, sincerada 2026-08-31 (MOV-01 plantilla-only, rotación cerrada, Project 14, LOW-01 pivot skill). Fuera de alcance (W) omitido.
 
 ```mermaid
 gantt
@@ -15,8 +15,9 @@ gantt
     DEVOPS-01..03 Docker/PG/Mosquitto   :done,  s1a, 2026-08-12, 5d
     DEVOPS-04 CI arduino-cli            :done,  s1b, 2026-08-14, 4d
     DEVOPS-05 RF nRF24L01                :done,  s1c, 2026-08-16, 4d
-    MOV-01 Setup MVVM                    :done,  s1d, 2026-08-17, 7d
-    LOW-01 tuya-local validación         :active,s1e, 2026-08-18, 8d
+    MOV-01 Setup MVVM (plantilla-only)   :done,  s1d, 2026-08-17, 7d
+    LOW-01 tuya-local validación         :crit, active, s1e, 2026-08-18, 8d
+    LOW-01 pivot skill Alexa/GHome      :crit, s1e2, 2026-08-31, 7d
     EST-01 EMA prototipo                 :done,  s1f, 2026-08-13, 6d
     PM-03/04 sprints/gantt inicial      :done,  s1g, 2026-08-12, 3d
 
@@ -27,8 +28,9 @@ gantt
     PM-03 R-12/R-13                     :done,  d4, 2026-08-29, 1d
     MOV-01 cierre formal                :done,  d5, 2026-08-29, 1d
     MOV-12 build Android                :done,  d6, 2026-08-29, 1d
-    PM-02 tablero Scrum                 :done,  d7, 2026-08-29, 1d
+    PM-02 tablero Scrum (Project 14)    :done,  d7, 2026-08-29, 1d
     PM-04 gantt (este archivo)          :done,  d8, 2026-08-29, 1d
+    Sinceramiento 2026-08-31             :done,  d9, 2026-08-31, 1d
 
     section Sprint 2 — Domótica (RF-2.2 HU-01)
     FW-MEGA cerrojo 4x4+MG90S            :active, s2a, 2026-08-26, 10d
@@ -65,13 +67,15 @@ PM-08 ─► DEVOPS-11 ─► DEVOPS-10 ─► MOV-01/12 (deuda, ya saldada 2026
 ```
 
 - **Ruta crítica:** `DEVOPS-11 → DEVOPS-10 → MOV-01` (desbloqueó CI y KSP 1.9.22-1.0.17, `.gitignore`).
-- **Riesgo LOW-01** (`R-01`) validado en Sprint 1, no esperar a Sprint 4 (`backlog.md:63`).
+- **Riesgo LOW-01** (`R-01`) bloqueado 2026-08-31 acceso `local_key` difícil — pivot a **skill Alexa/Google Home** como alternativa oficial si se confirma incompatibilidad (`risk-register.md:16`).
+- `MOV-01` sincerado plantilla-only 2026-08-31 — lógica real queda para `feature/app-setup-mvvm` Sprint 2.
 - `MOV-06` latencia joystick depende de `DEVOPS-05` RF ya probado.
 
 ## Hitos
 
 - 2026-08-26 Sprint 1 merge `9eac686` → `develop` + `sprint/2-domotica-acceso` activo.
 - **2026-08-29 Deuda 1→2 saldada** (8/8 ACT en `docs/deuda-sprint1-sprint2.md`).
+- **2026-08-31 Sinceramiento:** MOV-01 plantilla-only (`docs/cierre-mov01.md:4`), rotación prod + AP lab `FELIPE./2516f751` (`R-12` Resuelto), Project `https://github.com/users/Craos6518/projects/14`, LOW-01 pivot skill Alexa/GHome (`R-01` alta bloqueada), `a051dd4` EMA bench en `develop`.
 - 2026-09-08 Sprint 3 inicia (requiere Sprint 2 verde).
 - 2026-09-22 Sprint 4 cierre E2E + sustentación.
 
