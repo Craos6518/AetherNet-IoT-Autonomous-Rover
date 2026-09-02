@@ -62,7 +62,7 @@ Backlog operativo detallado: [`backlog-devops.md`](backlog-devops.md)
 
 | Tema | Profundidad requerida | Para qué requisito |
 |---|---|---|
-| Subredes, DHCP reservations (IP fija al ESP32/bombillo/servidor) | Aplicar en el router | Restricción §6 PRD: todo en la misma subred |
+| Subredes, DHCP reservations (IP fija al ESP32/servidor) | Aplicar en el router | Restricción §6 PRD: todo en la misma subred (bombillo cancelado) |
 | Diagnóstico: ping, nmap, tcpdump básico | Saber usar | Debugging de conectividad MQTT/RF |
 | Puertos: 1883 (MQTT), 9001 (WS), 5432 (PG), 8000 (API) | Saber quién expone qué y a quién | Seguridad LAN |
 

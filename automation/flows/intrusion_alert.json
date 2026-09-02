@@ -14,7 +14,11 @@
     "inputs": 0,
     "x": 150,
     "y": 100,
-    "wires": [["function-parse-intrusion"]]
+    "wires": [
+      [
+        "function-parse-intrusion"
+      ]
+    ]
   },
   {
     "id": "function-parse-intrusion",
@@ -29,7 +33,12 @@
     "libs": [],
     "x": 350,
     "y": 100,
-    "wires": [["telegram-alert", "tuya-bulb-alert", "debug-intrusion"]]
+    "wires": [
+      [
+        "telegram-alert",
+        "debug-intrusion"
+      ]
+    ]
   },
   {
     "id": "telegram-alert",
@@ -44,7 +53,11 @@
     "libs": [],
     "x": 550,
     "y": 50,
-    "wires": [["http-telegram"]]
+    "wires": [
+      [
+        "http-telegram"
+      ]
+    ]
   },
   {
     "id": "http-telegram",
@@ -69,38 +82,11 @@
     ],
     "x": 750,
     "y": 50,
-    "wires": [["debug-telegram"]]
-  },
-  {
-    "id": "tuya-bulb-alert",
-    "type": "function",
-    "z": "aethernet-main",
-    "name": "Format Tuya Bulb Command (Red Flash)",
-    "func": "// Tuya local protocol via tuya-local node or HTTP\n// Mercury LB401 RGB bulb - flash red 3 times\nmsg.payload = {\n    device_id: $globalContext(\"tuya_bulb_device_id\"),\n    local_key: $globalContext(\"tuya_bulb_local_key\"),\n    ip: $globalContext(\"tuya_bulb_ip\"),\n    commands: [\n        { code: \"colour_data\", value: { h: 0, s: 1000, v: 1000 } },  // Red\n        { code: \"switch_led\", value: true }\n    ],\n    flash_pattern: {\n        count: 3,\n        on_ms: 500,\n        off_ms: 500\n    }\n};\nreturn msg;",
-    "outputs": 1,
-    "noerr": 0,
-    "initialize": "",
-    "finalize": "",
-    "libs": [],
-    "x": 550,
-    "y": 150,
-    "wires": [["tuya-local-send"]]
-  },
-  {
-    "id": "tuya-local-send",
-    "type": "exec",
-    "z": "aethernet-main",
-    "name": "tuya-cli send command",
-    "command": "tuya-cli",
-    "addpay": true,
-    "append": "",
-    "useSpawn": "false",
-    "timer": "",
-    "oldrc": false,
-    "name": "tuya-cli send",
-    "x": 750,
-    "y": 150,
-    "wires": [["debug-tuya"], [], []]
+    "wires": [
+      [
+        "debug-telegram"
+      ]
+    ]
   },
   {
     "id": "debug-intrusion",
@@ -134,23 +120,6 @@
     "statusType": "auto",
     "x": 950,
     "y": 50,
-    "wires": []
-  },
-  {
-    "id": "debug-tuya",
-    "type": "debug",
-    "z": "aethernet-main",
-    "name": "Debug: Tuya Response",
-    "active": true,
-    "tosidebar": true,
-    "console": false,
-    "tostatus": false,
-    "complete": "payload",
-    "targetType": "msg",
-    "statusVal": "",
-    "statusType": "auto",
-    "x": 950,
-    "y": 150,
     "wires": []
   },
   {

@@ -29,7 +29,7 @@ AetherNet es una plataforma integral de domótica y robótica móvil orientada a
 *   Aplicación nativa de Android en Kotlin (MVVM, Jetpack Compose).
 *   Backend local contenerizado en Docker (FastAPI, PostgreSQL, Mosquitto MQTT).
 *   Automatización LowCode mediante Node-RED.
-*   Control local de bombillería inteligente vía IP (`tuya-local`).
+*   ~~Control local de bombillería inteligente vía IP (`tuya-local`)~~ — **CANCELADO 2026-09-01** (ver `docs/adr/adr-001-cancelacion-tuya.md`, `docs/risk-register.md:16` R-01 — políticas API propietaria viola RNF-3.1). Iluminación de intrusión solo vía LED RGB local.
 *   Firmware C++ en microcontroladores interconectados por RF (2.4 GHz), UART y Wi-Fi.
 *   Implementación de algoritmos estadísticos (Media Móvil Exponencial) en el firmware.
 
@@ -56,6 +56,6 @@ Para garantizar la viabilidad y calidad del producto, el sistema será evaluado 
 
 ## 6. Suposiciones y Restricciones Técnicas
 
-*   **Restricción de Red:** Todos los dispositivos Wi-Fi (ESP32, ESP8266, App, Bombillo Tuya y Servidor Docker) deben operar estrictamente en la misma subred de área local (LAN).
+*   **Restricción de Red:** Todos los dispositivos Wi-Fi (ESP32, ESP8266, App y Servidor Docker) deben operar estrictamente en la misma subred LAN. ~~Bombillo Tuya~~ eliminado del alcance.
 *   **Restricción de Energía:** El Rover depende de baterías Lipo/18650, por lo que su tiempo de operación autónoma está limitado a la capacidad de la batería, sin estación de recarga automática en esta versión.
 *   **Contingencia:** Si el router principal falla o pierde conexión a Internet, la automatización IP se caerá, pero el acceso a la puerta (Teclado/Servomotor) seguirá operando gracias al procesamiento *Edge* del Arduino MEGA.

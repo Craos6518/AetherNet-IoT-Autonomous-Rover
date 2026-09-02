@@ -35,15 +35,10 @@ AetherNet es un sistema distribuido de 3 capas que vive completo dentro de una m
 │                    ┌────────▼───────┐  ┌──────▼─────────┐
 │                    │ App AetherControl│  │  Node-RED       │
 │                    │ (Kotlin/Compose) │  │  (automation/)  │
-│                    └──────────────────┘  └────┬───────┬────┘
-│                                                │       │
-│                                          Telegram   tuya-local
-│                                          Bot API    (LAN, HTTP/TCP)
-│                                                        │
-│                                                 ┌──────▼──────────┐
-│                                                 │ Bombillo Mercury │
-│                                                 │ LB401 (RGB)      │
-│                                                 └──────────────────┘
+│                    └──────────────────┘  └────┬──────┘
+│                                                │
+│                                          Telegram
+│                                          Bot API
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -56,7 +51,7 @@ AetherNet es un sistema distribuido de 3 capas que vive completo dentro de una m
 | **Rover UNO** (`firmware/rover-uno/`) | Tracción (L298N), evasión de obstáculos (HC-SR04), anti-caída (TCRT5000), recepción de comandos RF | Decisión de "modo patrullaje" a alto nivel (eso llega como comando desde la app vía Gateway) |
 | **Backend** (`backend/`) | FastAPI (API REST + WebSockets), Mosquitto (bus de eventos pub/sub), PostgreSQL (histórico de accesos/eventos) | Reglas de automatización (eso es Node-RED); UI |
 | **App AetherControl** (`app/`) | Dashboard en tiempo real, joystick virtual, envío de PIN, fallback Bluetooth SPP | Almacenamiento persistente (consume el histórico vía backend, no lo posee) |
-| **Node-RED** (`automation/`) | Motor de reglas: escucha eventos MQTT y dispara Telegram / cambios en el bombillo Tuya | Control de acceso físico (eso es del MEGA, de forma independiente) |
+| **Node-RED** (`automation/`) | Motor de reglas: escucha eventos MQTT y dispara notificaciones Telegram | Control de acceso físico (eso es del MEGA, de forma independiente) |
 | **stats/** | Filtro EMA (y prototipo de Kalman) sobre lecturas de sensores; prueba t-Student RF vs. Wi-Fi | Actuar sobre los motores directamente — el filtro corre en firmware (ver §4), `stats/` es para el análisis offline/histórico |
 
 ## 3. Protocolos de comunicación
@@ -67,7 +62,6 @@ AetherNet es un sistema distribuido de 3 capas que vive completo dentro de una m
 | Gateway ↔ MEGA | UART (serial) | Enlace punto a punto simple, confiable a corta distancia física (mismo panel) | — |
 | Gateway ↔ Backend ↔ App/Node-RED | MQTT (Mosquitto) + WebSockets | Pub/sub desacopla productores (sensores) de consumidores (app, Node-RED); WebSockets para push en tiempo real al dashboard | < 50 ms |
 | App ↔ nodos críticos (fallback) | Bluetooth SPP | Contingencia si cae el Wi-Fi (RF-1.3); no reemplaza MQTT, es solo respaldo | — |
-| Node-RED ↔ Bombillo Tuya | `tuya-local` (LAN, sin nube) | Cumplir RNF-3.1 (100% FOSS) evitando Tuya Cloud | — |
 | Node-RED ↔ Telegram | HTTPS (Telegram Bot API) | Única salida a Internet del sistema; solo para notificaciones, no para control | — |
 
 > **Nota de diseño:** Telegram es la única dependencia de red externa (Internet) de todo el sistema. Si el router pierde Internet, las notificaciones fallan pero el acceso físico (MEGA) sigue operando — ver Contingencia en `prd.md` §6 y riesgo R-09 en `risk-register.md`.
@@ -94,19 +88,17 @@ El EMA corre **en el firmware** (decisión en tiempo real); el análisis estadí
 3. MEGA reporta el evento al Gateway vía UART.
 4. Gateway publica el evento en un topic MQTT (ej. `aethernet/seguridad/intrusion`).
 5. Backend lo persiste en PostgreSQL.
-6. Node-RED, suscrito al mismo topic, dispara en paralelo:
-   - Mensaje a Telegram (RF-4.1).
-   - Cambio del bombillo Tuya a rojo parpadeante vía `tuya-local` (RF-4.2).
+6. Node-RED, suscrito al mismo topic, dispara mensaje a Telegram (RF-4.1).
 7. La app, también suscrita, refleja la alerta en el dashboard en tiempo real (RF-1.1).
 
-Los pasos 2 y 6 son **independientes entre sí**: el LED local funciona aunque MQTT/Node-RED estén caídos (ver nota de diseño en `hardware-inventory.md`).
+Los pasos 2 y 6 son **independientes entre sí**: el LED RGB local funciona aunque MQTT/Node-RED estén caídos (ver `hardware-inventory.md`).
 
 ## 6. Decisiones de diseño y alternativas descartadas
 
 | Decisión | Alternativa considerada | Por qué se descartó |
 |---|---|---|
 | MQTT (Mosquitto) como bus central | HTTP polling directo desde la app | Polling no escala bien a eventos en tiempo real y no desacopla productores/consumidores |
-| `tuya-local` para el bombillo | Tuya Cloud API | Viola RNF-3.1 (100% FOSS, sin nube propietaria) |
+| Bombillo Tuya cancelado (2026-09-01) | `tuya-local` / Tuya Cloud API | Cancelado por incompatibilidad `local_key` (R-01) y complejidad; se mantiene solo LED RGB local + Telegram para HU-02 |
 | RF (nRF24L01) para Gateway↔Rover | Wi-Fi (ESP-NOW o socket) | RF dedicado da latencia más predecible para control de motores; Wi-Fi ya está ocupado por MQTT/telemetría general |
 | EMA sobre Kalman para el filtro en producción | Filtro de Kalman completo | EMA es suficiente para el KPI de >85% de reducción de ruido con muchísima menor complejidad de implementación en firmware con recursos limitados; Kalman queda como comparación conceptual (ver `roadmap.md` §5) |
 

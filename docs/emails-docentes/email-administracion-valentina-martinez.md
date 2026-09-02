@@ -16,7 +16,7 @@ Solo tuvimos **una semana de clases** antes del sismo. Dado que su asignatura **
 |------------|---------------------|----------|
 | **App Móvil** | Kotlin + Jetpack Compose (Android nativo) | Interfaz humana: dashboard, joystick, PIN, alertas |
 | **Backend** | Python (FastAPI) + PostgreSQL + Mosquitto MQTT (Docker) | API, Base de datos, Broker de mensajes tiempo real |
-| **Automatización** | Node-RED (LowCode visual) + Telegram Bot + `tuya-local` | Reglas: "si intrusión → Telegram + luz roja" |
+| **Automatización** | Node-RED + Telegram Bot (tuya-local cancelado 2026-09-01) | Reglas: "si intrusión → Telegram + LED RGB rojo" |
 | **Gateway ESP32** | C++ (Arduino CLI) | Puente Wi-Fi/MQTT ↔ Radio 2.4GHz (nRF24L01) ↔ Puerto serie (UART) |
 | **Controlador MEGA** | C++ (Arduino IDE) | Cerrojo (teclado 4x4 + servo), Láser KY-008, LED RGB, Relés |
 | **Rover UNO** | C++ (Arduino IDE) | Robot oruga: motores L298N, Ultrasonido HC-SR04, IR TCRT5000, Radio nRF24L01 |

@@ -37,7 +37,7 @@ Evaluación del PDF: proyecto por cortes (30% + 30% + 40%) — el Proyecto Integ
 | Lo que se ve en el contenido | Lo que se aplica en el proyecto | Dónde está aplicado |
 |---|---|---|
 | Identificación y matriz de riesgos | Matriz formal de riesgos del proyecto; cada riesgo con plan de mitigación | `docs/risk-register.md`; ítem PM-03 del backlog |
-| Riesgos técnicos de integración | Riesgo crítico #1 identificado temprano: compatibilidad `tuya-local` del bombillo — con instrucción explícita de validar en Sprint 1 aunque su implementación sea Sprint 4 | `docs/backlog.md` LOW-01 + §"Resumen de riesgos críticos"; `docs/roadmap.md` §3 |
+| Riesgos técnicos de integración | ~~Riesgo tuya-local~~ — **CANCELADO 2026-09-01** (R-01, RF-4.2 Won't). Hu-02 ahora solo Telegram + LED RGB | `docs/risk-register.md:16` R-01 |
 | Riesgos de dependencia entre áreas | Cada área del backlog documenta su riesgo específico: cascada Móviles←DevOps (MOV-06 depende del enlace RF), base fundacional DevOps que bloquea todo, backlog Estadística concentrado en Sprint 4 | `docs/backlog.md` §riesgos por área |
 | Riesgo de seguridad funcional | Fail-safe del Rover ante pérdida de enlace RF (HU-04) nació como respuesta a riesgo documentado | RF-3.3 ↔ `docs/architecture.md` §6 ↔ `docs/risk-register.md` |
 
