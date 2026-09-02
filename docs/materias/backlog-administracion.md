@@ -28,7 +28,7 @@ Backlog operativo detallado del Área 4. IDs PM-01..07 provienen de `docs/backlo
 
 ### PM-03 — Matriz de riesgos viva ✅ EXISTE (actualizar)
 | M · Continuo · Origen entregable PDF |
-**Qué hacer exactamente ahora:** incorporar a `docs/risk-register.md` los riesgos NUEVOS encontrados en esta revisión técnica: (a) CI silenciosamente roto por ausencia de `main.py` (prob. alta/impacto alto hasta cerrar DEVOPS-06); (b) conflicto pines MEGA relés↔LED (ya detectado, sin mitigación asignada); (c) credenciales versionadas en gateway.ino; (d) job Android desactivado oculta fallos de compilación de la app.
+**Qué hacer exactamente ahora:** incorporar a `docs/risk-register.md` los riesgos NUEVOS encontrados en esta revisión técnica: (a) CI silenciosamente roto por ausencia de `main.py` (prob. alta/impacto alto hasta cerrar DEVOPS-06); (b) pinout MEGA verificado tras eliminar matriz de potencia (histórico resuelto); (c) credenciales versionadas en gateway.ino; (d) job Android desactivado oculta fallos de compilación de la app.
 **Criterios:**
 - [ ] Cada riesgo nuevo tiene probabilidad, impacto, mitigación y responsable
 - [ ] Revisión documentada al cierre de cada sprint (fecha + cambios)

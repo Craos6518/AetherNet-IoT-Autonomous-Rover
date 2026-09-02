@@ -22,7 +22,7 @@ Backlog operativo detallado: [`backlog-devops.md`](backlog-devops.md)
 |---|---|---|---|
 | Configuración `mosquitto.conf`: listener 1883 + WebSocket 9001 | Saber editar y reiniciar | RF-2.1 | El puerto 9001 ya está mapeado en Compose; falta confirmar que la config lo habilite (`protocol websockets`) — la App Android usará WS o TCP según librería |
 | Autenticación (`password_file`) y ACLs (`acl_file`) | Saber crear ambos archivos y hashear contraseñas con `mosquitto_passwd` | DEVOPS-02, RF-4.2 | Mínimo: gateway puede publicar en `aethernet/#`; Node-RED puede leer `aethernet/seguridad/#`; nadie anónimo publica |
-| Topics y QoS: diseño de árbol de topics | Diseñar y documentar tabla topic→productor→consumidor→QoS | RF-2.1, RF-4.x | Los topics ya existen definidos en `gateway.ino` (rover/command, access/event, seguridad/intrusion, relay/+): documentarlos es la tarea, no inventarlos nuevos |
+| Topics y QoS: diseño de árbol de topics | Diseñar y documentar tabla topic→productor→consumidor→QoS | RF-2.1, RF-4.x | Los topics ya existen definidos en `gateway.ino` (rover/command, access/event, seguridad/intrusion): documentarlos es la tarea, no inventarlos nuevos |
 | Retained messages y Last Will (LWT) | Conceptual+aplicado en gateway | RF-3.3 | LWT del gateway para que la App sepa si el gateway murió |
 
 ## Bloque 3 — CI/CD GitHub Actions avanzado (Sprint 1-2)
@@ -54,7 +54,7 @@ Backlog operativo detallado: [`backlog-devops.md`](backlog-devops.md)
 | Protocolo UART ESP32↔MEGA: framing + checksum | Diseñar y documentar | RF-2.1 | Ambos sketches usan Serial2 @115200 pero **el formato de trama no está documentado**: definir (ej. JSON por línea vs binario con header/checksum), misma decisión en ambos lados |
 | Structs empaquetados (`#pragma pack`) compartidos entre sketches | Aplicar | RF-3.1 | Patrón ya usado Rover↔Gateway; replicar consistencia Gateway↔MEGA |
 | Gestión de credenciales en firmware (sin hardcodear) | Refactorizar | Seguridad, FOSS | `gateway.ino` tiene `WIFI_PASSWORD "changeme"` y broker IP fija → mover a archivo `config.h` ignorado por git + plantilla `config.h.example` |
-| Resolución de conflictos de pines | Analizar y corregir | RF-2.2 | `access_control.ino` declara relés en pins 40-47 que chocan con LED RGB 44-46 (conflicto ya detectado en comentario del código): reasignar y actualizar pinout |
+| Resolución de conflictos de pines | Verificar | RF-2.2 | `access_control.ino` verificado — LED RGB 44-46 libre, sin colisión (conflicto histórico resuelto) |
 | EEPROM para PIN y config persistente | Implementar | HU-01 | `VALID_PIN "1234"` hardcodeado con TODO explícito → mover a EEPROM con comando de cambio de PIN |
 | Depuración serie y medición de latencia | Aplicar | KPI PRD (<10 ms RF, <50 ms MQTT) | Instrumentar timestamps en paquetes para alimentar EST-05 |
 

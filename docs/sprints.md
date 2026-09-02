@@ -63,4 +63,13 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
   - [x] DEVOPS-04: Pipeline `ci.yml:90` corregido (FQBN rover `arduino:avr:uno`, ArduinoJson pinned 6.21.3); compilación local OK: `mega-access` 19252 bytes/7%, `rover-uno` 6900 bytes/21% (arduino-cli 1.5.1); estructura sketch `firmware/*/*.ino` creada para CI.
   - [x] DEVOPS-05: ✅ VALIDADO HW 2026-09-01 — `docs/testing-rf-sprint1.md:32` 4/4: `nRF24L01 initialized` ambos (`ESP32 CSN15` `ttyUSB0` + `UNO` `ttyACM0`), `RF TX/RX L=120` `mosquitto_pub 192.168.1.14` + `isChipConnected=1` `test-nrf`, `FAIL-SAFE 500ms` `rover-uno.ino:220`.
   - Tests: `backend/tests/test_health.py:6` (6 tests, mock DB) + `stats/tests/test_ema_filter.py` pasan; ruff `All checks passed`.
-- Próximo: cerrar Sprint 1 con `docker compose up` + `curl /health` en CI, y arrancar Sprint 2 (cerrojo MEGA + LED RGB + pantallas Compose).
+- Deuda Sprint 1→2 saldada 2026-08-29 (8/8) — deltas 2026-08-31:
+  - [x] PM-08: `docs/auditoria-secretos-sprint1.md:10` H-01/H-02 (FELIPE./2516f751 en `ed557b7/ddebd48`) — H-01 **Cerrado 2026-08-31** prod rotada + AP lab recreado
+  - [x] DEVOPS-11/08: `gateway-esp32.ino:20-51` sin hardcode + `secrets.h.example` + `backend/.env.example` + `.gitignore:219` (`firmware/**/secrets.h`)
+  - [x] DEVOPS-10: `ci.yml:14` 1.5.1, `ci.yml:99-107` fallback secrets, `ci.yml:241` android-build condicional, `.gitignore:72-73` (MOV-12); verificado ruff/pytest/mypy/arduino-cli verde
+  - [x] PM-03: `risk-register.md:32` R-12 Resuelto / R-13 + R-01 pivot skill Alexa/Google Home
+  - [x] MOV-01/MOV-12: `docs/cierre-mov01.md:4` ✅ Done `f03190b` 2026-09-01 — `AetherControlApp`+`ServiceLocator` DI manual, `Retrofit`+DTOs, `PreferencesManager` `updateBaseUrl`, `network_security_config` cleartext, `DashboardViewModel` `StateFlow`+`NavGraph`+`DashboardScreen` editor URL, `assembleDebug`+`testDebugUnitTest` verdes + `curl 192.168.1.14:8000/health` ok en SM-X620 — cierra plantilla-only
+  - [x] PM-02: `docs/tablero-scrum.md:49` `https://github.com/users/Craos6518/projects/14` (Kanban 6 cols)
+  - [x] PM-04: `docs/gantt.md:7` Mermaid Sprints 1-4 + deuda — actualizar LOW-01 a bloqueado 2026-08-31
+  - [x] EST-01: `stats/ema_filter.py` + bench `a051dd4` 531 muestras (adelantado Sprint 1-2)
+- Próximo (Sprint 2): `feature/firmware-mega-cerrojo` (RF-2.2/HU-01 teclado 4x4+MG90S), `feature/firmware-mega-laser` (RF-2.3/KY-008), LED RGB `hardware-inventory.md:9` (HU-01 verde / HU-02 rojo), `feature/app-pantallas-domotica` (MOV-02), `feature/app-mqtt-telemetria` (MOV-03), `feature/app-pin-cerrojo` (MOV-04), `feature/app-setup-mvvm` (**MOV-01 real**), `feature/backend-endpoints` (DEVOPS-06/07), `feature/automation-mqtt-sub` (LOW-02). LOW-01 pivot a skill si se confirma bloqueo.

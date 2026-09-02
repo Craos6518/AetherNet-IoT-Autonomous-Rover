@@ -32,6 +32,8 @@ Resuelve `PM-03` del backlog. Consolida los riesgos ya identificados de forma di
 |---|---|---|---|---|---|---|
 | R-08 | Dispositivos fuera de la subred LAN esperada (`prd.md` §6) | Baja | Alto (rompe MQTT y RF) | Media | Fijar IPs por DHCP reservation antes de Sprint 2 | DevOps |
 | R-09 | Caída del router / pérdida de Internet | Media | Bajo (mitigado: acceso Edge MEGA sigue operando) | Baja | Ya mitigado (`prd.md` §6); solo verificar que Telegram falle de forma controlada, no silenciosa (tuya-local ya cancelado) | DevOps |
+| R-12 | Credenciales WiFi hardcodeadas en historial git (`FELIPE./2516f751` en `gateway-esp32.ino:24-25`, commits `ed557b7/ddebd48`) — PM-08 H-01 — **RESUELTO 2026-08-31** | Baja (histórico) | Alto (histórico) | **Resuelto** | ACT-02 DEVOPS-11: `firmware/gateway-esp32/secrets.h` (gitignoreado) + `secrets.h.example`; fallback `__has_include` con defaults `AetherNet-LAN/changeme` para CI. **2026-08-31:** producción rotada (password prod cambiado); AP lab `FELIPE./2516f751` recreado idéntico para compatibilidad local — prod ya no expuesto. No requiere `filter-repo` — ver `docs/auditoria-secretos-sprint1.md:10` §5 y `docs/deuda-sprint1-sprint2.md:36` | DevOps | Resuelto 2026-08-31 |
+| R-13 | IP LAN hardcodeada (`192.168.1.14/100` en `gateway-esp32.ino:26,35`) acopla firmware a host `wlp1s0` y rompe CI/docker | Media | Medio (falla `POST /api/access-events` fuera de LAN de prueba) | Media | Mover `MQTT_BROKER/BACKEND_HOST` a `secrets.h` y `env.example:48`/`backend/.env.example:9`; usar DHCP reservation o mDNS (`aethernet.local`) antes de Sprint 2 | DevOps | Sprint 2 |
 
 ## Riesgos de gestión / proyecto
 

@@ -51,6 +51,16 @@ Sprint activo: `<pendiente de definir>` — ver [`docs/sprints.md`](./docs/sprin
 
 **2026-09-01:** bombillo Tuya / `tuya-local` **CANCELADO** (R-01). Riesgo crítico cerrado; HU-02 ahora solo Telegram + LED RGB local.
 
+## 📱 App AetherControl — Arquitectura MOV-01 (RF-1.1, RNF-3.1)
+
+**Stack:** Kotlin 2.2.10, Jetpack Compose (BOM 2026.02.01), MVVM + StateFlow, Retrofit 2.11.0 + OkHttp 4.12.0 + kotlinx.serialization 1.8.0, Navigation Compose 2.8.4, DataStore 1.1.1 — todo FOSS.
+
+**DI manual (RNF-3.1):** `core/di/ServiceLocator.kt:1` es `object ServiceLocator` con `lateinit appContext` / `by lazy` para `OkHttpClient`, `Retrofit`, `ApiService`, `PreferencesManager`, `AetherRepository`. Se inicializa en `AetherControlApp.kt:1` (`Application.onCreate`) y se registra en `app/src/main/AndroidManifest.xml:5` (`android:name=".AetherControlApp"`). `ui/viewmodel/ViewModelFactory.kt:1` expone `DashboardViewModelFactory(repo) : ViewModelProvider.Factory` y se usa en `MainActivity.kt:16` como `viewModel(factory = DashboardViewModelFactory(ServiceLocator.repository))`. No se usa Hilt/Koin a propósito — decisión documentada para evaluación académica RNF-3.1.
+
+**Networking:** `data/remote/ApiService.kt:1` espeja `backend/app/main.py:48` y `backend/app/routers/events.py:31,58,92,123`; `baseUrl = "http://10.0.2.2:8000/"` (emulador) extraído a `ServiceLocator`/`PreferencesManager` (no hardcodeado en ViewModel). `Json { ignoreUnknownKeys=true; isLenient=true }` + `HttpLoggingInterceptor` solo en `BuildConfig.DEBUG`.
+
+**DTOs:** `data/remote/dto/*` espejo de `backend/app/schemas.py:17,26,33,47,56,73,79,95,106` con `@Serializable` y `@SerialName("event_metadata")` donde aplica.
+
 ## 📄 Licencia
 
 <!-- TODO: el stack debe ser 100% FOSS (RNF-3.1), pero falta definir la licencia del repositorio en sí -->

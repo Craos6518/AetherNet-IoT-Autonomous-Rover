@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop]
+    branches: ['**']
   pull_request:
     branches: [main, develop]
 
@@ -11,7 +11,7 @@ permissions:
   security-events: write
 
 env:
-  ARDUINO_CLI_VERSION: 1.0.4
+  ARDUINO_CLI_VERSION: 1.5.1
 
 jobs:
   # =============================================================================
@@ -96,16 +96,26 @@ jobs:
           arduino-cli core install arduino:avr
           arduino-cli lib install "Keypad" "Servo" "RF24" "NewPing" "ArduinoJson@6.21.3" "PubSubClient"
 
+      - name: Prepare secrets fallback (DEVOPS-11 — gateway sin secrets.h usa defaults)
+        if: matrix.firmware == 'gateway-esp32'
+        run: |
+          if [ ! -f firmware/gateway-esp32/secrets.h ] && [ -f firmware/gateway-esp32/secrets.h.example ]; then
+            echo "secrets.h missing — copying from secrets.h.example for CI (defaults AetherNet-LAN/changeme)"
+            cp firmware/gateway-esp32/secrets.h.example firmware/gateway-esp32/secrets.h
+          fi
+          cat firmware/gateway-esp32/secrets.h || echo "using __has_include fallback defaults in gateway-esp32.ino:28-51"
+
       - name: Compile firmware
         run: |
           export PATH="$(pwd)/bin:$HOME/bin:$PATH"
           if [ "${{ matrix.firmware }}" = "gateway-esp32" ]; then FQBN="esp32:esp32:esp32"; elif [ "${{ matrix.firmware }}" = "rover-uno" ]; then FQBN="arduino:avr:uno"; else FQBN="arduino:avr:mega"; fi; echo "Compiling ${{ matrix.firmware }} with $FQBN"; arduino-cli compile --fqbn $FQBN ./firmware/${{ matrix.firmware }}
 
   # =============================================================================
-  # Docker Build Test
+  # Docker Build Test + Integration (Sprint 1 cierre — docs/sprints.md:61)
+  # Valida stack real: postgres health → fastapi /health → POST/GET 4 endpoints
   # =============================================================================
   docker-build:
-    name: Docker Build Test
+    name: Docker Build + Integration Test
     runs-on: ubuntu-latest
     needs: [backend-test, firmware-compile]
     steps:
@@ -116,17 +126,87 @@ jobs:
         run: |
           docker compose build --no-cache
 
-      - name: Test Docker Compose up (background)
+      - name: Start stack (detached)
         run: |
           docker compose up -d
-          sleep 10
           docker compose ps
 
-      - name: Test FastAPI health endpoint
+      - name: Wait for Postgres healthy
         run: |
-          curl -f http://localhost:8000/health || exit 1
+          echo "Waiting for postgres healthcheck..."
+          for i in $(seq 1 30); do
+            if docker inspect --format='{{json .State.Health.Status}}' aethernet-postgres 2>/dev/null | grep -q "healthy"; then
+              echo "Postgres healthy"
+              break
+            fi
+            echo "  attempt $i/30 — not healthy yet"
+            sleep 2
+            if [ "$i" = "30" ]; then echo "Postgres did not become healthy"; docker compose logs postgres; exit 1; fi
+          done
+
+      - name: Wait for FastAPI /health (retry 30x2s)
+        run: |
+          echo "Polling http://localhost:8000/health ..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8000/health | grep -q '"status":"ok"'; then
+              echo "FastAPI healthy"
+              curl -s http://localhost:8000/health | cat
+              break
+            fi
+            echo "  attempt $i/30 — waiting..."
+            sleep 2
+            if [ "$i" = "30" ]; then echo "FastAPI /health never ready"; docker compose logs fastapi; docker compose ps; exit 1; fi
+          done
+
+      - name: Integration — POST/GET 4 endpoints (HU-01..HU-03, RF-3.3)
+        run: |
+          set -e
+          echo "=== POST /api/access-events (HU-01) ==="
+          curl -sf -X POST http://localhost:8000/api/access-events \
+            -H "Content-Type: application/json" \
+            -d '{"user_id":"ci_user","pin_hash":"abc123","success":true,"source":"ci"}' | grep -q "ci_user"
+          echo "  ok"
+
+          echo "=== POST /api/sensor-events (HU-03) ==="
+          curl -sf -X POST http://localhost:8000/api/sensor-events \
+            -H "Content-Type: application/json" \
+            -d '{"sensor_id":"ci-hc-sr04","sensor_type":"ultrasonic","value":42.5,"filtered_value":41.2,"unit":"cm","metadata":{"alpha":0.2}}' | grep -q "ci-hc-sr04"
+          echo "  ok"
+
+          echo "=== POST /api/security-events (HU-02) ==="
+          curl -sf -X POST http://localhost:8000/api/security-events \
+            -H "Content-Type: application/json" \
+            -d '{"event_type":"intrusion","severity":"high","description":"ci test"}' | grep -q "intrusion"
+          echo "  ok"
+
+          echo "=== POST /api/rover/telemetry (RF-3.3) ==="
+          SESSION=$(python3 -c "import uuid; print(uuid.uuid4())")
+          curl -sf -X POST http://localhost:8000/api/rover/telemetry \
+            -H "Content-Type: application/json" \
+            -d "{\"session_id\":\"$SESSION\",\"left_motor_pwm\":120,\"right_motor_pwm\":120,\"ultrasonic_distance_cm\":35.0,\"ir_left\":false,\"ir_center\":true,\"ir_right\":false,\"rf_rssi\":-65}" | grep -q "$SESSION"
+          echo "  ok"
+
+          echo "=== GET list endpoints ==="
+          for ep in access-events sensor-events security-events rover/telemetry; do
+            curl -sf "http://localhost:8000/api/$ep?limit=5" | grep -q "\[" || (echo "GET /api/$ep failed"; exit 1)
+            echo "  GET /api/$ep ok"
+          done
+
+          echo "=== GET / (root) ==="
+          curl -sf http://localhost:8000/ | grep -q "AetherNet"
+
+          echo "All integration checks passed"
+
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          docker compose logs --tail=100 postgres || true
+          docker compose logs --tail=100 mosquitto || true
+          docker compose logs --tail=100 fastapi || true
+          docker compose ps || true
 
       - name: Cleanup
+        if: always()
         run: |
           docker compose down -v
 
@@ -170,24 +250,36 @@ jobs:
   android-build:
     name: Android Build Check
     runs-on: ubuntu-latest
-    if: false  # Enable when app/ structure exists with gradle
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check if Android project exists (MOV-12 — skip si app solo está vacía)
+        id: check
+        run: |
+          if [ -f "app/build.gradle.kts" ] || [ -f "app/settings.gradle.kts" ] || [ -f "gradlew" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No Android Gradle files found — skipping build."
+          fi
+
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        if: steps.check.outputs.exists == 'true'
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Setup Android SDK
+        if: steps.check.outputs.exists == 'true'
         uses: android-actions/setup-android@v3
 
       - name: Build Debug APK
+        if: steps.check.outputs.exists == 'true'
         run: |
-          cd app
-          ./gradlew assembleDebug
+          chmod +x ./gradlew
+          ./gradlew :app:assembleDebug --stacktrace
 
   # =============================================================================
   # Security Scan (Trivy)

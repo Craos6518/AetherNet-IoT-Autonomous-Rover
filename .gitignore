@@ -64,15 +64,13 @@ docker-compose.override.yml
 *.store
 *.ks
 *.key
-*.properties
-*.gradle
-*.gradle.kts
 .gradle/
 build/
 out/
 local.properties
 signing.properties
-gradle.properties
+# gradle.properties global is ignored, pero build scripts sí se trackean (FIX MOV-12: no ignorar *.gradle.kts)
+# *.gradle y *.gradle.kts removidos — eran la causa de que app/build.gradle.kts no estuviera trackeado
 *.iml
 .idea/
 *.iws
@@ -89,8 +87,17 @@ gradle.properties
 *.store
 *.ks
 *.key
-# Gradle wrapper (keep gradlew, gradlew.bat, but ignore jar)
-gradle/wrapper/gradle-wrapper.jar
+# Gradle wrapper — conservar wrapper raíz y app/ para CI reproducible (MOV-12)
+# Root wrapper trackeado para build reproducible; app/ también si existe (legado)
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!gradlew
+!gradlew.bat
+!app/gradle/wrapper/gradle-wrapper.jar
+!app/gradlew
+!app/gradlew.bat
+# Daemon JVM auto-generado por foojay toolchains — no versionar
+gradle/gradle-daemon-jvm.properties
 
 # =============================================================================
 # C++ / Arduino / Firmware
@@ -214,6 +221,10 @@ secrets/
 *.secret
 *.credentials
 *.token
+# Firmware secrets — DEVOPS-11 / PM-08 (docs/auditoria-secretos-sprint1.md)
+firmware/gateway-esp32/secrets.h
+firmware/mega-access/src/secrets.h
+firmware/**/secrets.h
 
 # =============================================================================
 # Project-specific
@@ -233,13 +244,18 @@ firmware/*/build/
 firmware/*/.build/
 firmware/*/.pio/
 
-# Stats output
+# Stats output (forzados con git add -f para evidencia EST-08: alpha_sweep.json/png, ema_demo.json, ema-real-531.csv)
 stats/output/
 stats/data/
 stats/*.csv
 stats/*.json
 stats/*.png
 stats/*.pdf
+
+# Fritzing — fuentes binarias pesadas no versionadas (versionar solo .md/.png exportados ema-*.md/png)
+docs/fritzing/*.fzz
+docs/fritzing/*.fz
+docs/fritzing/Filtro*
 
 # Documentation builds
 docs/_build/

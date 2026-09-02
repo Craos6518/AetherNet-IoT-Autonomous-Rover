@@ -19,7 +19,7 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 - Bluetooth API clásica (SPP) para el fallback de RF-1.3 — distinto del BLE, ojo con esa confusión común.
 - Manejo de permisos en runtime (Android 12+): `BLUETOOTH_CONNECT`, `ACCESS_FINE_LOCATION` para escaneo BT.
 
-**Se despliega en:** Sprint 2 (pantallas base de relés) → Sprint 3 (Joystick + telemetría).
+**Se despliega en:** Sprint 2 (pantallas base de luces/bombillo) → Sprint 3 (Joystick + telemetría).
 
 **Habilita:** RF-1.1, RF-1.2, RF-1.3, HU-01 (interfaz de desbloqueo).
 
