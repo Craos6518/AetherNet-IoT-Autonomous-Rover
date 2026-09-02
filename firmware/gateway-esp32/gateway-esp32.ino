@@ -56,9 +56,9 @@
 #define BACKEND_ACCESS_PATH "/api/access-events"
 #endif
 
-// nRF24L01 pins
+// nRF24L01 pins — CSN 15 corrige colisión SCK 18 (DEVOPS-05 reapertura 2026-09-01)
 #define NRF_CE_PIN 5
-#define NRF_CSN_PIN 18
+#define NRF_CSN_PIN 15
 
 // UART to MEGA — 38400 + divisor 1k/2k MEGA16->ESP32_16, GND común (HU-01)
 #define MEGA_SERIAL Serial2

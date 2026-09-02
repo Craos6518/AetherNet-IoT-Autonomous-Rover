@@ -16,17 +16,17 @@ Cada ítem referencia su RF/HU de origen y el sprint donde debe quedar cerrado s
 | ID | Tarea | Prioridad | Sprint | Depende de | Origen |
 |---|---|---|---|---|---|
 | MOV-01 | Setup proyecto Android (Kotlin + Compose + arquitectura MVVM base) — ✅ Done `f03190b` `feature/app-setup-mvvm` 2026-09-01 (StateFlow+Repo+Navigation, DI manual, cleartext fix, verificado `192.168.1.14:8000/health` ok en SM-X620) | M | 1 | DEVOPS-01 (para saber endpoints) | RF-1.1 |
-| MOV-02 | Pantallas de control: bombillo Tuya (color/brillo), LED local (solo lectura) | M | 2 | LOW-02, MEGA firmware básico | RF-1.1 |
+| MOV-02 | Pantallas de control: LED local (solo lectura) — ~~bombillo Tuya cancelado~~ | M | 2 | MEGA firmware básico | RF-1.1 |
 | MOV-03 | Cliente MQTT/WebSocket en la app, suscripción a topics de telemetría | M | 2 | DEVOPS-02 (broker corriendo) | RF-1.1 |
 | MOV-04 | Módulo de PIN/clave para envío de comandos de cerrojo desde la app | S | 2 | MOV-03 | HU-01 |
 | MOV-05 | Joystick virtual en Compose (captura de vectores X,Y) | M | 3 | — | RF-1.2 |
 | MOV-06 | Envío de comandos del joystick con baja latencia (throttling/debounce) | M | 3 | MOV-05, RF-2.1 operativo | RF-1.2 |
 | MOV-07 | Fallback Bluetooth SPP para nodos críticos si cae el Wi-Fi | S | 3 | Nodo Acceso Compacto (HC-06) | RF-1.3 |
-| MOV-08 | Dashboard consolidado (estado bombillo, LED local, telemetría, alertas) | S | 4 | MOV-02, MOV-03 | RF-1.1 |
+| MOV-08 | Dashboard consolidado (estado LED local, telemetría, alertas) | S | 4 | MOV-02, MOV-03 | RF-1.1 |
 | MOV-09 | Manejo de errores de red / reconexión automática MQTT | C | 4 | MOV-03 | — |
 | MOV-10 | Pruebas unitarias (JUnit) de ViewModels críticos | S | 4 | MOV-02 a MOV-06 | RNF (calidad) |
 
-**Riesgo del área:** MOV-06 (latencia del joystick) depende de que el enlace RF del Rover (Área DevOps/Firmware) ya esté probado — si Sprint 1 se atrasa, este ítem se atrasa en cascada. MOV-02 ya no incluye relés (no hay hardware), solo bombillo Tuya + LED local.
+**Riesgo del área:** MOV-06 (latencia del joystick) depende de que el enlace RF del Rover ya esté probado. MOV-02 solo incluye LED RGB local (bombillo Tuya cancelado ADR-001).
 
 ---
 
@@ -48,19 +48,19 @@ Cada ítem referencia su RF/HU de origen y el sprint donde debe quedar cerrado s
 
 ---
 
-## Área 3 — Automatizaciones y LowCode (Node-RED, Telegram, Tuya)
+## Área 3 — Automatizaciones y LowCode (Node-RED, Telegram)
 
 | ID | Tarea | Prioridad | Sprint | Depende de | Origen |
 |---|---|---|---|---|---|
-| LOW-01 | Confirmar que el bombillo específico soporta `tuya-local` (obtener `local_key`/`device_id`) | M | 1 (validar antes del 4) | Compra/disponibilidad del bombillo | RF-4.2 (riesgo) |
+| LOW-01 | ~~Confirmar bombillo `tuya-local`~~ — **CANCELADO 2026-09-01** (ADR-001, R-01 políticas API) | W | — | — | RF-4.2 cancelado |
 | LOW-02 | Flujo Node-RED: suscripción a topics MQTT de eventos | M | 2 | DEVOPS-02 | RF-4.1 |
 | LOW-03 | Bot de Telegram: creación vía BotFather + nodo de envío de mensajes | M | 4 | LOW-02 | RF-4.1, HU-02 |
-| LOW-04 | Integración `tuya-local` en Node-RED (cambio de color/parpadeo) | M | 4 | LOW-01, LOW-02 | RF-4.2, HU-02 |
-| LOW-05 | Flujo de alerta de intrusión completo (láser → Telegram + bombillo rojo) | M | 4 | LOW-03, LOW-04, MEGA-láser (Área firmware) | HU-02 |
+| LOW-04 | ~~Integración `tuya-local` en Node-RED~~ — **CANCELADO 2026-09-01** (ADR-001) | W | — | — | RF-4.2 cancelado |
+| LOW-05 | Flujo de alerta de intrusión (láser → Telegram + LED RGB rojo) | M | 4 | LOW-03, MEGA-láser | HU-02 (sin bombillo) |
 | LOW-06 | Cuadro de mando ejecutivo no-code (dashboard Node-RED opcional) | C | 4 | LOW-02 | Entregable PDF |
 | LOW-07 | Manejo de reconexión si Node-RED pierde el broker MQTT | C | 4 | LOW-02 | — |
 
-**Riesgo del área:** LOW-01 es el ítem más peligroso de todo el backlog — si el bombillo comprado no soporta `tuya-local`, HU-02 y RF-4.2 completos quedan en riesgo. **Validar en Sprint 1, no esperar al Sprint 4.**
+**Riesgo del área:** ~~LOW-01~~ cancelado 2026-09-01. HU-02 ahora solo depende de Telegram + LED RGB local; RF-4.2 fuera de alcance.
 
 ---
 
@@ -98,7 +98,7 @@ Cada ítem referencia su RF/HU de origen y el sprint donde debe quedar cerrado s
 
 ## Resumen de riesgos críticos para cumplir el tiempo estipulado
 
-1. **LOW-01** (compatibilidad `tuya-local` del bombillo) — validar en Sprint 1, no en Sprint 4.
+1. ~~LOW-01 (tuya-local)~~ — **CANCELADO 2026-09-01** (ADR-001, políticas API).
 2. **EST-01** (prototipo EMA) — adelantar a Sprint 1-2 en vez de dejarlo todo para el cierre.
 3. **DEVOPS-01 a DEVOPS-05** — son la base de todo; cualquier atraso aquí es atraso de proyecto completo, no solo de un área.
 4. **PM-05** — sin esto, la coordinación entre áreas (y entre agentes de código, si se usan) se degrada silenciosamente.

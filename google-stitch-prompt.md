@@ -34,7 +34,7 @@
 |------|---------|-------------|
 | **Access Status** | Large lock icon (🔒/🔓), last access timestamp, PIN entry button | MEGA UART → ESP32 → MQTT `aethernet/access/status` |
 | **Laser Trap** | Laser icon + status (✅ Intact / 🚨 BREACHED), arm/disarm button | MEGA KY-008 → ESP32 → MQTT `aethernet/security/laser` |
-| **Room Light (Tuya)** | Color picker + brightness slider + power toggle, "Intrusion Flash" indicator | Node-RED → `tuya-local` → MQTT `aethernet/light/tuya` |
+| ~~Room Light (Tuya)~~ — **CANCELADO 2026-09-01** | ~~Color picker~~ — cancelado (R-01) | ~~tuya-local~~ — eliminado; intrusión solo LED RGB local + Telegram |
 | **Local LED (MEGA)** | RGB color indicator (Green=unlocked, Red=intrusion), read-only | MEGA PWM → ESP32 → MQTT `aethernet/light/local` |
 | **Sound Level** | Real-time VU meter bar (0-100%), peak hold | ESP8266 KY-037 → MQTT `aethernet/env/sound` |
 
@@ -156,8 +156,8 @@ RF Connected:      #1A73E8 (Blue)
 RF Degraded:       #F57C00 (Orange) — latency >50ms
 RF Lost:           #D32F2F (Red) — fail-safe active
 Bluetooth Active:  #6A1B9A (Purple 800)
-Tuya Bulb Online:  #00C853
-Tuya Bulb Offline: #9E9E9E (Grey 500)
+~~Tuya Bulb Online:  #00C853~~ — cancelado ADR-001 (solo LED RGB local)
+~~Tuya Bulb Offline: #9E9E9E~~ — cancelado ADR-001
 ```
 
 ### Typography
@@ -224,7 +224,7 @@ Tap: opens Network Diagnostics bottom sheet
 ## User Flows to Illustrate
 
 1. **Cold Start → Dashboard:** Splash → auto-connect → Dashboard loaded with live data
-2. **Intrusion Alert:** Laser breached → Dashboard alarm banner → Tuya bulb flashes red → Telegram notification → User taps → Access Control screen shows log
+2. **Intrusion Alert:** Laser breached → Dashboard alarm banner → LED RGB flashes red (local) → Telegram notification → User taps → Access Control screen shows log
 3. **Rover Manual Drive:** Dashboard → Rover tab → Joystick active → RF latency <10ms → Telemetry overlay updates real-time
 4. **RF Fail-Safe:** Rover moving → RF packets stop → 300ms timeout → Rover stops → Red banner "FAIL-SAFE ACTIVE" → Joystick disabled until reconnect
 5. **Bluetooth Fallback:** Wi-Fi lost → Auto-switch to HC-06 → Purple chip "Bluetooth Fallback" → Limited control (unlock only, no Tuya)

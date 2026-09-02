@@ -25,7 +25,7 @@
 - 5 tarjetas simples en grid 2x3 (última posición libre o info RF)
 - Solo texto + iconos básicos
 - Botón "Abrir Puerta" en tarjeta de acceso
-- Switch on/off para bombillo Tuya
+- ~~Switch on/off para bombillo Tuya~~ — cancelado ADR-001 (solo LED RGB local)
 - Barra inferior con 5 iconos + texto
 
 ---

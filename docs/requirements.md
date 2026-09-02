@@ -29,7 +29,7 @@ AetherNet IoT es un sistema distribuido de domótica modular, control de acceso 
 
 ### 2.4. Automatización y LowCode (Node-RED)
 * **RF-4.1:** El motor de reglas debe capturar eventos críticos (ej. intrusión) y enviar una notificación push/mensaje a través de un Bot de Telegram.
-* **RF-4.2:** El sistema debe cambiar el estado y color de un bombillo inteligente (protocolo Tuya Local) en respuesta a eventos de sensores sin depender de la nube externa.
+* **RF-4.2:** ~~El sistema debe cambiar el estado y color de un bombillo inteligente (protocolo Tuya Local) en respuesta a eventos de sensores sin depender de la nube externa.~~ — **CANCELADO 2026-09-01** (ADR-001, R-01 — políticas de integración API propietaria viola RNF-3.1 + `local_key` inaccesible). Fuera de alcance; HU-02 se cumple solo con LED RGB local + Telegram.
 
 ---
 
@@ -66,7 +66,7 @@ AetherNet IoT es un sistema distribuido de domótica modular, control de acceso 
 * **Criterios de Aceptación (BDD):**
   * *Dado* que el sistema está en modo "Armado",
   * *Cuando* la señal del láser KY-008 se interrumpe,
-  * *Entonces* Node-RED envía un mensaje con prioridad alta a Telegram y el bombillo Tuya parpadea en rojo.
+  * *Entonces* Node-RED envía un mensaje con prioridad alta a Telegram y el LED RGB local pasa a rojo (bombillo Tuya cancelado ADR-001, R-01 políticas API).
 
 ### HU-03: Filtrado Estadístico de Telemetría
 **Como** analista de datos/desarrollador,

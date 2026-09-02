@@ -17,11 +17,12 @@ Validar en banco (sin soldar) que `radio.begin()` pasa en ambos lados y que un `
 | 1 | ESP32 DevKit V1 (30-pin) | U1 Gateway | En Fritzing busca `ESP32` → `ESP32 DevKit V1`. El doc usa ESP32-WROOM-32U, mismo pinout. |
 | 2 | Arduino UNO R3 | U2 Rover | `Arduino UNO (Rev3)` |
 | 3 | nRF24L01 (2.4GHz) ×2 | RF1, RF2 | Parte `nRF24L01` en core. Ojo: Fritzing lo muestra con 8 pines, usar vista PCB. |
-| 4 | Condensador electrolítico 10µF ×2 | C1,C2 | **Obligatorio** entre VCC/GND del nRF24 (v. `testing-rf-sprint1.md:9`). En Fritzing: `Capacitor - electrolytic`. |
-| 5 | Condensador cerámico 100nF ×2 (opcional pero recomendado) | C3,C4 | En paralelo con 10µF para rizado. |
-| 6 | Breadboard half-size ×2 | BB1,BB2 | Uno para cada nRF + caps. No compartir 3.3V entre nodos. |
-| 7 | Fuente 3.3V estable (regulador AMS1117 o USB 3.3V del UNO/ESP32) | — | nRF **no** a 5V. En Fritzing cable rojo 3.3V, negro GND. |
-| 8 | Cables Dupont macho-hembra | — | Para SPI. |
+| 4 | Condensador electrolítico **10µF ideal** ×2 (o **22µF válido**) | C1,C2 | **Obligatorio** entre VCC/GND del nRF24 (v. `testing-rf-sprint1.md:9` + `plano-sprint1-nrf24-reapertura.md:5`). **10µF ideal** (4× disponibles, menor ESR) / **22µF válido** (2× disponibles, mejor bulk pico 115mA). Uno por nodo, no mezclar. En Fritzing: `Capacitor - electrolytic` ≤5mm del nRF + `100nF` en paralelo si hay. |
+| 5 | Condensador electrolítico 47µF/100µF | — | **Reserva Sprint 3** — **No usar en nRF.** Reservados para bulk `L298N`/`TP4056`/`StepUp 5V` (tienes 2× 47µF + 3× 100µF). Sobredimensionados para nRF. |
+| 6 | Condensador cerámico 100nF ×2 (opcional pero recomendado) | C3,C4 | En paralelo con 10µF/22µF para rizado HF. |
+| 7 | Breadboard half-size ×2 | BB1,BB2 | Uno para cada nRF + caps. No compartir 3.3V entre nodos. |
+| 8 | Fuente 3.3V estable (regulador AMS1117 o USB 3.3V del UNO/ESP32) | — | nRF **no** a 5V. En Fritzing cable rojo 3.3V, negro GND. |
+| 9 | Cables Dupont macho-hembra | — | Para SPI. |
 
 **No incluir en Sprint 1:** MEGA 2560, teclado 4x4, MG90S, KY-008, LED RGB, L298N, HC-SR04, TCRT5000, Node-RED. Reservados.
 
@@ -31,7 +32,7 @@ Validar en banco (sin soldar) que `radio.begin()` pasa en ambos lados y que un `
 
 | nRF24L01 RF1 | → | ESP32 DevKit | Color sugerido | Origen código | Nota Fritzing |
 |---|---|---|---|---|---|
-| VCC (3.3V) | → | 3V3 | Rojo | `gateway.ino:30` | + 10µF a GND en BB1. |
+| VCC (3.3V) | → | 3V3 | Rojo | `gateway.ino:30` | + **10µF ideal (o 22µF válido)** a GND en BB1 ≤5mm (+ 100nF si hay). |
 | GND | → | GND | Negro | — | — |
 | CE | → | GPIO5 | Naranja | `gateway.ino:31` `NRF_CE_PIN 5` | Drag wire en Fritzing pin `IO5` |
 | CSN | → | **GPIO15** (*) | Amarillo | `gateway.ino:32` `NRF_CSN_PIN 18` (conflicto, ver §6) | **Corrección propuesta: 15, no 18.** En Fritzing usa `IO15`. Si mantienes 18, colisiona con SCK. |
@@ -46,7 +47,7 @@ Validar en banco (sin soldar) que `radio.begin()` pasa en ambos lados y que un `
 
 | nRF24L01 RF2 | → | Arduino UNO | Color | Origen | Nota Fritzing |
 |---|---|---|---|---|---|
-| VCC | → | 3.3V | Rojo | `rover.ino:53` | +10µF a GND en BB2. UNO da ~50mA — suficiente para TX PA_HIGH (pico 115mA, usar cap). |
+| VCC | → | 3.3V | Rojo | `rover.ino:53` | + **10µF ideal (o 22µF válido)** a GND en BB2 ≤5mm. UNO da ~50mA — suficiente para TX PA_HIGH (pico 115mA, usar cap). 47/100µF no van aquí. |
 | GND | → | GND | Negro | — | — |
 | CE | → | D4 | Naranja | `rover.ino:53` `CE=4` | `Digital 4` |
 | CSN | → | D10 | Amarillo | `rover.ino:54` `CSN=10` | `Digital 10` (SS hardware). Conflicto histórico con `ENB=10` ya resuelto moviendo ENB a 11 (`rover.ino:39`), CSN queda libre. |
@@ -73,9 +74,9 @@ En Fritzing: trazo discontinuo, etiqueta `Sprint 2 — no conectar`. Mantiene el
 graph TB
   subgraph Sprint1_RF_Link [Sprint 1 — Banco RF sin soldar]
     ESP32[ESP32-WROOM<br/>Gateway<br/>CE5 CSN15* SCK18 MOSI23 MISO19]
-    RF1[nRF24L01 #1<br/>Canal 76 2Mbps PA_HIGH<br/>Addr GATEW/ROVER]
+    RF1[nRF24L01 #1<br/>Canal 76 2Mbps PA_HIGH<br/>Addr GATEW/ROVER<br/>+10µF ideal / 22µF válido]
     UNO[Arduino UNO<br/>Rover<br/>CE4 CSN10 SCK13 MOSI11 MISO12]
-    RF2[nRF24L01 #2<br/>+10µF VCC/GND]
+    RF2[nRF24L01 #2<br/>+10µF ideal / 22µF válido]
     ESP32 ---|SPI| RF1
     UNO ---|SPI| RF2
     RF1 <-->|RF 2.4GHz<br/>RoverCommand/Telemetry<br/>checksum| RF2
@@ -90,7 +91,7 @@ graph TB
 2. **Breadboard view:**
    - Arrastra `ESP32 DevKit V1` a BB superior, USB a la izquierda.
    - Arrastra `Arduino UNO` a zona inferior.
-   - Crea dos `Breadboard Mini` para cada nRF24; coloca el nRF24 encima, suelda `C1=10µF` entre `VCC-GND` pegado al módulo (pata corta a GND).
+   - Crea dos `Breadboard Mini` para cada nRF24; coloca el nRF24 encima, suelda `C1=10µF ideal (o 22µF válido)` entre `VCC-GND` pegado al módulo (pata corta a GND).
    - Cablea según tablas §3.1/3.2. Usa `Wire` con colores indicados; en `Inspector` deja `wire thickness 0.7mm`.
    - Verifica en `Schematic view`: debe quedar un bus SPI en cada nodo (SCK/MOSI/MISO compartido), CE/CSN únicos.
 3. **Schematic view:** Fritzing autogenera — solo verifica que no haya junctions fantasmas. Añade label `Sprint 1 — DEVOPS-05` y nota de `(*) CSN 15`.

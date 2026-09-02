@@ -2,7 +2,7 @@
 
 Plataforma distribuida de domótica modular, telemetría estadística y robótica móvil. Proyecto Integrador de 5º semestre de Ingeniería de Sistemas / Desarrollo de Software (UTP) — **100% FOSS**, sin dependencia de nubes propietarias (AWS, GCP, Azure, Tuya Cloud).
 
-El sistema controla acceso físico a una habitación (teclado + cerrojo), detecta intrusiones (trampa láser), notifica en tiempo real (Telegram + iluminación inteligente local) y opera un rover tanque de patrullaje con evasión autónoma de obstáculos — todo coordinado desde una app Android y un backend contenerizado en la misma LAN.
+El sistema controla acceso físico (teclado + cerrojo), detecta intrusiones (trampa láser), notifica en tiempo real vía Telegram + LED RGB local, y opera un rover tanque con evasión autónoma — todo coordinado desde app Android y backend en la misma LAN (bombillo Tuya cancelado 2026-09-01).
 
 ## 🧠 ¿Eres un agente de código?
 
@@ -14,7 +14,7 @@ Lee **[`AGENTS.md`](./AGENTS.md)** antes de tocar cualquier archivo. Ahí está 
 .
 ├── app/                      # App Android "AetherControl" — Kotlin, Jetpack Compose, MVVM
 ├── backend/                  # FastAPI + PostgreSQL + Mosquitto MQTT + Docker Compose
-├── automation/               # Node-RED, Telegram Bot API, tuya-local
+├── automation/               # Node-RED, Telegram Bot API (tuya-local cancelado 2026-09-01)
 ├── firmware/
 │   ├── gateway-esp32/        # Gateway central — ESP32, UART, nRF24L01
 │   ├── mega-access/          # Control de acceso/potencia — Arduino MEGA
@@ -49,7 +49,7 @@ El detalle completo (visión, requisitos, hardware, sprints, roadmap, backlog) v
 
 Sprint activo: `<pendiente de definir>` — ver [`docs/sprints.md`](./docs/sprints.md#estado-actual).
 
-**Riesgo abierto más crítico:** confirmar que el bombillo Tuya adquirido soporta `tuya-local` (ítem `LOW-01` del backlog) — debe validarse en Sprint 1, no esperar al Sprint 4.
+**2026-09-01:** bombillo Tuya / `tuya-local` **CANCELADO** (R-01). Riesgo crítico cerrado; HU-02 ahora solo Telegram + LED RGB local.
 
 ## 📱 App AetherControl — Arquitectura MOV-01 (RF-1.1, RNF-3.1)
 

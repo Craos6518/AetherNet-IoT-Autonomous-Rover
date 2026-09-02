@@ -9,7 +9,7 @@ Plataforma distribuida de domótica modular, telemetría estadística y robótic
 **Antes de tocar código, lee en este orden:**
 1. `docs/prd.md` — visión, alcance (in/out), KPIs, restricciones técnicas.
 2. `docs/requirements.md` — requisitos funcionales/no funcionales y las Historias de Usuario BDD (HU-01, HU-02, HU-03).
-3. `docs/hardware-inventory.md` — matriz completa de hardware por subsistema, incluida la distinción LED RGB (local) vs. bombillo Tuya (red).
+3. `docs/hardware-inventory.md` — matriz completa de hardware por subsistema (LED RGB local como único indicador visual; bombillo Tuya cancelado ADR-001).
 4. `docs/sprints.md` — planeación Scrum y estado actual del proyecto; consúltalo antes de proponer trabajo, para no adelantar tareas de un sprint cuya base aún no existe.
 5. `docs/roadmap.md` — conocimientos necesarios por materia para desplegar cada componente; útil si el agente necesita explicar o justificar una elección técnica a un colaborador nuevo.
 6. `docs/backlog.md` — backlog operativo por materia (MoSCoW + sprint asignado). Es la fuente de verdad de "qué falta hacer" — un agente debe consultarlo antes de proponer nuevo trabajo, y actualizar el estado de un ítem cuando lo complete.
@@ -22,7 +22,7 @@ Si una tarea contradice algo en estos seis archivos, el agente debe señalarlo a
 |---|---|---|
 | App Android "AetherControl" | Kotlin, Jetpack Compose, MVVM, Coroutines, StateFlow, Retrofit, MQTT, Bluetooth API | `app/` |
 | Backend | FastAPI, PostgreSQL, Mosquitto MQTT, Docker Compose | `backend/` |
-| Automatización LowCode | Node-RED, Telegram Bot API, `tuya-local` | `automation/` |
+| Automatización LowCode | Node-RED, Telegram Bot API (tuya-local cancelado 2026-09-01) | `automation/` |
 | Firmware Gateway | C++ (ESP32), UART, nRF24L01, arduino-cli | `firmware/gateway-esp32/` |
 | Firmware Acceso/Potencia | C++ (Arduino MEGA), teclado 4x4, servo MG90S, LED RGB local | `firmware/mega-access/` |
 | Firmware Rover | C++ (Arduino UNO), L298N, HC-SR04, TCRT5000 | `firmware/rover-uno/` |
