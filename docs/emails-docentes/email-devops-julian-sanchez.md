@@ -16,7 +16,7 @@ El sistema integra **5 subsistemas reales** que se comunican entre sí:
 1. **App móvil Android** (Kotlin + Jetpack Compose) — interfaz de usuario
 2. **Backend local en contenedores** (FastAPI + PostgreSQL + Mosquitto MQTT) — cerebro central
 3. **Gateway ESP32** — puente entre Wi-Fi/MQTT y radiofrecuencia (2.4 GHz) / Puerto serie
-4. **Controlador Arduino MEGA** — cerrojo electrónico (teclado + servo), trampa láser, relés
+4. **Controlador Arduino MEGA** — cerrojo electrónico (teclado + servo), trampa láser, LED RGB local
 5. **Rover tanque autónomo (Arduino UNO)** — navegación por radiofrecuencia, evasión de obstáculos, anti-caída
 
 **El "para qué":** Un sistema de seguridad y automatización que sigue funcionando aunque se caiga Internet o el router (procesamiento en el borde / *edge computing*), con alertas en tiempo real (Telegram) y control remoto desde el celular.
@@ -31,7 +31,7 @@ El sistema integra **5 subsistemas reales** que se comunican entre sí:
 | **Backend** | Python (FastAPI), PostgreSQL, Docker, Docker Compose | API REST, base de datos, broker de mensajes MQTT |
 | **Automatización** | Node-RED (programación visual / LowCode), Telegram Bot | Reglas: "si hay intrusión → avisa a Telegram + enciende luz roja" |
 | **Firmware Gateway** | C++ (ESP32), Arduino CLI | Wi-Fi + Radio 2.4GHz (nRF24L01) + Puerto serie (UART) |
-| **Firmware Acceso** | C++ (Arduino MEGA) | Teclado 4x4, Servomotor, Láser KY-008, LED RGB, Relés |
+| **Firmware Acceso** | C++ (Arduino MEGA) | Teclado 4x4, Servomotor, Láser KY-008, LED RGB |
 | **Firmware Rover** | C++ (Arduino UNO) | Motores (L298N), Ultrasonido HC-SR04, Sensores IR TCRT5000, Radio nRF24L01 |
 | **Estadística** | Python (Pandas, SciPy) / R | Filtro EMA, Prueba t-Student, Análisis Weibull |
 | **CI/CD** | GitHub Actions + `arduino-cli` | Compila y valida firmware C++ en cada push automáticamente |
@@ -65,7 +65,7 @@ El sistema integra **5 subsistemas reales** que se comunican entre sí:
 
 ### Mi plan durante la contingencia
 
-**Importante:** Cuento con **todos los componentes electrónicos en casa** (ESP32, Arduino MEGA, Arduino UNO, módulos nRF24L01, HC-SR04, TCRT5000, KY-008, servos, relés, LED RGB, teclado 4x4, L298N, chasis oruga, bombillo Tuya, ESP8266, Arduino Nano, HC-06, sensores varios) y mi laptop con entorno de desarrollo completo. Esto me permite **flashear, depurar y probar comunicación real entre microcontroladores desde casa** (UART, SPI, Radio 2.4GHz), no solo compilar.
+**Importante:** Cuento con **todos los componentes electrónicos en casa** (ESP32, Arduino MEGA, Arduino UNO, módulos nRF24L01, HC-SR04, TCRT5000, KY-008, servos, LED RGB, teclado 4x4, L298N, chasis oruga, bombillo Tuya, ESP8266, Arduino Nano, HC-06, sensores varios) y mi laptop con entorno de desarrollo completo. Esto me permite **flashear, depurar y probar comunicación real entre microcontroladores desde casa** (UART, SPI, Radio 2.4GHz), no solo compilar.
 
 | Ahora (casa — hardware + software) | Cuando volvamos al lab (integración completa) |
 |------------------------------------|-----------------------------------------------|

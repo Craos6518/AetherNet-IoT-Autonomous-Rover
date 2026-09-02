@@ -148,7 +148,7 @@ if __name__ == "__main__":
     for r, f, t in zip(noisy_readings[:10], filtered[:10], true_distance[:10]):
         print(f"{r:8.1f} {f:10.1f} {t:8.1f}")
 
-    # Save demo data for reference
+    # Save demo data for reference (ruta robusta al cwd)
     demo_data = {
         "alpha": 0.2,
         "true_values": true_distance[:20],
@@ -156,6 +156,9 @@ if __name__ == "__main__":
         "filtered_values": filtered[:20],
         "metrics": metrics
     }
-    with open("data/ema_demo.json", "w") as f:
+    from pathlib import Path
+    out = Path(__file__).parent / "data" / "ema_demo.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w") as f:
         json.dump(demo_data, f, indent=2)
-    print("\nDemo data saved to stats/data/ema_demo.json")
+    print(f"\nDemo data saved to {out}")

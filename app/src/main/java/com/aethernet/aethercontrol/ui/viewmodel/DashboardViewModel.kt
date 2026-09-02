@@ -1,76 +1,59 @@
 package com.aethernet.aethercontrol.ui.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aethernet.aethercontrol.data.repository.AetherRepository
+import com.aethernet.aethercontrol.domain.model.DashboardUiState
+import com.aethernet.aethercontrol.util.Result
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asLiveData
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-sealed interface DashboardUiState {
-    data class Connected(
-        val relayStates: Map<String, Boolean> = emptyMap(),
-        val roverTelemetry: RoverTelemetry? = null,
-        val lastAccessEvent: AccessEvent? = null
-    ) : DashboardUiState
+/**
+ * ViewModel — MOV-01 5.2 (RF-1.1, RNF-3.1).
+ * Solo StateFlow, no LiveData. init { refreshHealth() } sin TODO MQTT (docs/cierre-mov01.md:22).
+ */
+class DashboardViewModel(
+    private val repo: AetherRepository
+) : ViewModel() {
 
-    data class Disconnected(val reason: String) : DashboardUiState
-
-    object Connecting : DashboardUiState
-
-    data class Error(val message: String) : DashboardUiState
-}
-
-data class RoverTelemetry(
-    val leftMotorPwm: Int,
-    val rightMotorPwm: Int,
-    val ultrasonicDistanceCm: Double?,
-    val irLeft: Boolean,
-    val irCenter: Boolean,
-    val irRight: Boolean,
-    val rfRssi: Int?
-)
-
-data class AccessEvent(
-    val userId: String,
-    val success: Boolean,
-    val timestamp: Long,
-    val source: String
-)
-
-class DashboardViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow<DashboardUiState>(DashboardUiState.Connecting)
-    val uiState: LiveData<DashboardUiState> = _uiState.asLiveData()
-
-    private val _connectionStatus = MutableStateFlow<String>("Desconectado")
-    val connectionStatus: LiveData<String> = _connectionStatus.asLiveData()
+    private val _uiState = MutableStateFlow(DashboardUiState())
+    val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
     init {
-        // TODO: Implement MQTT connection and subscribe to topics
-        // For now, simulate disconnected state
-        _uiState.value = DashboardUiState.Disconnected("MQTT no configurado")
-        _connectionStatus.value = "Desconectado"
+        refreshHealth()
     }
 
-    fun connect() {
+    fun refreshHealth() {
         viewModelScope.launch {
-            _uiState.value = DashboardUiState.Connecting
-            _connectionStatus.value = "Conectando..."
-            // TODO: Implement actual MQTT connection
-            // mqttClient.connect()...
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            when (val r = repo.getHealth()) {
+                is Result.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isConnected = true,
+                            health = r.data,
+                            lastSync = System.currentTimeMillis(),
+                            error = null
+                        )
+                    }
+                }
+                is Result.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isConnected = false,
+                            error = r.msg
+                        )
+                    }
+                }
+                is Result.Loading -> {
+                    _uiState.update { it.copy(isLoading = true) }
+                }
+            }
         }
-    }
-
-    fun sendJoystickCommand(x: Float, y: Float) {
-        // TODO: Publish to MQTT topic aethernet/rover/command
-    }
-
-    fun sendPinCommand(pin: String) {
-        // TODO: Publish to MQTT topic aethernet/access/pin
-    }
-
-    fun toggleRelay(relayId: String, state: Boolean) {
-        // TODO: Publish to MQTT topic aethernet/relay/{relayId}
     }
 }
