@@ -27,9 +27,9 @@
 #define MQTT_USER ""
 #define MQTT_PASS ""
 
-// nRF24L01 pins
+// nRF24L01 pins — CSN 15 corrige colisión SCK 18 (DEVOPS-05 reapertura 2026-09-01)
 #define NRF_CE_PIN 5
-#define NRF_CSN_PIN 18
+#define NRF_CSN_PIN 15
 
 // UART to MEGA
 #define MEGA_SERIAL Serial2
