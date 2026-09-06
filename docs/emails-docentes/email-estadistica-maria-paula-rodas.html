@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta y avances del componente estadístico (AetherNet) — TS4D3 Gr. 402</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f4f5; font-family:'Segoe UI', Arial, Helvetica, sans-serif; color:#1f2937; line-height:1.6;">
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0;">Propuesta estadística AetherNet — TS4D3 U1-U8, EMA α=0.2, t-Student y confiabilidad.</div>
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#f4f4f5; padding:24px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="680" style="max-width:680px; background-color:#ffffff; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb;">
+          <tr>
+            <td style="background-color:#0f172a; padding:20px 28px;">
+              <p style="margin:0; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#94a3b8; font-weight:600;">TS4D3 · Estadística — Grupo 402 · UTP</p>
+              <h1 style="margin:6px 0 0 0; font-size:18px; line-height:1.3; color:#ffffff; font-weight:700;">Propuesta y avances del componente estadístico (AetherNet)</h1>
+              <p style="margin:6px 0 0 0; font-size:13px; color:#cbd5e1;">Proyecto Integrador · AetherNet IoT &amp; Autonomous Rover</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 28px 8px 28px;">
+              <p style="margin:0 0 16px 0; font-size:14.5px;">Estimada profesora <strong>María Paula</strong>:</p>
+              <p style="margin:0 0 18px 0; font-size:14.5px; color:#334155;">Atendiendo a la orientación que me brindó previamente para el proyecto integrador, estructuré la propuesta formal del componente estadístico de <strong>AetherNet IoT &amp; Autonomous Rover</strong> y avancé en el prototipado validado en Python (con estructura lista para inyección de lecturas reales de los sensores HC-SR04/KY-037).</p>
+              <h2 style="margin:22px 0 10px 0; font-size:14px; font-weight:700; color:#0f172a; border-left:4px solid #0ea5e9; padding-left:10px; text-transform:uppercase; letter-spacing:0.04em;">Alineación con el syllabus TS4D3</h2>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom:18px;">
+                <tr>
+                  <td style="padding:10px 12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+                    <ul style="margin:0; padding-left:18px; font-size:13.5px; color:#334155;">
+                      <li style="margin-bottom:8px;"><strong>U1 (Descriptiva):</strong> Análisis exploratorio de lecturas ruidosas HC-SR04 y KY-037 — varianza/MSE y visualización crudo vs. filtrado.</li>
+                      <li style="margin-bottom:8px;"><strong>U4–5 (Variables Discretas):</strong> Intrusión Bernoulli/Poisson y reintentos RF Geométrica desde histórico de eventos.</li>
+                      <li style="margin-bottom:8px;"><strong>U6–7 (Continuas, art. con RNF-2.2):</strong> Latencia RF (nRF24L01) vs. Wi-Fi/MQTT — t-Student 2 muestras (Welch), Shapiro-Wilk + Levene, alternativa Mann-Whitney U.</li>
+                      <li style="margin-bottom:0;"><strong>U8 (Confiabilidad):</strong> Sistema en serie — modelo exponencial (Weibull opcional) para contraste teórico del timeout fail-safe 500&nbsp;ms (RF-3.3 / HU-04).</li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+              <h2 style="margin:22px 0 10px 0; font-size:14px; font-weight:700; color:#0f172a; border-left:4px solid #0ea5e9; padding-left:10px; text-transform:uppercase; letter-spacing:0.04em;">Entregables específicos propuestos</h2>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse:collapse; margin-bottom:20px; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                <thead>
+                  <tr style="background-color:#0f172a;">
+                    <th align="left" style="padding:10px 12px; font-size:11px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.05em;">Aplicación</th>
+                    <th align="left" style="padding:10px 12px; font-size:11px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.05em;">Método / Prueba</th>
+                    <th align="left" style="padding:10px 12px; font-size:11px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.05em;">Resultado esperado</th>
+                  </tr>
+                </thead>
+                <tbody style="font-size:13px; color:#334155;">
+                  <tr style="background:#ffffff;">
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;"><strong>Filtro EMA</strong></td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;">Media Móvil Exponencial (α&nbsp;=&nbsp;0.2) — <code style="background:#f1f5f9; padding:1px 5px; border-radius:4px;">S<sub>t</sub>=α·Y<sub>t</sub>+(1-α)·S<sub>t-1</sub></code></td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;">Reducción &gt;85% (KPI PRD), Python → C++</td>
+                  </tr>
+                  <tr style="background:#f8fafc;">
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;"><strong>RF vs. Wi-Fi</strong></td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;">t-Student 2 muestras (Welch)</td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;">p-value, IC95%, <em>d</em> de Cohen</td>
+                  </tr>
+                  <tr style="background:#ffffff;">
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;"><strong>Confiabilidad</strong></td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;">Exponencial (Weibull opcional)</td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;">Tasa falla vs. timeout 500&nbsp;ms</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom:18px;">
+                <tr>
+                  <td style="padding:12px 14px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; font-size:13px; color:#14532d;"><strong style="color:#15803d;">Estado actual:</strong> EMA validado en CI. t-Student y descriptivo propuestos Sprint&nbsp;4, pendientes de datos reales (EST-09/EST-10).</td>
+                </tr>
+              </table>
+              <h2 style="margin:22px 0 10px 0; font-size:14px; font-weight:700; color:#0f172a; border-left:4px solid #0ea5e9; padding-left:10px; text-transform:uppercase; letter-spacing:0.04em;">Documentación de referencia</h2>
+              <p style="margin:0 0 8px 0; font-size:12.5px; color:#64748b;">Repositorio: <a href="https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover" style="color:#0284c7; text-decoration:none; word-break:break-all;">github.com/Craos6518/AetherNet-IoT-Autonomous-Rover</a></p>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse:collapse; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; margin-bottom:8px;">
+                <tbody style="font-size:13px; color:#334155;">
+                  <tr style="background:#ffffff;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; width:34%; font-weight:600;">Mapa académico</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><a href="https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover/blob/develop/docs/materias/estadistica.md" style="color:#0284c7; text-decoration:none;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/materias/estadistica.md</code></a></td></tr>
+                  <tr style="background:#f8fafc;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">Backlog</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><a href="https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover/blob/develop/docs/materias/backlog-estadistica.md" style="color:#0284c7; text-decoration:none;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/materias/backlog-estadistica.md</code></a> EST-01..11</td></tr>
+                  <tr style="background:#ffffff;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">Roadmap</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><a href="https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover/blob/develop/docs/materias/roadmap-estadistica.md" style="color:#0284c7; text-decoration:none;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/materias/roadmap-estadistica.md</code></a></td></tr>
+                  <tr style="background:#f8fafc;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">RNF / HU / KPI</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/requirements.md:42</code> · <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">:72</code> · <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/prd.md:51</code></td></tr>
+                  <tr style="background:#ffffff;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">Sprints</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/sprints.md:40</code></td></tr>
+                  <tr style="background:#f8fafc;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">EMA Python</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">stats/ema_filter.py:15</code> · <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">:99</code></td></tr>
+                  <tr style="background:#ffffff;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">Firmware</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">firmware/rover-uno/src/rover.ino:246</code> · <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">:63</code></td></tr>
+                  <tr style="background:#f8fafc;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">Evidencia</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">stats/data/ema_demo.json</code> · <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">alpha_sweep.py</code></td></tr>
+                </tbody>
+              </table>
+              <p style="margin:0 0 6px 0; font-size:14.5px; color:#334155;">Quedo atento a sus comentarios o ajustes para adaptar el cronograma de evaluación.</p>
+              <p style="margin:0; font-size:14.5px; color:#334155;">Un saludo cordial,</p>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-top:18px;">
+                <tr><td style="border-left:3px solid #0ea5e9; padding-left:12px;"><p style="margin:0; font-size:14px; font-weight:700; color:#0f172a;">Andres Felipe Martinez Henao</p><p style="margin:2px 0 0 0; font-size:12.5px; color:#64748b;">Estudiante TS4D3 Estadística — Grupo 402</p><p style="margin:2px 0 0 0; font-size:12.5px; color:#64748b;">Proyecto Integrador: AetherNet IoT &amp; Autonomous Rover</p></td></tr>
+              </table>
+            </td>
+          </tr>
+          <tr><td style="background:#f8fafc; padding:14px 28px; border-top:1px solid #e2e8f0;"><p style="margin:0; font-size:11px; color:#94a3b8; text-align:center;">Enviado desde AetherNet · 100% FOSS · UTP Pereira</p></td></tr>
+        </table>
+        <p style="margin:12px 0 0 0; font-size:11px; color:#94a3b8; text-align:center; max-width:680px;">Si la tabla no se visualiza, abre este archivo en el navegador o reenvía como HTML.</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

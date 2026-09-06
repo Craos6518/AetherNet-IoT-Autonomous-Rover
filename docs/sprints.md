@@ -20,7 +20,7 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 
 - Implementación del cerrojo (Teclado 4x4 + Servo MG90S) en Arduino MEGA. → RF-2.2, HU-01
 - **LED RGB local en el MEGA** (feedback verde/rojo de acceso). → HU-01, HU-02 (ver `docs/hardware-inventory.md`)
-- Primeras pantallas en Jetpack Compose (Kotlin): control bombillo Tuya + estado LED local. → RF-1.1
+- Primeras pantallas en Jetpack Compose (Kotlin): estado LED RGB local (bombillo Tuya cancelado ADR-001). → RF-1.1
 
 **Depende de:** Sprint 1 (Docker + UART funcionando).
 
@@ -40,7 +40,7 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 
 - Filtro de Kalman / EMA en Python para procesar datos de sensores (HC-SR04, KY-037). → RNF-2.1, HU-03
 - Flujos en Node-RED con bot de Telegram para notificaciones de seguridad. → RF-4.1, HU-02
-- **Integración del bombillo Tuya vía `tuya-local`** (parpadeo rojo en intrusión). → RF-4.2, HU-02
+- ~~Integración del bombillo Tuya vía `tuya-local`~~ — **CANCELADO 2026-09-01** (ADR-001, R-01 políticas API propietaria). Intrusión solo vía LED RGB local + Telegram. → RF-4.2 cancelado, HU-02 simplificada
 - Pruebas de integración End-to-End, documentación y pruebas unitarias.
 
 **Depende de:** Sprint 2 (evento de intrusión ya disparándose desde el MEGA) y Sprint 3 (telemetría del Rover ya fluyendo).
@@ -53,7 +53,7 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 - Última actualización: **2026-09-01 — Sprint 1 ✅ CERRADO — DEVOPS-05 RF nRF24L01 validado HW `docs/testing-rf-sprint1.md:32` 4/4 ✅ — `ESP32 nRF24L01 initialized` `ttyUSB0 WiFi FELIPE. 192.168.1.23 MQTT connected` + `UNO nRF24L01 initialized` `ttyACM0` + `mosquitto_pub 192.168.1.14` → `RF TX: L=120 R=120 mode=1` `gateway-esp32.ino:261` → `RF RX: L=120 R=120 mode=1` `rover-uno.ino:202` + `FAIL-SAFE 500ms` `docs/sprints.md:13` (fix `CSN 18→15` `gateway-esp32.ino:61` + `C1/C2 10µF en paralelo` + `SSID FELIPE.` punto) — plano `docs/fritzing/plano-sprint1-nrf24-reapertura.md` validado. Anterior hito MOV-01 real ✅ Done `f03190b` `feature/app-setup-mvvm` (RF-1.1, RNF-3.1) — verificado `192.168.1.14:8000/health` en SM-X620 + `assembleDebug`/`testDebugUnitTest` verdes** (ver `docs/cierre-mov01.md:4`, `docs/deuda-sprint1-sprint2.md:36`); `develop` al día con `a051dd4` EMA bench 531 + `f1ffcaa` stats + `f03190b` MOV-01
   - **MOV-01 real (2026-09-01):** `f03190b` implementa MVVM base real — `AetherControlApp.kt`, `ServiceLocator` DI manual, `Retrofit`+`kotlinx.serialization`, DTOs espejo `schemas.py`, `PreferencesManager` `DataStore` con `updateBaseUrl()` dinámico, `network_security_config` cleartext, `DashboardViewModel` `StateFlow` + `NavGraph` + `DashboardScreen` con editor `Backend URL`, `MainActivity` refactor + tests `turbine`. Verificado `docker 0.0.0.0:8000` + `curl 192.168.1.14:8000/health 200 ok` + App `ok` (antes `CLEARTEXT/SocketTimeout` fix). Cierra deuda `ACT-05` plantilla-only.
   - **Sinceramiento MOV-01 (2026-08-31):** dueño confirma 0 líneas Kotlin propias — `app/app/src/main/java/.../MainActivity.kt:22` y `DashboardViewModel.kt:32` son plantilla wizard `Empty Activity + Compose` con `TODO MQTT` sin implementación. Infra verde (`app/gradlew` 9.5.0 `tasks` OK, KSP 1.9.22-1.0.17, `ci.yml:241` condicional) pero **MOV-01 pasa a ⚠️ plantilla-only** — ver `docs/cierre-mov01.md:4`. Lógica MVVM real queda para `feature/app-setup-mvvm` en Sprint 2.
-  - **LOW-01 pivot (2026-08-31):** `tuya-local` bloqueado por acceso difícil a `local_key` (R-01). Alternativa oficial en evaluación: **retirar o reemplazar por skill Alexa / Google Home** (ver `docs/risk-register.md:16` R-01). Si se confirma incompatibilidad, LOW-04 migrará a skill y se documentará excepción a `RNF-3.1` FOSS.
+  - **LOW-01 cancelación (2026-09-01):** `tuya-local`/bombillo **CANCELADO** definitivamente por políticas de integración (API) propietaria (viola RNF-3.1, requiere cuenta Tuya Cloud) + `local_key` inaccesible (R-01, ADR-001). No se reemplaza por skill Alexa/Google (decisión del equipo). RF-4.2 → Won't; HU-02 solo LED RGB + Telegram.
   - **Rotación cerrada (2026-08-31):** producción rotada (password prod cambiado); AP lab `FELIPE./2516f751` recreado idéntico para compatibilidad local — `R-12` Resuelto (ver `docs/auditoria-secretos-sprint1.md:15` §5 + `docs/risk-register.md:35`).
   - **PM-02 completado (2026-08-31):** `https://github.com/users/Craos6518/projects/14` — ver `docs/tablero-scrum.md:49`.
 - Avances Sprint 1 verificados 2026-08-26 (base) + deltas 2026-08-31:

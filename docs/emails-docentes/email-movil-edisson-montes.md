@@ -1,93 +1,60 @@
-Asunto: Avance proyecto integrador AetherNet — TS6C3 Programación Móvil (contexto post-sismo)
+# Email — Programación Móvil TS6C3 (Edisson Montes) — Versión final
+
+**Asunto:** Propuesta y avances del componente móvil (AetherControl) — TS6C3 Gr. 401
+
+**Repositorio:** https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover
+
+---
 
 Estimado profesor Edisson:
 
-Le escribo con mucho respeto por la situación que atraviesa nuestra comunidad tras el **sismo del 10 de agosto (7:34 AM, mag. 7.4)**. Sé que la afectación ha sido desigual: compañeros que han perdido parte de sus hogares, otros que están de voluntarios en terreno, varios que han tenido que regresar a sus ciudades de origen. En mi caso, mi familia y yo no sufrimos daños graves, estoy colaborando como voluntario en lo que puedo, y tengo la posibilidad de seguir codeando desde casa.
+Espero que usted y sus seres queridos se encuentren bien tras el sismo del 10 de agosto (7:34 AM, mag. 7.4). Por mi parte, mi familia está a salvo y he podido apoyar labores de voluntariado local sin descuidar el trabajo académico desde casa. Solo tuvimos una semana de clases antes del evento.
 
-Solo alcanzamos **una semana de clases** antes del evento. Agradezco mucho que haya confirmado en clase que **veremos Kotlin + Android Studio + Jetpack Compose** — ese es el stack que tengo montado y con el que quiero ir avanzando mientras se define el retorno a clases.
+Atendiendo a su confirmación en clase de que trabajaremos con **Kotlin + Android Studio + Jetpack Compose**, estructuré la propuesta formal del componente móvil de **AetherNet IoT & Autonomous Rover** — App nativa **AetherControl**, interfaz humana del sistema — y avancé en la arquitectura base MVVM validada en dispositivo físico.
 
----
+**Aclaración tecnológica (trazable):** El PDF del programa describe la pila .NET/C#/Xamarin.Forms/XAML. El proyecto implementa los **mismos conceptos y patrones** con la pila nativa moderna **Kotlin/Compose** (estándar Android 2024-2025, 100% FOSS según RNF-3.1). La equivalencia está mapeada en `docs/materias/programacion-movil.md:7`.
 
-### ¿Qué es AetherNet? (Contexto general)
+**Alineación con el syllabus TS6C3 (U1–U4):**
 
-**AetherNet IoT & Autonomous Rover** es mi **Proyecto Integrador de 5º semestre**. Es un sistema real de **domótica + control de acceso + robot móvil** que se controla desde una **App nativa Android** que yo construyo.
+* **U1 Plataforma y Lenguaje (.NET → Kotlin):** Android Studio + Gradle como plataforma/IDE/build system; Kotlin con null-safety, data classes (`RoverTelemetry`, `AccessEvent`) y sealed interfaces (`DashboardUiState`), Flow/Coroutines para asincronía — equivalente funcional a C#/colecciones del PDF.
+* **U2 Front Móvil (XAML → Compose):** UI declarativa en Compose — `Column`/`Row`/`LazyColumn` ≈ StackLayout/Grid, pantallas como `@Composable` ≈ Pages, theming Material3; recomposición automática por estado.
+* **U3 Back Móvil (MVVM + Emuladores):** MVVM nativo: `View` (Compose) observa `uiState` inmutable expuesto por `DashboardViewModel` vía `StateFlow`; `ViewModel` + `Repository` con `viewModelScope`; AVD + dispositivo físico SM-X620 para validación.
+* **U4 Datos y Entorno (REST/JSON, Hardware, Permisos):** Canal principal **MQTT/WebSocket** pub/sub (RF-1.1) con payloads JSON — Retrofit/OkHttp reservado para REST puntual; persistencia local **Room** (Entities/DAOs/AppDatabase); hardware vía **Bluetooth SPP (RFCOMM)** como contingencia si cae Wi-Fi (RF-1.3, `BLUETOOTH_CONNECT` en Android 12+).
 
-**La App se llama "AetherControl"** y es la **interfaz humana** de todo el sistema: desde el celular el usuario ve sensores en tiempo real, abre la puerta con PIN, maneja el robot con un joystick virtual, y recibe alertas de intrusión — **todo funcionando en red local (Wi-Fi), y si se cae el Wi-Fi, cambia automático a Bluetooth clásico**.
+**Funcionalidades núcleo de AetherControl (criterios BDD):**
 
----
+| Feature | Usuario | Tecnología clave | Criterio BDD |
+|---|---|---|---|
+| Dashboard Telemetría | Ve distancia, estado puerta, alertas en vivo | Compose + `StateFlow` ← `Repository` (MQTT) | Dado conectado, cuando hay lectura, entonces UI <200 ms |
+| Joystick Virtual | Arrastra → vector X/Y [-1,1] → throttle 50 ms → `control/rover/cmd` | `PointerInput` + drag → MQTT | Comando enviado cada 50 ms máx |
+| PIN Cerrojo | Teclado numérico → `access/door/unlock` → servo 90° + LED verde | Compose + MQTT | HU-01: Dado cerrada, cuando PIN correcto + #, entonces servo + LED |
+| Alerta Intrusión | Notificación HIGH + banner rojo si láser KY-008 se corta | `NotificationManager` | HU-02: Dado Armado, cuando láser interrumpido, entonces notificación <2 s |
+| Fallback Bluetooth | Wi-Fi caído → Modo BT → HC-06 (Nano) → control básico | `BluetoothSocket` RFCOMM/SPP | RF-1.3: Dado Wi-Fi caído, cuando activa BT, entonces comandos llegan |
 
-### Stack de la App (tecnologías, explicadas en simple)
+**Entregables específicos propuestos:**
 
-| Tecnología | Qué es | Para qué la uso en AetherControl |
-|------------|--------|----------------------------------|
-| **Kotlin** | Lenguaje oficial Android (moderno, seguro, conciso) | Todo el código de la app |
-| **Jetpack Compose** | **UI declarativa** (nuevo estándar Android): describes *cómo se ve* la pantalla según el *estado*, y el sistema la redibuja solo | Pantallas reactivas: dashboard, joystick, PIN, alertas |
-| **MVVM (Model-View-ViewModel)** | Arquitectura: **View** (Compose) ↔ **ViewModel** (lógica + estado) ↔ **Model** (datos/repositorio) | Separación limpia, testeable, ciclo de vida correcto |
-| **Coroutines + Flow** | Programación asíncrona nativa Kotlin (hilos, streams reactivos) | MQTT/WebSocket en background, UI nunca se traba |
-| **Hilt / Koin** | Inyección de dependencias (automatiza crear objetos) | ViewModels, Repositorios, Clientes MQTT/Bluetooth |
-| **MQTT (Eclipse Paho / HiveMQ)** | Protocolo ligero pub/sub para IoT (tópicos: `telemetria/rover`, `alertas/intrusion`, `control/rover/cmd`) | Tiempo real con backend y gateway |
-| **Bluetooth SPP (RFCOMM)** | Bluetooth **clásico** (no BLE) — puerto serie virtual | **Contingencia**: si Wi-Fi falla, app habla directo con Arduino Nano (HC-06) |
-| **Permisos Android 12+** | `BLUETOOTH_CONNECT`, `BLUETOOTH_SCAN`, `ACCESS_FINE_LOCATION` | Requeridos en runtime para Bluetooth y escaneo |
+| Aplicación | Método / Stack real | Resultado esperado |
+|---|---|---|
+| Arquitectura base | MVVM + `StateFlow` + `ServiceLocator` DI manual + `Retrofit`/`kotlinx.serialization` + `DataStore` | Build `assembleDebug` verde y `testDebugUnitTest` verde (verificado) |
+| Dashboard + Telemetría | Compose + `PreferencesManager.updateBaseUrl()` + `network_security_config` cleartext | App conecta a `192.168.1.14:8000/health` ok en SM-X620 |
+| Joystick + BT (progresivo) | Compose `PointerInput` + MQTT throttling + `BluetoothSocket` SPP | MOV-05/06/07 — Sprints 3-4, depende de RF probado |
 
-> **Nota:** Usted definió **Kotlin + Compose** en clase. El syllabus original menciona Xamarin/.NET/C#, pero **los objetivos de aprendizaje son los mismos**: MVVM, UI reactiva, consumo de servicios, hardware/permisos, emuladores. Compose es el estándar actual de Android (2024-2025) y es 100% FOSS (requisito del proyecto integrador).
+**Estado actual (honestidad técnica — `docs/materias/programacion-movil.md:65`):** MOV-01 ✅ Done `f03190b` `feature/app-setup-mvvm` 2026-09-01 — `AetherControlApp`, `ServiceLocator` DI manual, DTOs espejo `schemas.py`, `DashboardViewModel` con `StateFlow`/`NavGraph`/`DashboardScreen` editor URL, verificado `curl 192.168.1.14:8000/health` + `assembleDebug`. MOV-02..10 pendientes por sprints (MQTT client, pantallas, joystick, BT SPP, tests JUnit). `ci.yml` job `android-build` en plantilla condicional hasta existir Gradle completo — no se presenta como hecho.
 
----
+**Documentación de referencia en el repositorio:**
 
-### Alineación: Unidad del Syllabus → Qué construyo en la App
+* Mapa académico U1–U4 (.NET → Kotlin/Compose): `docs/materias/programacion-movil.md`
+* Backlog móvil (MOV-01..10, MoSCoW, sprints): `docs/backlog.md:14`
+* Roadmap por materia (despliegue por sprint): `docs/materias/roadmap-movil.md` + `docs/roadmap.md:0`
+* Requisitos y HU BDD: `docs/requirements.md:14` (RF-1.1..1.3) y `docs/requirements.md:51` (HU-01..04)
+* Sprints (Sprint 2 pantallas, Sprint 3 joystick/telemetría): `docs/sprints.md:19` y `docs/sprints.md:32`
+* App verificada: `app/src/main/java/.../AetherControlApp.kt`, `ServiceLocator`, `DashboardViewModel.kt:11` (`DashboardUiState`), `hardware-inventory.md:9` (LED RGB local — bombillo Tuya cancelado ADR-001)
+* Estado Sprint 1 y deuda saldada: `docs/cierre-mov01.md:4` y `docs/deuda-sprint1-sprint2.md:36`
 
-| Unidad Syllabus (enfoque Xamarin) | Equivalente en Kotlin/Compose (lo que hago) | Qué avanzo en casa (emulador + celular propio) |
-|-----------------------------------|---------------------------------------------|------------------------------------------------|
-| **U1: Plataforma .NET** (Framework, IDE, C#, colecciones) | **Kotlin + Android Studio + Gradle**: Null-safety, Coroutines, Flow, Colecciones, Build system | ✅ Proyecto base MVVM + Hilt + dependencias listo |
-| **U2: Front Móvil** (XAML, Pages, StackLayout/Grid, Views) | **Compose**: `State`/`StateFlow`, Material3 (`Column`, `Row`, `Box`, `LazyColumn`), Recomposición automática | 🟡 Pantallas: Dashboard (telemetría), Luces/bombillo Tuya, PIN cerrojo, Alertas |
-| **U3: Back Móvil** (Xamarin.Forms, MVVM, Emuladores) | **MVVM nativo**: `ViewModel` + `StateFlow` + `Repository` + DI (Hilt), Emulador + Device físico | 🟡 `Repository` unificado (MQTT + Bluetooth), `ViewModel` por pantalla, tests unitarios |
-| **U4: Datos y Entorno** (REST/JSON, APIs nativas, Hardware, Permisos, Multiplataforma) | **MQTT/WebSocket + Bluetooth SPP (RF-1.3) + Permisos runtime Android 12+** | 🟡 Cliente MQTT (reconexión, QoS), Módulo Bluetooth SPP, Pantalla permisos |
+Quedo atento a sus indicaciones sobre cronograma, entregables (APK firmado + código + demo) y modalidad de evaluación.
 
----
+Un saludo cordial,
 
-### Funcionalidades núcleo de "AetherControl" (con criterios BDD medibles)
-
-| Feature | Qué hace el usuario | Tecnología clave | Criterio de Aceptación (BDD) |
-|---------|---------------------|------------------|------------------------------|
-| **Dashboard Telemetría** | Ve distancia robot, estado puerta, sensores, alertas — **en vivo** | Compose + `StateFlow` observando `Repository` (MQTT) | `Dado` robot conectado `Cuando` hay lectura `Entonces` UI se actualiza <200ms |
-| **Joystick Virtual** | Arrastra dedo → robot se mueve en esa dirección/velocidad | `PointerInput` + `drag` gestures → vectores X/Y [-1,1] → throttle 50ms → MQTT `control/rover/cmd` | `Dado` joystick activo `Cuando` arrastra `Entonces` comando enviado cada 50ms máx |
-| **PIN Cerrojo** | Teclado numérico en pantalla → envía "abrir" → puerta abre (servo) + LED verde | Compose `LazyColumn` numérico → MQTT `access/door/unlock` | `Dado` puerta cerrada `Cuando` PIN correcto + # `Entonces` servo 90° + LED verde (HU-01) |
-| **Alerta Intrusión** | Notificación push + vibración + sonido + banner rojo si láser se corta | FCM local / `NotificationManager` + prioridad `HIGH` | `Dado` modo Armado `Cuando` láser interrumpido `Entonces` notificación <2s (HU-02) |
-| **Fallback Bluetooth** | Si Wi-Fi cae → botón "Modo Bluetooth" → conecta a Arduino Nano (HC-06) → control básico | `BluetoothAdapter` + `BluetoothSocket` (RFCOMM/SPP) | `Dado` Wi-Fi caído `Cuando` activa BT `Entonces` comandos llegan a Nano (RF-1.3) |
-
----
-
-### Mi estrategia: **App + Hardware real en casa (MQTT + Bluetooth), E2E completo cuando vuelva al lab**
-
-**Tengo el hardware completo en casa:** ESP32 (gateway MQTT), Arduino Nano + HC-06 (Bluetooth SPP), Arduino MEGA (cerrojo), Rover UNO, sensores. Puedo **probar la App contra MQTT real (broker Mosquitto en Docker) y Bluetooth SPP real (Nano HC-06) ahora mismo**, no solo en emulador.
-
-| Ahora (casa — App + Hardware real) | Cuando volvamos al lab (integración completa) |
-|------------------------------------|-----------------------------------------------|
-| UI completa en Compose (Dashboard, Joystick, PIN, Alertas) | Pruebas E2E sistema completo, medir KPIs finales |
-| `ViewModel` + `Repository` + `StateFlow` testeados (JUnit) | Validación latencia real Wi-Fi <50ms, RF <10ms |
-| **MQTT real contra Mosquitto (Docker) + Bluetooth SPP real contra Nano HC-06** | Fallback Wi-Fi→BT automático en escenario real |
-| **Joystick → MQTT → ESP32 → Radio nRF24L01 → Rover UNO (prueba banco)** | Integración con Node-RED, Telegram, Tuya-local |
-| Tests unitarios ViewModel (`MOV-10`) | Demo física completa, defensa |
-
----
-
-### Evidencia técnica (repositorio — todo Kotlin/Compose)
-- `app/` — Proyecto Android completo (Gradle, Kotlin, Compose, MVVM, Hilt)
-- `app/src/main/java/.../ui/dashboard/` — Dashboard reactivo (telemetría MQTT → StateFlow → Compose)
-- `app/src/main/java/.../ui/joystick/` — Joystick `PointerInput` + throttling 50ms
-- `app/src/main/java/.../bluetooth/` — Módulo Bluetooth SPP (`BluetoothSocket` RFCOMM)
-- `app/src/main/java/.../mqtt/` — Cliente MQTT (Paho/HiveMQ) + reconexión exponencial + topics tipados
-- `docs/requirements.md` RF-1.1 a RF-1.3, HU-01 a HU-04 (criterios BDD)
-- `docs/backlog.md` Área 1 — MOV-01 a MOV-10 (MoSCoW, sprints, dependencias)
-- `docs/roadmap.md` §1 — Conocimientos previos/adquiridos, despliegue por sprint
-
----
-
-Entiendo que el semestre se reacomodará y que la prioridad institucional es el bienestar de la comunidad. Este correo solo busca **explicar con claridad qué estoy construyendo, con qué herramientas, y cómo cada parte cubre los objetivos de su materia**, para que cuando se definan los nuevos tiempos podamos alinear la evaluación.
-
-Quedo atento a sus indicaciones sobre cronograma, entregables (APK firmado + código + demo físico) y modalidad de evaluación.
-
-Con respeto y solidaridad,
-
-**[Su Nombre]**
-Estudiante TS6C3 Programación Móvil - Grupo 401
+**Andres Felipe Martinez Henao**
+Estudiante TS6C3 Programación Móvil — Grupo 401
 Proyecto Integrador: AetherNet IoT & Autonomous Rover

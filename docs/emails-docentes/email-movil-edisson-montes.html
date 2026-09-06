@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta y avances del componente móvil (AetherControl) — TS6C3 Gr. 401</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f4f5; font-family:'Segoe UI', Arial, Helvetica, sans-serif; color:#1f2937; line-height:1.6;">
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0;">Propuesta móvil AetherControl — Kotlin/Compose MVVM, U1-U4 Xamarin→Compose, BDD y trazabilidad.</div>
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#f4f4f5; padding:24px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="680" style="max-width:680px; background-color:#ffffff; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb;">
+          <tr>
+            <td style="background-color:#4338ca; padding:20px 28px;">
+              <p style="margin:0; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#c7d2fe; font-weight:600;">TS6C3 · Programación Móvil — Grupo 401 · UTP</p>
+              <h1 style="margin:6px 0 0 0; font-size:18px; line-height:1.3; color:#ffffff; font-weight:700;">Propuesta y avances del componente móvil (AetherControl)</h1>
+              <p style="margin:6px 0 0 0; font-size:13px; color:#e0e7ff;">App nativa Kotlin + Jetpack Compose · MVVM + StateFlow</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 28px 8px 28px;">
+              <p style="margin:0 0 16px 0; font-size:14.5px;">Estimado profesor <strong>Edisson</strong>:</p>
+              <p style="margin:0 0 10px 0; font-size:14.5px; color:#334155;">Espero que usted y sus seres queridos se encuentren bien tras el sismo del 10 de agosto (7:34 AM, mag. 7.4). Por mi parte, mi familia está a salvo y he podido apoyar labores de voluntariado local sin descuidar el trabajo académico desde casa. Solo tuvimos una semana de clases antes del evento.</p>
+              <p style="margin:0 0 10px 0; font-size:14.5px; color:#334155;">Atendiendo a su confirmación en clase de que trabajaremos con <strong>Kotlin + Android Studio + Jetpack Compose</strong>, estructuré la propuesta formal del componente móvil de <strong>AetherNet IoT &amp; Autonomous Rover</strong> — App nativa <strong>AetherControl</strong> — y avancé en la arquitectura base MVVM validada en dispositivo físico.</p>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin:12px 0 18px 0;">
+                <tr>
+                  <td style="padding:10px 12px; background:#eef2ff; border:1px solid #c7d2fe; border-radius:8px; font-size:12.5px; color:#3730a3;">
+                    <strong>Nota de adaptación trazable:</strong> El PDF del programa describe .NET/C#/Xamarin/XAML. El proyecto implementa los <strong>mismos conceptos y patrones</strong> con Kotlin/Compose (estándar Android 2024-2025, 100% FOSS RNF-3.1). Equivalencia mapeada en <code style="background:#ffffff; padding:1px 4px; border-radius:4px;">docs/materias/programacion-movil.md:7</code>.
+                  </td>
+                </tr>
+              </table>
+
+              <h2 style="margin:22px 0 10px 0; font-size:14px; font-weight:700; color:#0f172a; border-left:4px solid #6366f1; padding-left:10px; text-transform:uppercase; letter-spacing:0.04em;">Alineación con el syllabus TS6C3 (U1–U4)</h2>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom:18px;">
+                <tr>
+                  <td style="padding:10px 12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+                    <ul style="margin:0; padding-left:18px; font-size:13.5px; color:#334155;">
+                      <li style="margin-bottom:7px;"><strong>U1 Plataforma y Lenguaje (.NET → Kotlin):</strong> Android Studio + Gradle; Kotlin con null-safety, data classes y sealed interfaces (<code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">DashboardUiState</code>), Coroutines/Flow.</li>
+                      <li style="margin-bottom:7px;"><strong>U2 Front Móvil (XAML → Compose):</strong> UI declarativa Compose — <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">Column</code>/<code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">Row</code>/<code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">LazyColumn</code> ≈ StackLayout/Grid, theming Material3, recomposición por estado.</li>
+                      <li style="margin-bottom:7px;"><strong>U3 Back Móvil (MVVM + Emuladores):</strong> MVVM nativo — <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">View</code> (Compose) observa <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">uiState: StateFlow</code> expuesto por <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">DashboardViewModel</code> + <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">Repository</code> + <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">viewModelScope</code>; AVD + SM-X620.</li>
+                      <li style="margin-bottom:0;"><strong>U4 Datos y Entorno (REST/JSON, HW, Permisos):</strong> Canal principal <strong>MQTT/WebSocket</strong> pub/sub (RF-1.1, JSON), Retrofit para REST puntual; <strong>Room</strong> local; <strong>Bluetooth SPP (RFCOMM)</strong> como contingencia Wi-Fi (RF-1.3, <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">BLUETOOTH_CONNECT</code> Android 12+).</li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+
+              <h2 style="margin:22px 0 10px 0; font-size:14px; font-weight:700; color:#0f172a; border-left:4px solid #6366f1; padding-left:10px; text-transform:uppercase; letter-spacing:0.04em;">Funcionalidades núcleo — criterios BDD</h2>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse:collapse; margin-bottom:20px; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                <thead>
+                  <tr style="background-color:#4338ca;">
+                    <th align="left" style="padding:9px 10px; font-size:11px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.05em;">Feature</th>
+                    <th align="left" style="padding:9px 10px; font-size:11px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.05em;">Usuario</th>
+                    <th align="left" style="padding:9px 10px; font-size:11px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.05em;">Tecnología clave</th>
+                    <th align="left" style="padding:9px 10px; font-size:11px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.05em;">Criterio BDD</th>
+                  </tr>
+                </thead>
+                <tbody style="font-size:12.5px; color:#334155;">
+                  <tr style="background:#ffffff;">
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;"><strong>Dashboard</strong></td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">Ve distancia, puerta, alertas en vivo</td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">Compose + <code style="background:#f1f5f9; padding:1px 3px; border-radius:4px;">StateFlow</code> ← MQTT</td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">Dado conectado, lectura → UI &lt;200 ms</td>
+                  </tr>
+                  <tr style="background:#f8fafc;">
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;"><strong>Joystick</strong></td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">Arrastra → vector X/Y [-1,1]</td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;"><code style="background:#f1f5f9; padding:1px 3px; border-radius:4px;">PointerInput</code> + throttle 50 ms → MQTT</td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">Comando cada 50 ms máx</td>
+                  </tr>
+                  <tr style="background:#ffffff;">
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;"><strong>PIN Cerrojo</strong></td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">Teclado → <code style="background:#f1f5f9; padding:1px 3px; border-radius:4px;">access/door/unlock</code></td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">Compose + MQTT → servo 90°</td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">HU-01: PIN + # → LED verde</td>
+                  </tr>
+                  <tr style="background:#f8fafc;">
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;"><strong>Alerta Intrusión</strong></td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">Banner rojo si láser KY-008 se corta</td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;"><code style="background:#f1f5f9; padding:1px 3px; border-radius:4px;">NotificationManager</code> HIGH</td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">HU-02: Armado → &lt;2 s</td>
+                  </tr>
+                  <tr style="background:#ffffff;">
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;"><strong>Fallback BT</strong></td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">Wi-Fi caído → Modo BT → HC-06</td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;"><code style="background:#f1f5f9; padding:1px 3px; border-radius:4px;">BluetoothSocket</code> RFCOMM/SPP</td>
+                    <td style="padding:9px 10px; border-top:1px solid #e2e8f0; vertical-align:top;">RF-1.3: BT → comandos OK</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h2 style="margin:22px 0 10px 0; font-size:14px; font-weight:700; color:#0f172a; border-left:4px solid #6366f1; padding-left:10px; text-transform:uppercase; letter-spacing:0.04em;">Entregables específicos propuestos</h2>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse:collapse; margin-bottom:20px; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                <thead>
+                  <tr style="background-color:#4338ca;">
+                    <th align="left" style="padding:10px 12px; font-size:11px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.05em;">Aplicación</th>
+                    <th align="left" style="padding:10px 12px; font-size:11px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.05em;">Método / Stack real</th>
+                    <th align="left" style="padding:10px 12px; font-size:11px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.05em;">Resultado esperado</th>
+                  </tr>
+                </thead>
+                <tbody style="font-size:13px; color:#334155;">
+                  <tr style="background:#ffffff;">
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;"><strong>Arquitectura base</strong></td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;">MVVM + <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">StateFlow</code> + <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">ServiceLocator</code> DI manual + Retrofit/DataStore</td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">assembleDebug</code> + <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">testDebugUnitTest</code> verdes</td>
+                  </tr>
+                  <tr style="background:#f8fafc;">
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;"><strong>Dashboard + Telemetría</strong></td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;">Compose + <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">PreferencesManager.updateBaseUrl()</code> + cleartext</td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">192.168.1.14:8000/health</code> ok en SM-X620</td>
+                  </tr>
+                  <tr style="background:#ffffff;">
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;"><strong>Joystick + BT</strong></td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;">Compose <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">PointerInput</code> + MQTT throttle + <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">BluetoothSocket</code></td>
+                    <td style="padding:12px; border-top:1px solid #e2e8f0; vertical-align:top;">MOV-05/06/07 — Sprints 3-4 (depende RF)</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom:18px;">
+                <tr>
+                  <td style="padding:12px 14px; background:#eef2ff; border:1px solid #c7d2fe; border-radius:8px; font-size:13px; color:#3730a3;">
+                    <strong style="color:#4338ca;">Estado actual:</strong> MOV-01 ✅ Done <code style="background:#ffffff; padding:1px 4px; border-radius:4px;">f03190b</code> 2026-09-01 — <code style="background:#ffffff; padding:1px 4px; border-radius:4px;">ServiceLocator</code> DI manual (no Hilt), DTOs espejo <code style="background:#ffffff; padding:1px 4px; border-radius:4px;">schemas.py</code>, <code style="background:#ffffff; padding:1px 4px; border-radius:4px;">DashboardViewModel</code> StateFlow/NavGraph, verificado <code style="background:#ffffff; padding:1px 4px; border-radius:4px;">curl 192.168.1.14:8000/health</code>. MOV-02..10 pendientes por sprints. <code style="background:#ffffff; padding:1px 4px; border-radius:4px;">android-build</code> condicional.
+                  </td>
+                </tr>
+              </table>
+
+              <h2 style="margin:22px 0 10px 0; font-size:14px; font-weight:700; color:#0f172a; border-left:4px solid #6366f1; padding-left:10px; text-transform:uppercase; letter-spacing:0.04em;">Documentación de referencia</h2>
+              <p style="margin:0 0 8px 0; font-size:12.5px; color:#64748b;">Repositorio: <a href="https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover" style="color:#4f46e5; text-decoration:none; word-break:break-all;">github.com/Craos6518/AetherNet-IoT-Autonomous-Rover</a></p>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse:collapse; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; margin-bottom:8px;">
+                <tbody style="font-size:13px; color:#334155;">
+                  <tr style="background:#ffffff;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; width:32%; font-weight:600;">Mapa académico</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><a href="https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover/blob/develop/docs/materias/programacion-movil.md" style="color:#4f46e5; text-decoration:none;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/materias/programacion-movil.md</code></a> U1–U4</td></tr>
+                  <tr style="background:#f8fafc;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">Backlog móvil</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><a href="https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover/blob/develop/docs/backlog.md" style="color:#4f46e5; text-decoration:none;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/backlog.md:14</code></a> MOV-01..10</td></tr>
+                  <tr style="background:#ffffff;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">Requisitos / HU</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/requirements.md:14</code> RF-1.1..1.3 · <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">:51</code> HU-01..04</td></tr>
+                  <tr style="background:#f8fafc;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">Sprints</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/sprints.md:19</code> + <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">:32</code></td></tr>
+                  <tr style="background:#ffffff;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">App verificada</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">AetherControlApp.kt</code> · <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">DashboardViewModel.kt:11</code> · <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">ServiceLocator</code></td></tr>
+                  <tr style="background:#f8fafc;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">HW / LED local</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/hardware-inventory.md:9</code> — Tuya cancelado ADR-001</td></tr>
+                  <tr style="background:#ffffff;"><td style="padding:9px 12px; border-top:1px solid #e2e8f0; font-weight:600;">Cierre Sprint 1</td><td style="padding:9px 12px; border-top:1px solid #e2e8f0;"><code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">docs/cierre-mov01.md:4</code> · <code style="background:#f1f5f9; padding:1px 4px; border-radius:4px;">f03190b</code></td></tr>
+                </tbody>
+              </table>
+
+              <p style="margin:0 0 6px 0; font-size:14.5px; color:#334155;">Quedo atento a sus indicaciones sobre cronograma, entregables (APK firmado + código + demo) y modalidad de evaluación.</p>
+              <p style="margin:0; font-size:14.5px; color:#334155;">Un saludo cordial,</p>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-top:18px;">
+                <tr><td style="border-left:3px solid #6366f1; padding-left:12px;"><p style="margin:0; font-size:14px; font-weight:700; color:#0f172a;">Andres Felipe Martinez Henao</p><p style="margin:2px 0 0 0; font-size:12.5px; color:#64748b;">Estudiante TS6C3 Programación Móvil — Grupo 401</p><p style="margin:2px 0 0 0; font-size:12.5px; color:#64748b;">Proyecto Integrador: AetherNet IoT &amp; Autonomous Rover</p></td></tr>
+              </table>
+            </td>
+          </tr>
+          <tr><td style="background:#f8fafc; padding:14px 28px; border-top:1px solid #e2e8f0;"><p style="margin:0; font-size:11px; color:#94a3b8; text-align:center;">Enviado desde AetherNet · 100% FOSS · UTP Pereira</p></td></tr>
+        </table>
+        <p style="margin:12px 0 0 0; font-size:11px; color:#94a3b8; text-align:center; max-width:680px;">Si la tabla no se visualiza, abre este archivo en el navegador o reenvía como HTML.</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

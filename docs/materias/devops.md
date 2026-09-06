@@ -82,7 +82,7 @@ Despliegue continuo: el PDF menciona Heroku/Vercel/Render — **no aplica**: el 
 |---|---|---|
 | Logs centralizados | **Parcial:** volúmenes de log de Mosquitto montados; logs de contenedores inspeccionables vía Docker; `docker-compose ps` en CI | `docker-compose.yml` (servicio mosquitto), job `docker-build` |
 | Prometheus + Grafana | **No implementado.** Las métricas existen conceptualmente (KPIs PRD, telemetría MQTT del Rover) pero no hay stack de observabilidad | Gap registrado — candidato a mejora post-Sprint 4 |
-| Alertas por umbrales | **Implementado a nivel negocio, no infra:** las alertas de intrusión (Telegram + bombillo rojo) son reglas sobre eventos, no sobre salud del sistema | `automation/flows/intrusion_alert.json`, RF-4.1/HU-02 |
+| Alertas por umbrales | **Implementado a nivel negocio, no infra:** las alertas de intrusión (Telegram + LED RGB rojo) son reglas sobre eventos, no sobre salud del sistema | `automation/flows/intrusion_alert.json`, RF-4.1/HU-02 |
 
 ---
 
