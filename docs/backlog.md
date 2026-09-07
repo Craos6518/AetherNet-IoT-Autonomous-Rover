@@ -16,7 +16,7 @@ Cada ítem referencia su RF/HU de origen y el sprint donde debe quedar cerrado s
 | ID | Tarea | Prioridad | Sprint | Depende de | Origen |
 |---|---|---|---|---|---|
 | MOV-01 | Setup proyecto Android (Kotlin + Compose + arquitectura MVVM base) — ✅ Done `f03190b` `feature/app-setup-mvvm` 2026-09-01 (StateFlow+Repo+Navigation, DI manual, cleartext fix, verificado `192.168.1.14:8000/health` ok en SM-X620) | M | 1 | DEVOPS-01 (para saber endpoints) | RF-1.1 |
-| MOV-02 | Pantallas de control: LED local (solo lectura) — ~~bombillo Tuya cancelado~~ | M | 2 | MEGA firmware básico | RF-1.1 |
+| MOV-02 | Pantallas de control LED local solo lectura — ✅ Done `feature/app-pantallas-domotica` 2026-09-07 (RF-1.1 HU-01/HU-02: LedStatusCard 64dp + poll 5s + mapper 5s/10s/1s espejo `led.cpp:64` + `config.h:52`) — bombillo Tuya CANCELADO ADR-001 | M | 2 | MEGA firmware básico | RF-1.1 |
 | MOV-03 | Cliente MQTT/WebSocket en la app, suscripción a topics de telemetría | M | 2 | DEVOPS-02 (broker corriendo) | RF-1.1 |
 | MOV-04 | Módulo de PIN/clave para envío de comandos de cerrojo desde la app | S | 2 | MOV-03 | HU-01 |
 | MOV-05 | Joystick virtual en Compose (captura de vectores X,Y) | M | 3 | — | RF-1.2 |
