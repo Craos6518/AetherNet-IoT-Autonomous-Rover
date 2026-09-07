@@ -4,6 +4,7 @@ import android.content.Context
 import com.aethernet.aethercontrol.BuildConfig
 import com.aethernet.aethercontrol.data.local.PreferencesManager
 import com.aethernet.aethercontrol.data.local.preferencesManager
+import com.aethernet.aethercontrol.data.mqtt.MqttManager
 import com.aethernet.aethercontrol.data.remote.ApiService
 import com.aethernet.aethercontrol.data.repository.AetherRepository
 import com.aethernet.aethercontrol.data.repository.AetherRepositoryImpl
@@ -83,6 +84,7 @@ object ServiceLocator {
     private var cachedRetrofit: Retrofit? = null
     private var cachedApi: ApiService? = null
     private var cachedRepo: AetherRepository? = null
+    private var cachedMqtt: MqttManager? = null
 
     private fun buildRetrofit(url: String): Retrofit =
         Retrofit.Builder()
@@ -105,10 +107,21 @@ object ServiceLocator {
         requireContext().preferencesManager()
     }
 
+    // MOV-03: MQTT Mosquitto tcp://host:1883 derivada de getCurrentBaseUrl() + fallback ws://host:9001
+    val mqttManager: MqttManager
+        get() = synchronized(this) {
+            cachedMqtt ?: MqttManager(requireContext()).also { cachedMqtt = it }
+        }
+
     val repository: AetherRepository
         get() = synchronized(this) {
-            cachedRepo ?: AetherRepositoryImpl(apiService).also { cachedRepo = it }
+            cachedRepo ?: AetherRepositoryImpl(apiService, mqttManager).also { cachedRepo = it }
         }
+
+    /** MOV-03: reconecta MQTT usando la URL HTTP actual (para DashboardScreen guardar URL). */
+    suspend fun reconnectMqtt() {
+        mqttManager.connect(getCurrentBaseUrl())
+    }
 
     /** URL actual en uso por Retrofit (útil para debug/UI). */
     fun getCurrentBaseUrl(): String = synchronized(this) { currentBaseUrl }
@@ -126,12 +139,14 @@ object ServiceLocator {
         val normalized = normalizeUrl(url)
         // Persiste primero
         preferencesManager.saveBaseUrl(normalized)
-        // Recrea singletons
+        // Recrea singletons (mantiene mqttManager, solo repo necesita nueva api)
         synchronized(this) {
             currentBaseUrl = normalized
             cachedRetrofit = buildRetrofit(normalized)
             cachedApi = cachedRetrofit!!.create(ApiService::class.java)
-            cachedRepo = AetherRepositoryImpl(cachedApi!!)
+            // reutiliza mqttManager existente para reconexión en próximo reconnectMqtt()
+            val mqtt = cachedMqtt ?: MqttManager(requireContext()).also { cachedMqtt = it }
+            cachedRepo = AetherRepositoryImpl(cachedApi!!, mqtt)
         }
         return normalized
     }
