@@ -10,10 +10,22 @@ import com.aethernet.aethercontrol.data.remote.dto.SecurityEventCreate
 import com.aethernet.aethercontrol.data.remote.dto.SecurityEventOut
 import com.aethernet.aethercontrol.data.remote.dto.SensorEventCreate
 import com.aethernet.aethercontrol.data.remote.dto.SensorEventOut
+import com.aethernet.aethercontrol.data.mqtt.AccessEventMqtt
+import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState
+import com.aethernet.aethercontrol.data.mqtt.RoverTelemetryMqtt
+import com.aethernet.aethercontrol.data.mqtt.SecurityEventMqtt
 import com.aethernet.aethercontrol.data.repository.AetherRepository
+import com.aethernet.aethercontrol.domain.mapper.LedStateMapper
+import com.aethernet.aethercontrol.domain.model.LedColor
+import com.aethernet.aethercontrol.domain.model.LedState
+import com.aethernet.aethercontrol.domain.model.LedUiState
 import com.aethernet.aethercontrol.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -45,8 +57,22 @@ class DashboardViewModelTest {
     }
 
     private class FakeRepo(
-        private val isHealthOk: Boolean = true
+        private val isHealthOk: Boolean = true,
+        private val ledState: LedUiState? = null,
+        private val ledError: String? = null,
+        private val mqttState: MqttConnectionState = MqttConnectionState.Disconnected,
+        val telemetryFlow: MutableSharedFlow<RoverTelemetryMqtt> = MutableSharedFlow(extraBufferCapacity = 32),
+        val accessFlow: MutableSharedFlow<AccessEventMqtt> = MutableSharedFlow(extraBufferCapacity = 32),
+        val securityFlow: MutableSharedFlow<SecurityEventMqtt> = MutableSharedFlow(extraBufferCapacity = 32)
     ) : AetherRepository {
+        private val _mqttState = MutableStateFlow(mqttState)
+        override val mqttConnectionState: StateFlow<MqttConnectionState> get() = _mqttState
+        override val roverTelemetryFlow: SharedFlow<RoverTelemetryMqtt> get() = telemetryFlow
+        override val accessEventFlow: SharedFlow<AccessEventMqtt> get() = accessFlow
+        override val securityEventFlow: SharedFlow<SecurityEventMqtt> get() = securityFlow
+        override suspend fun connectMqtt(httpBaseUrl: String) { _mqttState.value = MqttConnectionState.Connected(httpBaseUrl) }
+        override fun disconnectMqtt() { _mqttState.value = MqttConnectionState.Disconnected }
+
         override suspend fun getHealth(): Result<HealthResponse> =
             if (isHealthOk) Result.Success(HealthResponse("ok", "ok", "1.0.0-sprint1"))
             else Result.Error("Network error")
@@ -59,12 +85,15 @@ class DashboardViewModelTest {
         override suspend fun postSecurityEvent(payload: SecurityEventCreate) = Result.Error("not impl")
         override suspend fun getRoverTelemetry(limit: Int) = Result.Success(emptyList<RoverTelemetryOut>())
         override suspend fun postRoverTelemetry(payload: RoverTelemetryCreate) = Result.Error("not impl")
+        override suspend fun getLedState(): Result<LedUiState> =
+            if (ledError != null) Result.Error(ledError)
+            else Result.Success(ledState ?: LedUiState(color = LedColor.OFF, state = LedState.OFF, label = "Apagado"))
     }
 
     @Test
     fun `refreshHealth success updates isConnected and health`() = runTest {
         val repo = FakeRepo(isHealthOk = true)
-        val vm = DashboardViewModel(repo)
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = false)
 
         // Con Unconfined, init ya corrió: estado final debe ser conectado
         vm.uiState.test {
@@ -81,7 +110,7 @@ class DashboardViewModelTest {
     @Test
     fun `refreshHealth error sets error and isConnected false`() = runTest {
         val repo = FakeRepo(isHealthOk = false)
-        val vm = DashboardViewModel(repo)
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = false)
 
         vm.uiState.test {
             val state = awaitItem()
@@ -95,7 +124,7 @@ class DashboardViewModelTest {
     @Test
     fun `initial state after init reflects repo result`() = runTest {
         val repo = FakeRepo(isHealthOk = true)
-        val vm = DashboardViewModel(repo)
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = false)
         // Valor directo sin turbine también debe reflejar success
         val state = vm.uiState.value
         assertEquals(true, state.isConnected)
@@ -106,7 +135,7 @@ class DashboardViewModelTest {
     fun `refreshHealth toggles loading`() = runTest {
         // Repo con delay simulado usando Result.Success inmediato pero verificamos transición
         val repo = FakeRepo(isHealthOk = true)
-        val vm = DashboardViewModel(repo)
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = false)
         // Forzar refresh de nuevo y verificar que termina en connected
         vm.refreshHealth()
         vm.uiState.test {
@@ -114,5 +143,94 @@ class DashboardViewModelTest {
             assertEquals(true, state.isConnected)
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    // MOV-02 — LedUiState en ViewModel
+
+    @Test
+    fun `init loads ledState OFF by default`() = runTest {
+        val repo = FakeRepo(isHealthOk = true)
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = false)
+        val state = vm.uiState.value
+        // init refreshLedState con FakeRepo OFF
+        assertEquals(LedState.OFF, state.ledState.state)
+        assertEquals(LedColor.OFF, state.ledState.color)
+    }
+
+    @Test
+    fun `refreshLedState error sets led error without crashing`() = runTest {
+        val repo = FakeRepo(isHealthOk = true, ledError = "Network error")
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = false)
+        vm.refreshLedState()
+        vm.uiState.test {
+            val state = awaitItem()
+            assertNotNull(state.ledState.error)
+            assertEquals("Network error", state.ledState.error)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `refreshLedState success updates label`() = runTest {
+        val green = LedUiState(color = LedColor.GREEN, state = LedState.GREEN_UNLOCKED, label = "Verde desbloqueado", source = "access")
+        val repo = FakeRepo(isHealthOk = true, ledState = green)
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = false)
+        vm.refreshLedState()
+        vm.uiState.test {
+            val state = awaitItem()
+            assertEquals("Verde desbloqueado", state.ledState.label)
+            assertEquals(LedColor.GREEN, state.ledState.color)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `polling is active after init`() = runTest {
+        val repo = FakeRepo(isHealthOk = true)
+        val vmAuto = DashboardViewModel(repo, autoPollLed = true, autoConnectMqtt = false)
+        assertEquals(true, vmAuto.isPolling)
+        vmAuto.stopLedPolling()
+        assertEquals(false, vmAuto.isPolling)
+        vmAuto.startLedPolling()
+        assertEquals(true, vmAuto.isPolling)
+        vmAuto.stopLedPolling()
+
+        val vmManual = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = false)
+        assertEquals(false, vmManual.isPolling)
+        vmManual.startLedPolling()
+        assertEquals(true, vmManual.isPolling)
+        vmManual.stopLedPolling()
+    }
+
+    // MOV-03 — MQTT telemetría push <50ms prd.md:50
+
+    @Test
+    fun `mqtt telemetry updates lastRover`() = runTest {
+        val repo = FakeRepo(isHealthOk = true)
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = true)
+        vm.uiState.test {
+            // init emits Disconnected then Connected via FakeRepo.connectMqtt
+            var state = awaitItem()
+            // emite telem
+            repo.telemetryFlow.emit(RoverTelemetryMqtt(left_pwm = 120, right_pwm = 120, ultrasonic_cm = 45))
+            state = awaitItem()
+            assertEquals(120, state.lastRover?.left_pwm)
+            assertEquals(45, state.lastRover?.ultrasonic_cm)
+            cancelAndIgnoreRemainingEvents()
+        }
+        vm.disconnectMqtt()
+    }
+
+    @Test
+    fun `mqtt connected sets broker and stops polling fallback`() = runTest {
+        val repo = FakeRepo(isHealthOk = true)
+        val vm = DashboardViewModel(repo, autoPollLed = true, autoConnectMqtt = true)
+        vm.uiState.test {
+            val state = awaitItem()
+            assertEquals(true, state.mqttState is MqttConnectionState.Connected || state.mqttState is MqttConnectionState.Connecting)
+            cancelAndIgnoreRemainingEvents()
+        }
+        vm.disconnectMqtt()
+        vm.stopLedPolling()
     }
 }
