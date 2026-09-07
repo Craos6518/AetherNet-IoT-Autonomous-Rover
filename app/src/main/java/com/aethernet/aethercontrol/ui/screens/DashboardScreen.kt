@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -26,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aethernet.aethercontrol.core.di.ServiceLocator
+import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState
 import com.aethernet.aethercontrol.ui.components.LedStatusCard
 import com.aethernet.aethercontrol.ui.viewmodel.DashboardViewModel
 import kotlinx.coroutines.launch
@@ -63,6 +67,39 @@ fun DashboardScreen(vm: DashboardViewModel) {
                     color = Color.Red,
                     style = MaterialTheme.typography.titleMedium
                 )
+            }
+
+            // MOV-03: Estado MQTT vivo <50ms prd.md:50 — tcp://host:1883 (mosquitto.conf:4) o ws://host:9001 fallback
+            val mqttState = state.mqttState
+            Text(
+                text = when (mqttState) {
+                    is MqttConnectionState.Connected -> "MQTT ● ${mqttState.broker}"
+                    is MqttConnectionState.Connecting -> "MQTT ○ Conectando..."
+                    is MqttConnectionState.Error -> "MQTT ✕ ${mqttState.msg}"
+                    is MqttConnectionState.Disconnected -> "MQTT - Desconectado"
+                },
+                color = if (mqttState is MqttConnectionState.Connected) Color(0xFF4CAF50) else Color.Gray,
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            // MOV-03: Telemetría viva Rover (push MQTT, no poll)
+            state.lastRover?.let { t ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(text = "Rover L=${t.left_pwm} R=${t.right_pwm} US=${t.ultrasonic_cm ?: "-"}cm", style = MaterialTheme.typography.bodyMedium)
+                        if (t.ir_left != null || t.ir_center != null || t.ir_right != null) {
+                            Text(text = "IR L=${t.ir_left} C=${t.ir_center} R=${t.ir_right}", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                        }
+                        // barra progreso PWM -255..255
+                        LinearProgressIndicator(progress = { (t.left_pwm.coerceIn(-255, 255) + 255) / 510f }, modifier = Modifier.fillMaxWidth())
+                    }
+                }
             }
 
             // MOV-02: Card LED local solo lectura — círculo 64dp + etiqueta + lastSync + error
