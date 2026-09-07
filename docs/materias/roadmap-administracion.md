@@ -23,7 +23,7 @@ Backlog operativo detallado: [`backlog-administracion.md`](backlog-administracio
 | Tema | Profundidad | Para qué | Específico |
 |---|---|---|---|
 | Matriz probabilidad×impacto + planes de mitigación/contingencia | Mantener viva | PM-03 | `docs/risk-register.md` existe; actualizar al cierre de cada sprint con estado real |
-| Riesgos de integración hardware/software | Vigilancia activa | LOW-01, DEVOPS-14 | El conflicto de pines MEGA y la compatibilidad tuya-local son riesgos VIVOS hoy |
+| Riesgos de integración hardware/software | Vigilancia activa | DEVOPS-14 | Conflicto pines MEGA vigente; tuya-local **CERRADO 2026-09-01** (R-01 cancelado) |
 | Gestión de dependencias críticas entre áreas | Monitoreo semanal | Cascadas documentadas | MOV-06←RF←DEVOPS-05; EST-04←DEVOPS-12; App←broker ACL |
 
 ## Bloque 3 — Gestión de configuración

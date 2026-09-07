@@ -9,9 +9,9 @@ Resuelve deuda Sprint 1→2 PM-02. Fuente: `docs/backlog.md:9-79` + `docs/sprint
 | Columna | Contenido (IDs backlog) | Sprint |
 |---|---|---|
 | **Backlog** | `MOV-05..10`, `LOW-03..05`, `EST-02..07`, `DEVOPS-09` | 3-4 |
-| **Sprint 1 Done** | `DEVOPS-01..05`, `MOV-01` ✅, `LOW-01`, `EST-01`, `PM-03/04` (cerrados `sprints.md:52`) | 1 |
+| **Sprint 1 Done** | `DEVOPS-01..05`, `MOV-01` ⚠️ plantilla-only, `EST-01`, `PM-03/04` (cerrados `sprints.md:52`; `LOW-01` ⏳ bloqueado — ver R-01) | 1 |
 | **Sprint 2 In Progress** | `feature/firmware-mega-cerrojo` (HU-01 RF-2.2), `feature/firmware-mega-laser`, `MOV-02..04`, `DEVOPS-06..08`, `LOW-02` | 2 |
-| **Deuda Sprint 1→2 (esta entrega)** | `PM-08` ✅ `DEVOPS-11` ✅ `DEVOPS-10` ✅ `PM-03` ✅ `MOV-01` ✅ `MOV-12` ✅ | 1→2 |
+| **Deuda Sprint 1→2 (esta entrega)** | `PM-08` ✅ `DEVOPS-11` ✅ `DEVOPS-10` ✅ `PM-03` ✅ `MOV-01` ⚠️ plantilla-only `MOV-12` ✅ | 1→2 |
 | **Blocked** | (vacía tras esta deuda; antes: `MOV-12` por `.gitignore:69` y `DEVOPS-11` por hardcode) | — |
 | **Done (Sprint 2)** | Se mueve aquí al mergear `sprint/2-domotica-acceso → develop` con CI verde | 2 |
 
@@ -23,8 +23,8 @@ Resuelve deuda Sprint 1→2 PM-02. Fuente: `docs/backlog.md:9-79` + `docs/sprint
 | DEVOPS-11 Rotar secrets | — | Done 2026-08-29 | `feature/firmware-mega-cerrojo` | `gateway-esp32.ino:20-51` + `secrets.h.example` + `backend/.env.example` |
 | DEVOPS-10 Pipeline verde | — | Done 2026-08-29 | `feature/firmware-mega-cerrojo` | `ci.yml:14,99-107,241` + `.gitignore:72-73` |
 | PM-03 Matriz riesgos | — | Done 2026-08-29 | `feature/firmware-mega-cerrojo` | `risk-register.md:32` R-12/R-13 |
-| MOV-01 Setup MVVM | MOV-01 | Done 2026-08-29 | `feature/firmware-mega-cerrojo` + `feature/app-setup-mvvm` | `docs/cierre-mov01.md`, `app/gradlew tasks` OK |
-| MOV-12 Build Android | MOV-12 | Done (fusionado MOV-01) | `feature/firmware-mega-cerrojo` | `app/build.gradle.kts:4` KSP 1.9.22-1.0.17, `app/gradlew` 9.5.0 |
+| MOV-01 Setup MVVM | MOV-01 | ⚠️ Plantilla-only 2026-08-31 (sincerado) | `feature/firmware-mega-cerrojo` + `feature/app-setup-mvvm` | `docs/cierre-mov01.md:4` — 0 líneas Kotlin propias, `MainActivity.kt:22`/`DashboardViewModel.kt:32` plantilla wizard; infra `app/gradlew tasks` OK |
+| MOV-12 Build Android | MOV-12 | Done (infra, fusionado MOV-01) | `feature/firmware-mega-cerrojo` | `app/build.gradle.kts:4` KSP 1.9.22-1.0.17, `app/gradlew` 9.5.0 — build verde pero sin lógica |
 
 ## Tarjetas — Sprint 2 activo (para crear Issues)
 
@@ -46,7 +46,7 @@ Cada tarjeta: `ID: título (RF/HU) #feature/rama`.
 4. Automatización: `Workflow → Auto-add to project (on issue opened)` + `Status update on PR merged → Done`.
 5. Exportar link y pegarlo en `docs/sprints.md:52` "Estado actual" y aquí abajo.
 
-**Link del Project (rellenar al crearlo):** `https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover/projects/1` (placeholder)
+**Link del Project:** `https://github.com/users/Craos6518/projects/14` (creado 2026-08-31 — reemplaza placeholder `projects/1`)
 
 ## Relación con docs
 

@@ -87,12 +87,17 @@ signing.properties
 *.store
 *.ks
 *.key
-# Gradle wrapper — conservar wrapper de app/ para CI reproducible (MOV-12)
-# gradle-wrapper.jar en repo raíz se ignora, pero app/gradle/wrapper/ se trackea
-gradle/wrapper/gradle-wrapper.jar
+# Gradle wrapper — conservar wrapper raíz y app/ para CI reproducible (MOV-12)
+# Root wrapper trackeado para build reproducible; app/ también si existe (legado)
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!gradlew
+!gradlew.bat
 !app/gradle/wrapper/gradle-wrapper.jar
 !app/gradlew
 !app/gradlew.bat
+# Daemon JVM auto-generado por foojay toolchains — no versionar
+gradle/gradle-daemon-jvm.properties
 
 # =============================================================================
 # C++ / Arduino / Firmware
@@ -239,13 +244,18 @@ firmware/*/build/
 firmware/*/.build/
 firmware/*/.pio/
 
-# Stats output
+# Stats output (forzados con git add -f para evidencia EST-08: alpha_sweep.json/png, ema_demo.json, ema-real-531.csv)
 stats/output/
 stats/data/
 stats/*.csv
 stats/*.json
 stats/*.png
 stats/*.pdf
+
+# Fritzing — fuentes binarias pesadas no versionadas (versionar solo .md/.png exportados ema-*.md/png)
+docs/fritzing/*.fzz
+docs/fritzing/*.fz
+docs/fritzing/Filtro*
 
 # Documentation builds
 docs/_build/

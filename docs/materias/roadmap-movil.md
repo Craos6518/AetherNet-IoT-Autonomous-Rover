@@ -21,7 +21,7 @@ Backlog operativo detallado: [`backlog-movil.md`](backlog-movil.md)
 | Tema | Profundidad | Para qué requisito | Específico del proyecto |
 |---|---|---|---|
 | Composables, recomposición, `remember`/`mutableStateOf` | Operativo | RF-1.1 | Base de todas las pantallas |
-| Layouts: Column/Row/Box, modifiers, LazyColumn/LazyGrid | Operativo | RF-1.1 | Dashboard de relés = grid de switches; lista de eventos |
+| Layouts: Column/Row/Box, modifiers, LazyColumn/LazyGrid | Operativo | RF-1.1 | Dashboard de luces/bombillo = control color/brillo; lista de eventos |
 | Theming Material3 (ya iniciado en Theme.kt) | Mantener | Calidad visual | Colores de estado (verde acceso/rojo intrusión) coherentes con HU-01/HU-02 |
 | **Custom Canvas: joystick virtual** | Implementar desde cero | RF-1.2 | Núcleo diferencial del sprint 3: `Canvas` + detección de gesto (`pointerInput`/`detectDragGestures`) normalizando a vector X,Y ∈ [-1,1]; knob que regresa al centro al soltar |
 | Animaciones simples (pulse en alerta) | Opcional | HU-02 | Solo si sobra tiempo |
@@ -41,7 +41,7 @@ Backlog operativo detallado: [`backlog-movil.md`](backlog-movil.md)
 |---|---|---|---|
 | Cliente MQTT Android: Eclipse Paho (`org.eclipse.paho.client.mqttv3`) o HiveMQ client | Implementar completo | RF-1.1 | Decisión: Paho es el clásico con servicio persistente; documentar elección |
 | Conexión sobre TCP 1883 vs WebSocket 9001 según ACL del broker | Verificar contra DEVOPS-02 | RF-1.1 | La App autentica como usuario `appbackend` (ver ACL en backlog DevOps) |
-| Suscripción a telemetría y publicación de comandos | Implementar | RF-1.1/1.2 | Topics ya definidos en gateway: `aethernet/rover/command`, `aethernet/relay/+`, `aethernet/access/command`, `aethernet/app/#` |
+| Suscripción a telemetría y publicación de comandos | Implementar | RF-1.1/1.2 | Topics ya definidos en gateway: `aethernet/rover/command`, `aethernet/access/command`, `aethernet/app/#` |
 | Throttling/debounce del joystick (~20 Hz) | Implementar | RF-1.2, MOV-06 | Sin esto, cada frame de arrastre publicaría decenas de mensajes/s y saturaría el enlace RF |
 | Reconexión automática + indicador de estado de conexión | Implementar | MOV-09 | Mapear a estados `Connecting/Disconnected(reason)/Error` que YA existen en `DashboardUiState` |
 | JSON serialization (kotlinx.serialization) | Implementar | Todos | Payloads idénticos a los del backend/gateway (misma fuente de verdad) |

@@ -24,7 +24,7 @@ Backlog operativo detallado del Área 2. Cada tarea define **qué hacer exactame
 **Qué hacer exactamente:**
 1. Crear `backend/mosquitto/config/mosquitto.conf` con: `listener 1883` (TCP para ESP32/Node-RED), `listener 9001` + `protocol websockets` (para App Android), `password_file /mosquitto/config/passwd`, `acl_file /mosquitto/config/acl`, `persistence true`, `log_dest file /mosquitto/log/mosquitto.log`.
 2. Crear usuarios con `mosquitto_passwd -c backend/mosquitto/config/passwd gateway` (y `nodered`, `appbackend`). Contraseñas reales SOLO en `.env` local.
-3. Crear `backend/mosquitto/config/acl`: `gateway` → readwrite `aethernet/#`; `nodered` → read `aethernet/seguridad/#`, `aethernet/access/#`, write `aethernet/relay/#`; `appbackend` → read `aethernet/#`, write `aethernet/app/#`.
+3. Crear `backend/mosquitto/config/acl`: `gateway` → readwrite `aethernet/#`; `nodered` → read `aethernet/seguridad/#`, `aethernet/access/#`; `appbackend` → read `aethernet/#`, write `aethernet/app/#`.
 
 **Alcance IN:** archivos de config versionados sin secretos; plantilla `.example` si lleva contraseñas.
 **Alcance OUT:** TLS (red LAN confiable, fuera de alcance FOSS-local).
@@ -149,22 +149,22 @@ Backlog operativo detallado del Área 2. Cada tarea define **qué hacer exactame
 
 **Problema actual:** ambos sketches abren Serial2@115200 pero el formato de trama no está especificado en ningún documento.
 **Qué hacer exactamente:**
-1. Escribir `docs/uart-protocol.md`: tabla de tramas (comando relé, estado acceso, evento intrusión, heartbeat), encoding elegido (recomendado: JSON una-línea+\n para debuggabilidad, o binario con header 0xAA + len + checksum si se prioriza CPU), y manejo de errores.
+1. Escribir `docs/uart-protocol.md`: tabla de tramas (comando acceso/PIN, estado acceso, evento intrusión, heartbeat), encoding elegido (recomendado: JSON una-línea+\n para debuggabilidad, o binario con header 0xAA + len + checksum si se prioriza CPU), y manejo de errores.
 2. Implementar encoder/decoder espejo en `gateway.ino` y `access_control.ino` según esa spec.
 **Criterios:**
-- [ ] Comando de relé enviado por MQTT llega al relé físico pasando por ambas capas
+- [ ] Comando de acceso (PIN) enviado por MQTT llega al MEGA pasando por ambas capas
 - [ ] Evento de teclado llega a `aethernet/access/event` con <100 ms medidos
 
-### DEVOPS-14 — Corregir conflicto de pines LED RGB vs relés en MEGA
+### DEVOPS-14 — Verificar pinout LED RGB en MEGA
 | Campo | Valor |
 |---|---|
 | Prioridad | M · Sprint 2 · Origen HU-01/HU-02 |
 
-**Problema actual:** `access_control.ino` define LED RGB en 44/45/46 Y relés en pins 40-47 (el propio código advierte el choque).
-**Qué hacer exactamente:** reasignar relés a pins libres del MEGA (ej. 22-29 ya usados por keypad → usar 38,39,40,41,42,43,47,48 verificando contra pinout completo del sketch), actualizar comentarios de pinout cabecera, recompilar en CI.
+**Estado:** Hardware simplificado — no hay matriz de potencia (ver `hardware-inventory.md`). Conflicto histórico 44-46 resuelto al eliminar pines 40-47.
+**Qué hacer exactamente:** verificar que LED RGB `44,45,46` queda libre sin colisión y documentar pinout final en `firmware/README.md`, recompilar en CI.
 **Criterios:**
 - [ ] Ningún pin duplicado (grep de #define y arrays de pins)
-- [ ] LED RGB y relés operan simultáneamente sin interferencia en banco de pruebas
+- [ ] LED RGB opera sin interferencia en banco de pruebas
 
 ### DEVOPS-15 — PIN de acceso en EEPROM
 | Campo | Valor |

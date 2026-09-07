@@ -31,7 +31,7 @@ Estrategia de validación por subsistema. Los criterios de aceptación BDD (`Dad
 |---|---|---|
 | Interrupción del láser → LED local rojo (sin red) | Integración | Cortar la barrera con Wi-Fi del ESP32 desconectado — el LED debe encender igual |
 | Interrupción del láser → mensaje en Telegram | E2E | Cortar la barrera con el sistema completo activo, verificar llegada del mensaje y medir tiempo transcurrido |
-| Interrupción del láser → bombillo Tuya parpadea rojo | E2E | Mismo caso, verificar cambio de estado del bombillo Mercury LB401 vía `tuya-local` |
+| ~~Interrupción del láser → bombillo Tuya~~ — cancelado | — | Cancelado 2026-09-01 (R-01). Intrusión se verifica por LED RGB rojo + Telegram |
 | Tasa de falsos positivos del láser | No funcional | Dejar el sistema armado N horas sin interrupción real; contar alertas disparadas — objetivo del PRD: 0% |
 | Flujo Node-RED de intrusión completo (`LOW-05`) | Integración | Simular publicación del evento MQTT manualmente (ej. con `mosquitto_pub`) y verificar que Node-RED reacciona sin depender del hardware físico |
 
@@ -70,7 +70,7 @@ Estrategia de validación por subsistema. Los criterios de aceptación BDD (`Dad
 | Escenario | Resultado esperado | Referencia |
 |---|---|---|
 | Se cae el contenedor Docker del backend | MEGA sigue controlando acceso físico; app muestra estado "desconectado" sin crashear | `prd.md` §6 |
-| Se cae el router / Internet | Notificaciones Telegram y bombillo Tuya fallan; acceso físico sigue operando | `prd.md` §6, riesgo R-09 |
+| Se cae el router / Internet | Notificaciones Telegram fallan; acceso físico (MEGA + LED RGB) sigue operando | `prd.md` §6, R-09 |
 | Falla el enlace RF Gateway↔Rover | Rover ejecuta fail-stop (ver HU-04 arriba) | `requirements.md` RF-3.3, `architecture.md` §6 |
 
 ## 5. Qué queda fuera de este plan
