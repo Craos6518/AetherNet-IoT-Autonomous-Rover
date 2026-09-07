@@ -52,7 +52,7 @@ AetherNet es un sistema distribuido de 3 capas que vive completo dentro de una m
 | **Backend** (`backend/`) | FastAPI (API REST + WebSockets), Mosquitto (bus de eventos pub/sub), PostgreSQL (histórico de accesos/eventos) | Reglas de automatización (eso es Node-RED); UI |
 | **App AetherControl** (`app/`) | Dashboard en tiempo real, joystick virtual, envío de PIN, fallback Bluetooth SPP | Almacenamiento persistente (consume el histórico vía backend, no lo posee) |
 | **Node-RED** (`automation/`) | Motor de reglas: escucha eventos MQTT y dispara notificaciones Telegram | Control de acceso físico (eso es del MEGA, de forma independiente) |
-| **stats/** | Filtro EMA (y prototipo de Kalman) sobre lecturas de sensores; prueba t-Student RF vs. Wi-Fi | Actuar sobre los motores directamente — el filtro corre en firmware (ver §4), `stats/` es para el análisis offline/histórico |
+| **stats/** + `notebooks/EMA_Estadistica.ipynb` | Filtro EMA (y prototipo de Kalman) sobre lecturas de sensores; prueba t-Student RF vs. Wi-Fi (bitácora en `notebooks/`, espejo `stats/notebooks/`) | Actuar sobre los motores directamente — el filtro corre en firmware (ver §4), `stats/` + `notebooks/` son para el análisis offline/histórico |
 
 ## 3. Protocolos de comunicación
 
@@ -72,15 +72,15 @@ AetherNet es un sistema distribuido de 3 capas que vive completo dentro de una m
 ```
 Sensor (HC-SR04 / KY-037)
    → lectura analógica/digital en firmware (UNO/gateway)
-   → filtro EMA en tiempo real: S_t = α·Y_t + (1-α)·S_{t-1}, α=0.2
+   → filtro EMA en tiempo real: S_t = α·Y_t + (1-α)·S_{t-1}, α=0.2 (stats/ema_filter.py:15, rover-uno.ino:259, notebooks/EMA_Estadistica.ipynb:2)
    → valor suavizado usado para decisión inmediata (evasión de obstáculos)
    → evento/lectura publicado por MQTT
-   → persistido en PostgreSQL (tabla de eventos/sensores)
-   → extraído posteriormente por stats/ (psycopg2/SQLAlchemy)
-   → análisis descriptivo + prueba t-Student (RF vs. Wi-Fi) → docs/reporte final (EST-07)
+   → persistido en PostgreSQL (tabla de eventos/sensores, backend/app/models.py, init.sql)
+   → extraído posteriormente por stats/ (psycopg2/SQLAlchemy, stats/serial_plot_ema.py, visualize_ema.py)
+   → análisis descriptivo + prueba t-Student (RF vs. Wi-Fi) → notebooks/EMA_Estadistica.ipynb (canónico, docs/notebooks/README.md) → docs/reporte final (EST-07)
 ```
 
-El EMA corre **en el firmware** (decisión en tiempo real); el análisis estadístico más pesado (t-Student, descriptivos) corre **offline en `stats/`** sobre el histórico ya persistido. No son el mismo paso — confundirlos es un error común al implementar EST-02 vs. EST-04/05.
+El EMA corre **en el firmware** (decisión en tiempo real); el análisis estadístico más pesado (t-Student, descriptivos) corre **offline en `stats/`** sobre el histórico ya persistido y se documenta en `notebooks/EMA_Estadistica.ipynb` (canónico centralizado). No son el mismo paso — confundirlos es un error común al implementar EST-02 vs. EST-04/05.
 
 ## 5. Flujo de evento: HU-02 (alerta de intrusión)
 

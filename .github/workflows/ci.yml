@@ -1,69 +1,98 @@
+# =============================================================================
+# CI/CD Pipeline — AetherNet IoT & Autonomous Rover | 6º Semestre UTP
+# Autor: Est. Tecnología en Desarrollo de Software + Ing. Sistemas (UTP)
+# Experiencia: 2 años electrónica/Arduino (arduino-cli), 1 año Programación C,
+#              2 años Python (pytest/ruff/mypy), 2 años HTML/CSS/JS/React
+#              (GitHub Actions como CI de React/Vercel), 1 año PostgreSQL
+# Stack: GitHub Actions + arduino-cli 1.5.1 + Python 3.12 + Docker Compose + Trivy
+# FOSS: Todo en GitHub Actions (ubuntu-latest), sin CircleCI propietario (RNF-3.1)
+# Origen: RNF-1.2 (pipeline con arduino-cli en cada push), docs/sprints.md:61 CI,
+#         docs/requirements.md:22 RF-2.2/RNF-2.2, docs/prd.md:53 FOSS 100%
+# Qué hace: 6 jobs en paralelo/dependencias que validan backend, firmware, stats,
+#           Android y Docker integración + scan seguridad. Si uno falla, el PR no mergea.
+# Trigger: push a cualquier rama + PR a main/develop (como `on: push` en Actions de React).
+# =============================================================================
+
 name: CI/CD Pipeline
 
+# ---------------------------------------------------------------------------
+# Triggers — cuándo corre (como `on: push` en YAML de Actions para React)
+# ---------------------------------------------------------------------------
 on:
   push:
-    branches: ['**']
+    branches: ['**']  # cualquier push a cualquier rama — como `on: push: branches: ['**']` en CI de React (valida cada commit)
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop]  # PR a main/develop — como `on: pull_request` en CI de React (protege main)
 
+# ---------------------------------------------------------------------------
+# Permisos — principle of least privilege (como `permissions: contents: read` en Actions de Node)
+# ---------------------------------------------------------------------------
 permissions:
-  contents: read
-  security-events: write
+  contents: read  # lee repo — como `permissions: contents: read` en CI de React (checkout)
+  security-events: write  # escribe SARIF para Trivy — como `security-events: write` en CI de React con CodeQL
 
+# ---------------------------------------------------------------------------
+# Env global — versiones pinneadas (como `env: NODE_VERSION: 18` en CI de React)
+# ---------------------------------------------------------------------------
 env:
-  ARDUINO_CLI_VERSION: 1.5.1
+  ARDUINO_CLI_VERSION: 1.5.1  # pin 1.5.1 — como `ARDUINO_CLI_VERSION` en Actions de Arduino (evita breaking con latest)
 
 jobs:
   # =============================================================================
-  # Backend (FastAPI) - Python Tests & Lint
+  # Backend (FastAPI) - Python Tests & Lint — 2 años Python (ruff/mypy/pytest)
+  # Valida backend/app/*.py sin levantar Docker (mock DB en tests/test_health.py).
+  # Como `npm run lint && npm test` en CI de React, pero con `ruff check` + `mypy` + `pytest`.
   # =============================================================================
   backend-test:
-    name: Backend Tests (FastAPI)
-    runs-on: ubuntu-latest
+    name: Backend Tests (FastAPI)  # nombre en UI Actions — como `name: Lint and Test` en CI de React
+    runs-on: ubuntu-latest  # runner — como `runs-on: ubuntu-latest` en CI de React (FOSS)
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: ./backend  # cwd — como `working-directory: ./app` en CI de React (no repetir `cd backend`)
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # checkout — como `actions/checkout@v4` en CI de React (clona repo)
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5  # setup Python — como `actions/setup-node@v4` en CI de React pero para Python
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: '3.12'  # 3.12 — como `node-version: 18` en CI de React (pin para reproducibilidad)
+          cache: 'pip'  # cache pip — como `cache: npm` en CI de React (acelera `pip install`)
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip  # upgrade pip — como `npm ci` en React (instala deps)
+          pip install -r requirements.txt  # instala FastAPI, SQLAlchemy, asyncpg, Pydantic — como `npm ci` en React
 
       - name: Run linting (ruff)
         run: |
-          pip install ruff
-          ruff check app/
+          pip install ruff  # instala ruff — como `npm install eslint` en CI de React (lint rápido)
+          ruff check app/  # lint — como `eslint .` en React (ver backend/pyproject.toml:1 ignore B008 para Depends)
 
       - name: Run type checking (mypy)
         run: |
-          pip install mypy
-          mypy app/
+          pip install mypy  # instala mypy — como `npm install typescript` en CI de React (type check)
+          mypy app/  # type check — como `tsc --noEmit` en React (ver backend/pyproject.toml:13 ignore_missing_imports)
 
       - name: Run tests (pytest)
         run: |
-          pytest -v --tb=short
+          pytest -v --tb=short  # tests — como `npm test -- --watchAll=false` en React (backend/tests/test_health.py 6 tests con mock DB)
 
   # =============================================================================
-  # Firmware - Arduino CLI Compilation
+  # Firmware - Arduino CLI Compilation — 2 años electrónica/Arduino (arduino-cli) + 1 año C
+  # Compila 3 firmwares con FQBN correcto sin flashear hardware (como `npm run build` en React pero con arduino-cli).
+  # Matrix 3 firmwares en paralelo — como `strategy: matrix: node: [16,18]` en CI de React pero con firmware.
+  # Valida que no hay error de sintaxis C++ y que pinout no rompe SPI (como `tsc` en React valida tipos).
   # =============================================================================
   firmware-compile:
     name: Firmware Compilation (arduino-cli)
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        firmware:
-          - gateway-esp32
-          - mega-access
-          - rover-uno
+        firmware:  # matrix 3 firmwares — como `matrix: { firmware: [gateway-esp32, mega-access, rover-uno] }` en CI de React
+          - gateway-esp32  # ESP32 — FQBN esp32:esp32:esp32 (ver gateway-esp32.ino:1, CI fallback secrets.h)
+          - mega-access    # MEGA — FQBN arduino:avr:mega (ver mega-access.ino:1, config.h:30 LED 44/45/46)
+          - rover-uno      # UNO — FQBN arduino:avr:uno (ver rover-uno.ino:1, EMA α=0.2)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -71,86 +100,88 @@ jobs:
       - name: Install arduino-cli
         run: |
           curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh -s ${ARDUINO_CLI_VERSION}
-          # install.sh instala en ./bin (repo root) por defecto; añadir ese bin al PATH
+          # install.sh instala en ./bin (repo root) por defecto; añadir ese bin al PATH — como `npm i -g arduino-cli` en React
           echo "$(pwd)/bin" >> $GITHUB_PATH
           export PATH="$(pwd)/bin:$PATH"
-          "$(pwd)/bin/arduino-cli" version
+          "$(pwd)/bin/arduino-cli" version  # verifica instalación — como `arduino-cli version` en local
 
       - name: Setup arduino-cli config
         run: |
           export PATH="$(pwd)/bin:$HOME/bin:$PATH"
-          arduino-cli config init
-          arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli config init  # init config — como `arduino-cli config init` en local (crea ~/.arduino15/arduino-cli.yaml)
+          arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json  # índice ESP32 — como `npm update` para core ESP32
 
       - name: Install ESP32 core (for gateway-esp32)
-        if: matrix.firmware == 'gateway-esp32'
+        if: matrix.firmware == 'gateway-esp32'  # solo ESP32 — como `if: matrix.node == '18'` en CI de React
         run: |
           export PATH="$(pwd)/bin:$HOME/bin:$PATH"
-          arduino-cli core install esp32:esp32
-          arduino-cli lib install "PubSubClient" "ArduinoJson@6.21.3" "RF24"
+          arduino-cli core install esp32:esp32  # instala core ESP32 — como `arduino-cli core install esp32:esp32` en PlatformIO (ver gateway-esp32/platformio.ini)
+          arduino-cli lib install "PubSubClient" "ArduinoJson@6.21.3" "RF24"  # libs — como `lib_deps` en platformio.ini: PubSubClient, ArduinoJson 6.21.3 (pin, no latest), RF24
 
       - name: Install AVR core (for mega-access, rover-uno)
-        if: matrix.firmware != 'gateway-esp32'
+        if: matrix.firmware != 'gateway-esp32'  # MEGA/UNO — como `if: matrix.firmware != 'gateway-esp32'` en CI de React
         run: |
           export PATH="$(pwd)/bin:$HOME/bin:$PATH"
-          arduino-cli core install arduino:avr
-          arduino-cli lib install "Keypad" "Servo" "RF24" "NewPing" "ArduinoJson@6.21.3" "PubSubClient"
+          arduino-cli core install arduino:avr  # instala core AVR — como `arduino:avr` en PlatformIO (ver mega-access/platformio.ini)
+          arduino-cli lib install "Keypad" "Servo" "RF24" "NewPing" "ArduinoJson@6.21.3" "PubSubClient"  # libs MEGA/Rover — Keypad 4x4, Servo MG90S, RF24 nRF24L01, NewPing HC-SR04
 
       - name: Prepare secrets fallback (DEVOPS-11 — gateway sin secrets.h usa defaults)
-        if: matrix.firmware == 'gateway-esp32'
+        if: matrix.firmware == 'gateway-esp32'  # solo gateway — tiene secrets.h gitignored
         run: |
           if [ ! -f firmware/gateway-esp32/secrets.h ] && [ -f firmware/gateway-esp32/secrets.h.example ]; then
-            echo "secrets.h missing — copying from secrets.h.example for CI (defaults AetherNet-LAN/changeme)"
-            cp firmware/gateway-esp32/secrets.h.example firmware/gateway-esp32/secrets.h
+            echo "secrets.h missing — copying from secrets.h.example for CI (defaults AetherNet-LAN/changeme)"  # fallback — como `cp .env.example .env` en CI de React con dotenv
+            cp firmware/gateway-esp32/secrets.h.example firmware/gateway-esp32/secrets.h  # copia plantilla — CI usa defaults, no secretos reales (como `secrets.h` en .gitignore)
           fi
-          cat firmware/gateway-esp32/secrets.h || echo "using __has_include fallback defaults in gateway-esp32.ino:28-51"
+          cat firmware/gateway-esp32/secrets.h || echo "using __has_include fallback defaults in gateway-esp32.ino:28-51"  # log — ver gateway-esp32.ino:28 #if __has_include("secrets.h") fallback
 
       - name: Compile firmware
         run: |
           export PATH="$(pwd)/bin:$HOME/bin:$PATH"
-          if [ "${{ matrix.firmware }}" = "gateway-esp32" ]; then FQBN="esp32:esp32:esp32"; elif [ "${{ matrix.firmware }}" = "rover-uno" ]; then FQBN="arduino:avr:uno"; else FQBN="arduino:avr:mega"; fi; echo "Compiling ${{ matrix.firmware }} with $FQBN"; arduino-cli compile --fqbn $FQBN ./firmware/${{ matrix.firmware }}
+          if [ "${{ matrix.firmware }}" = "gateway-esp32" ]; then FQBN="esp32:esp32:esp32"; elif [ "${{ matrix.firmware }}" = "rover-uno" ]; then FQBN="arduino:avr:uno"; else FQBN="arduino:avr:mega"; fi; echo "Compiling ${{ matrix.firmware }} with $FQBN"; arduino-cli compile --fqbn $FQBN ./firmware/${{ matrix.firmware }}  # compila — como `arduino-cli compile --fqbn $FQBN ./firmware/${firmware}` en local (ver docs/architecture.md:72)
 
   # =============================================================================
   # Docker Build Test + Integration (Sprint 1 cierre — docs/sprints.md:61)
-  # Valida stack real: postgres health → fastapi /health → POST/GET 4 endpoints
+  # Valida stack real: postgres health → fastapi /health → POST/GET 4 endpoints (HU-01..HU-03, RF-3.3)
+  # Como `docker compose up && npm run test:integration` en CI de React con Docker, pero para FastAPI + Postgres + Mosquitto.
+  # Depende de backend-test + firmware-compile — como `needs: [lint, test]` en CI de React (solo si ambos pasan).
   # =============================================================================
   docker-build:
     name: Docker Build + Integration Test
     runs-on: ubuntu-latest
-    needs: [backend-test, firmware-compile]
+    needs: [backend-test, firmware-compile]  # espera backend + firmware — como `needs: [backend-test, firmware-compile]` en CI de React (no construye Docker si tests fallan)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Build Docker images
         run: |
-          docker compose build --no-cache
+          docker compose build --no-cache  # build sin cache — como `docker build --no-cache` en React (valida Dockerfile backend/Dockerfile:1 python:3.12-slim)
 
       - name: Start stack (detached)
         run: |
-          docker compose up -d
-          docker compose ps
+          docker compose up -d  # up -d — levanta postgres:16-alpine + mosquitto:2.0 + fastapi:8000 (ver docker-compose.yml:1)
+          docker compose ps  # lista contenedores — como `docker ps` en local
 
       - name: Wait for Postgres healthy
         run: |
-          echo "Waiting for postgres healthcheck..."
-          for i in $(seq 1 30); do
+          echo "Waiting for postgres healthcheck..."  # espera healthcheck — como `wait-for-it.sh postgres:5432` en CI de React con Postgres
+          for i in $(seq 1 30); do  # retry 30x2s = 60s — como `for i in {1..30}; do pg_isready && break; sleep 2; done` en CI de React
             if docker inspect --format='{{json .State.Health.Status}}' aethernet-postgres 2>/dev/null | grep -q "healthy"; then
-              echo "Postgres healthy"
+              echo "Postgres healthy"  # healthy — como `pg_isready -U aethernet` en docker-compose.yml:15 healthcheck
               break
             fi
             echo "  attempt $i/30 — not healthy yet"
-            sleep 2
-            if [ "$i" = "30" ]; then echo "Postgres did not become healthy"; docker compose logs postgres; exit 1; fi
+            sleep 2  # espera 2s — como `sleep 2` en bash (no bloquea jobs paralelos)
+            if [ "$i" = "30" ]; then echo "Postgres did not become healthy"; docker compose logs postgres; exit 1; fi  # falla — como `exit 1` en CI de React si DB no lista
           done
 
       - name: Wait for FastAPI /health (retry 30x2s)
         run: |
-          echo "Polling http://localhost:8000/health ..."
+          echo "Polling http://localhost:8000/health ..."  # polling health — como `curl --retry 30 http://localhost:3000/health` en CI de React
           for i in $(seq 1 30); do
-            if curl -sf http://localhost:8000/health | grep -q '"status":"ok"'; then
-              echo "FastAPI healthy"
-              curl -s http://localhost:8000/health | cat
+            if curl -sf http://localhost:8000/health | grep -q '"status":"ok"'; then  # curl -sf silencioso + fail si status != 2xx — como `curl -f http://localhost:8000/health` en CI de React
+              echo "FastAPI healthy"  # healthy — como `GET /health 200 {status:"ok", database:"ok"}` en backend/app/main.py:78
+              curl -s http://localhost:8000/health | cat  # log health — como `curl http://localhost:8000/health | jq` en local
               break
             fi
             echo "  attempt $i/30 — waiting..."
@@ -160,65 +191,67 @@ jobs:
 
       - name: Integration — POST/GET 4 endpoints (HU-01..HU-03, RF-3.3)
         run: |
-          set -e
-          echo "=== POST /api/access-events (HU-01) ==="
+          set -e  # fail fast — como `set -e` en bash de CI de React (si un curl falla, job falla)
+          echo "=== POST /api/access-events (HU-01) ==="  # HU-01 — MEGA keypad 1234# → Gateway 192.168.1.14 → HTTP POST → PostgreSQL access_events
           curl -sf -X POST http://localhost:8000/api/access-events \
             -H "Content-Type: application/json" \
-            -d '{"user_id":"ci_user","pin_hash":"abc123","success":true,"source":"ci"}' | grep -q "ci_user"
+            -d '{"user_id":"ci_user","pin_hash":"abc123","success":true,"source":"ci"}' | grep -q "ci_user"  # POST — como `fetch('http://localhost:8000/api/access-events', {method:'POST', body: JSON.stringify({user_id})})` en JS + `grep` verifica eco
           echo "  ok"
 
-          echo "=== POST /api/sensor-events (HU-03) ==="
+          echo "=== POST /api/sensor-events (HU-03) ==="  # HU-03 — HC-SR04 42.5 cm + EMA 41.2 (stats/ema_filter.py:32)
           curl -sf -X POST http://localhost:8000/api/sensor-events \
             -H "Content-Type: application/json" \
             -d '{"sensor_id":"ci-hc-sr04","sensor_type":"ultrasonic","value":42.5,"filtered_value":41.2,"unit":"cm","metadata":{"alpha":0.2}}' | grep -q "ci-hc-sr04"
           echo "  ok"
 
-          echo "=== POST /api/security-events (HU-02) ==="
+          echo "=== POST /api/security-events (HU-02) ==="  # HU-02 — láser KY-008 intrusion → Telegram (RF-4.1)
           curl -sf -X POST http://localhost:8000/api/security-events \
             -H "Content-Type: application/json" \
             -d '{"event_type":"intrusion","severity":"high","description":"ci test"}' | grep -q "intrusion"
           echo "  ok"
 
-          echo "=== POST /api/rover/telemetry (RF-3.3) ==="
-          SESSION=$(python3 -c "import uuid; print(uuid.uuid4())")
+          echo "=== POST /api/rover/telemetry (RF-3.3) ==="  # RF-3.3 — Rover nRF24L01 → Gateway → HTTP POST (session_id + PWM + HC-SR04 EMA)
+          SESSION=$(python3 -c "import uuid; print(uuid.uuid4())")  # genera UUID — como `crypto.randomUUID()` en JS para session_id
           curl -sf -X POST http://localhost:8000/api/rover/telemetry \
             -H "Content-Type: application/json" \
             -d "{\"session_id\":\"$SESSION\",\"left_motor_pwm\":120,\"right_motor_pwm\":120,\"ultrasonic_distance_cm\":35.0,\"ir_left\":false,\"ir_center\":true,\"ir_right\":false,\"rf_rssi\":-65}" | grep -q "$SESSION"
           echo "  ok"
 
-          echo "=== GET list endpoints ==="
+          echo "=== GET list endpoints ==="  # GET lista — como `fetch('http://localhost:8000/api/access-events?limit=5').then(r=>r.json())` en JS
           for ep in access-events sensor-events security-events rover/telemetry; do
-            curl -sf "http://localhost:8000/api/$ep?limit=5" | grep -q "\[" || (echo "GET /api/$ep failed"; exit 1)
+            curl -sf "http://localhost:8000/api/$ep?limit=5" | grep -q "\[" || (echo "GET /api/$ep failed"; exit 1)  # verifica JSON array — como `Array.isArray(await res.json())` en JS
             echo "  GET /api/$ep ok"
           done
 
-          echo "=== GET / (root) ==="
-          curl -sf http://localhost:8000/ | grep -q "AetherNet"
+          echo "=== GET / (root) ==="  # root — como `fetch('http://localhost:8000/')` en JS
+          curl -sf http://localhost:8000/ | grep -q "AetherNet"  # verifica name — como `res.json().name === "AetherNet IoT API"` en JS
 
-          echo "All integration checks passed"
+          echo "All integration checks passed"  # todo ok — como `console.log('All integration checks passed')` en CI de React
 
       - name: Show logs on failure
-        if: failure()
+        if: failure()  # solo si falla — como `if: failure()` en CI de React (no en success)
         run: |
-          docker compose logs --tail=100 postgres || true
-          docker compose logs --tail=100 mosquitto || true
-          docker compose logs --tail=100 fastapi || true
-          docker compose ps || true
+          docker compose logs --tail=100 postgres || true  # logs postgres — como `docker logs postgres` en local (para debug)
+          docker compose logs --tail=100 mosquitto || true  # logs mosquitto — ver backend/mosquitto/log/mosquitto.log
+          docker compose logs --tail=100 fastapi || true  # logs fastapi — ver backend/app/main.py logs
+          docker compose ps || true  # ps — como `docker ps` en local
 
       - name: Cleanup
-        if: always()
+        if: always()  # siempre — como `if: always()` en CI de React (limpia aunque falle)
         run: |
-          docker compose down -v
+          docker compose down -v  # down -v — borra contenedores + volumes (como `docker compose down -v` en local, limpia postgres_data)
 
   # =============================================================================
-  # Stats - Python Tests
+  # Stats - Python Tests — 2 años Python (pytest) | TS4D3 Estadística
+  # Valida stats/ema_filter.py 14 tests (HU-03 EMA α=0.2, KPI >85% prd.md:51).
+  # Como `npm test` en CI de React para stats con pytest, pero con `working-directory: ./stats`.
   # =============================================================================
   stats-test:
     name: Stats Tests (Python)
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./stats
+        working-directory: ./stats  # cwd stats — como `working-directory: ./stats` en CI de React para `npm test` en stats/
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -232,20 +265,22 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          # Asegura pytest y cov aunque requirements.txt no los traiga
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi  # instala pandas, scipy, matplotlib (ver stats/requirements.txt:1)
+          # Asegura pytest y cov aunque requirements.txt no los traiga — como `npm install jest` en CI de React si no está en package.json
           pip install pytest pytest-cov
 
       - name: Run tests
         run: |
-          if [ -f pytest.ini ] || [ -f pyproject.toml ] || ls test_*.py 1>/dev/null 2>&1; then
-            pytest -v --tb=short
+          if [ -f pytest.ini ] || [ -f pyproject.toml ] || ls test_*.py 1>/dev/null 2>&1; then  # si hay tests — como `if [ -f jest.config.js ]` en CI de React
+            pytest -v --tb=short  # tests — como `npm test -- --watchAll=false` en React (stats/tests/test_ema_filter.py 14 tests)
           else
             echo "No tests found in stats/, skipping"
           fi
 
   # =============================================================================
-  # Android Build (optional - requires more setup)
+  # Android Build (optional - requires more setup) — 2 años JS/React (Gradle como Vite)
+  # Verifica que app/ compila como `npm run build` en React pero con Gradle (Kotlin/Compose).
+  # Skip si no hay Gradle files (MOV-12) — como `if: exists` en CI de React con check.
   # =============================================================================
   android-build:
     name: Android Build Check
@@ -255,34 +290,36 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check if Android project exists (MOV-12 — skip si app solo está vacía)
-        id: check
+        id: check  # id check — como `id: check` en CI de React para `if: steps.check.outputs.exists == 'true'`
         run: |
-          if [ -f "app/build.gradle.kts" ] || [ -f "app/settings.gradle.kts" ] || [ -f "gradlew" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
+          if [ -f "app/build.gradle.kts" ] || [ -f "app/settings.gradle.kts" ] || [ -f "gradlew" ]; then  # si hay Gradle files — como `if [ -f package.json ]` en CI de React
+            echo "exists=true" >> $GITHUB_OUTPUT  # output exists=true — como `echo "exists=true" >> $GITHUB_OUTPUT` en CI de React
           else
             echo "exists=false" >> $GITHUB_OUTPUT
-            echo "No Android Gradle files found — skipping build."
+            echo "No Android Gradle files found — skipping build."  # skip — como `echo "No package.json — skipping"` en CI de React
           fi
 
       - name: Set up JDK 17
-        if: steps.check.outputs.exists == 'true'
-        uses: actions/setup-java@v5
+        if: steps.check.outputs.exists == 'true'  # solo si existe — como `if: steps.check.outputs.exists == 'true'` en CI de React
+        uses: actions/setup-java@v5  # setup Java — como `actions/setup-node@v4` en CI de React pero para JDK (Android necesita JDK 17)
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: 'temurin'  # temurin — como `distribution: 'temurin'` en CI de React con `setup-java`
+          java-version: '17'  # JDK 17 — como `java-version: '17'` en CI de React (AGP 8.7 necesita 17)
 
       - name: Setup Android SDK
         if: steps.check.outputs.exists == 'true'
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v3  # setup Android SDK — como `setup-android` en CI de React (instala SDK 37, build-tools)
 
       - name: Build Debug APK
         if: steps.check.outputs.exists == 'true'
         run: |
-          chmod +x ./gradlew
-          ./gradlew :app:assembleDebug --stacktrace
+          chmod +x ./gradlew  # chmod — como `chmod +x gradlew` en CI de React (hace ejecutable)
+          ./gradlew :app:assembleDebug --stacktrace  # build — como `npm run build` en React pero con Gradle (compila Kotlin/Compose a APK debug/app-debug.apk)
 
   # =============================================================================
-  # Security Scan (Trivy)
+  # Security Scan (Trivy) — 1 año PostgreSQL (seguridad) + 2 años JS/React (Trivy como npm audit)
+  # Escanea vulnerabilidades como `npm audit` en React pero con Trivy para Docker/Python.
+  # FOSS: Trivy (Aqua, Apache 2.0) — RNF-3.1.
   # =============================================================================
   security-scan:
     name: Security Scan (Trivy)
@@ -292,15 +329,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@master  # Trivy — como `aquasecurity/trivy-action` en CI de React (scan fs)
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          scan-type: 'fs'  # fs — escanea filesystem (como `npm audit` en React pero para todos los archivos)
+          scan-ref: '.'  # ref . — escanea repo root
+          format: 'sarif'  # SARIF — formato para GitHub Security tab (como `sarif` en CodeQL)
+          output: 'trivy-results.sarif'  # output — como `output: trivy-results.sarif` en CI de React
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
-        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3  # upload SARIF — como `codeql-action/upload-sarif` en CI de React (muestra en Security tab)
+        continue-on-error: true  # no falla job si upload falla — como `continue-on-error: true` en CI de React
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: 'trivy-results.sarif'  # SARIF file — como `sarif_file: 'trivy-results.sarif'` en CI de React

@@ -1,50 +1,67 @@
+# =============================================================================
+# pyproject.toml — Proyecto Stats AetherNet | 6º Semestre UTP | FOSS RNF-3.1
+# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Experiencia: 2 años Python (pip, pytest, ruff), 2 años JS/React (package.json),
+#              1 año PostgreSQL (psycopg2), 1 año C (port EMA)
+# Materia: TS4D3 Estadística — Pandas/SciPy/Matplotlib (no R propietario)
+# Analogía JS: este archivo es el package.json de Python — deps, scripts, lint
+# Analogía C: es el Makefile + Kconfig — qué compilar y cómo testear
+# =============================================================================
 [project]
-name = "aethernet-stats"
-version = "0.1.0"
+name = "aethernet-stats"  # nombre pip — como "name" en package.json
+version = "0.1.0"  # semver — 0.1.0 Sprint 1-2, 1.0.0 será informe final EST-07
 description = "Statistical analysis for AetherNet IoT sensors (EMA filtering, t-Student tests)"
-readme = "README.md"
-requires-python = ">=3.11"
+readme = "README.md"  # doc principal — como README en npm
+requires-python = ">=3.11"  # Python 3.11+ — por dataclass y typing moderno (como "engines" en package.json)
+# Deps runtime — como dependencies en package.json, pero para análisis datos + BD + plots
 dependencies = [
-    "pandas>=2.2.0",
-    "numpy>=1.26.0",
-    "scipy>=1.13.0",
-    "psycopg2-binary>=2.9.9",
-    "sqlalchemy>=2.0.30",
-    "python-dotenv>=1.0.1",
-    "matplotlib>=3.8.0",
+    "pandas>=2.2.0",        # DataFrames — como Excel en Python, para sensor_events de PostgreSQL (EST-10)
+    "numpy>=1.26.0",        # arrays numéricos — base de pandas/scipy (como lodash para números)
+    "scipy>=1.13.0",        # t-Student, Shapiro, Levene — U4 inferencia (EST-05)
+    "psycopg2-binary>=2.9.9", # driver PostgreSQL — como pg en Node, para leer FastAPI DB (1 año exp)
+    "sqlalchemy>=2.0.30",   # ORM/query builder — como Prisma en Node, para db_extract.py futuro
+    "python-dotenv>=1.0.1", # .env loader — como dotenv en Node, para DATABASE_URL
+    "matplotlib>=3.8.0",    # plots — como Chart.js, para visualize_ema.py y alpha_sweep.py
 ]
 
+# Deps dev — como devDependencies en package.json (solo para CI/lint, no prod)
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.2.0",
-    "pytest-cov>=5.0.0",
-    "ruff>=0.4.0",
-    "mypy>=1.10.0",
+    "pytest>=8.2.0",      # tests — como Jest en React (TestEMAFilter 14 tests)
+    "pytest-cov>=5.0.0",  # coverage — como jest --coverage, 90% en stats/
+    "ruff>=0.4.0",        # linter+formatter — como ESLint+Prettier, rápido (reemplaza flake8/black)
+    "mypy>=1.10.0",       # type checker — como TSC en TS, verifica Optional[float] etc.
 ]
 
+# Build system — como "scripts" en package.json pero para pip build
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.build_meta"
+build-backend = "setuptools.build_meta"  # setuptools — el webpack de Python (empaqueta)
 
+# Pytest config — como jest.config.js (tool.pytest.ini_options)
 [tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_functions = ["test_*"]
-pythonpath = ["."]
-addopts = "-v --tb=short --cov=. --cov-report=term-missing"
+testpaths = ["tests"]  # dónde buscar tests — como testMatch en Jest
+python_files = ["test_*.py"]  # patrón archivos — test_ema_filter.py
+python_functions = ["test_*"]  # patrón funciones — test_noise_reduction_kpi
+pythonpath = ["."]  # añade stats/ al PYTHONPATH — para from ema_filter import (como baseUrl en TS)
+addopts = "-v --tb=short --cov=. --cov-report=term-missing"  # default: verbose, traceback corto, coverage term
 
+# Ruff config — como .eslintrc.json (tool.ruff)
 [tool.ruff]
-line-length = 100
-target-version = "py311"
-select = ["E", "F", "I", "W", "UP", "B", "C4", "SIM", "T20"]
-ignore = ["E501"]
+line-length = 100  # 100 chars — como printWidth en Prettier (no 80, más ancho para DataFrames)
+target-version = "py311"  # Python 3.11 — como "target": "es2022" en TS
+# Reglas: E pycodestyle, F pyflakes, I isort, W warnings, UP pyupgrade, B flake8-bugbear, C4 comprehensions, SIM simplify, T20 flake8-use-pathlib
+select = ["E", "F", "I", "W", "UP", "B", "C4", "SIM", "T20"]  # como extends en ESLint
+ignore = ["E501"]  # ignora E501 line too long porque line-length 100 ya la controla (como eslint-disable)
 
+# Ruff format — como prettier.config.js
 [tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
+quote-style = "double"  # " como en JS (no ' )
+indent-style = "space"  # espacios, no tabs (como en React)
 
+# Mypy config — como tsconfig.json strict (tool.mypy)
 [tool.mypy]
-python_version = "3.11"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
+python_version = "3.11"  # como "target" en TS
+warn_return_any = true  # avisa si retornas Any sin tipar — como noImplicitAny en TS
+warn_unused_configs = true  # avisa config mypy no usada
+disallow_untyped_defs = true  # obliga tipar todas las defs — como strict en TS (Optional[float] etc.)
