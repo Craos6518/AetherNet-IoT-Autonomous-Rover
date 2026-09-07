@@ -90,11 +90,13 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 - Python básico (o R) para manipulación de datos.
 
 **Conocimientos a adquirir**
-- Media Móvil Exponencial (EMA): entender el rol de `α = 2/(N+1)` en el trade-off entre suavizado y latencia de respuesta — se usa con `α = 0.2` según HU-03.
+- Media Móvil Exponencial (EMA): entender el rol de `α = 2/(N+1)` en el trade-off entre suavizado y latencia de respuesta — se usa con `α = 0.2` según HU-03. Prototipado en `stats/ema_filter.py:15` y validado en banco `firmware/test-ema-uno` + `notebooks/EMA_Estadistica.ipynb:2`.
 - Filtro de Kalman (mencionado como alternativa/complemento a EMA en la matriz del PDF) — al menos su intuición conceptual (predicción + corrección) aunque se implemente la versión EMA.
-- Pandas/SciPy para análisis descriptivo e inferencial sobre los datos históricos almacenados en PostgreSQL.
-- Prueba de hipótesis $t$-Student de dos muestras (RF vs. Wi-Fi) — plantear correctamente $H_0$/$H_1$, verificar supuestos (normalidad, varianzas) antes de aplicarla.
-- Conexión Python → PostgreSQL (`psycopg2`/`SQLAlchemy`) para extraer el histórico de eventos.
+- Pandas/SciPy para análisis descriptivo e inferencial sobre los datos históricos almacenados en PostgreSQL (`stats/materias/estadistica.md`, `notebooks/EMA_Estadistica.ipynb:6` barrido α Monte Carlo 100×).
+- Prueba de hipótesis $t$-Student de dos muestras (RF vs. Wi-Fi) — plantear correctamente $H_0$/$H_1$, verificar supuestos (normalidad, varianzas) antes de aplicarla (`stats/notebooks/README.md` espejo de `notebooks/`).
+- Conexión Python → PostgreSQL (`psycopg2`/`SQLAlchemy`) para extraer el histórico de eventos (`stats/visualize_ema.py`, `stats/serial_plot_ema.py`).
+
+**Notebooks centralizados:** `notebooks/EMA_Estadistica.ipynb` (canónico, ver `notebooks/README.md` y `docs/notebooks/README.md`). `stats/notebooks/` es espejo de compatibilidad — no editar.
 
 **Se despliega en:** Sprint 4 (aunque el diseño del algoritmo puede prototiparse desde antes, en paralelo al Sprint 1-2).
 

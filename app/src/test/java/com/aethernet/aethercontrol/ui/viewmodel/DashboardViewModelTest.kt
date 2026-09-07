@@ -88,6 +88,8 @@ class DashboardViewModelTest {
         override suspend fun getLedState(): Result<LedUiState> =
             if (ledError != null) Result.Error(ledError)
             else Result.Success(ledState ?: LedUiState(color = LedColor.OFF, state = LedState.OFF, label = "Apagado"))
+
+        override suspend fun sendAccessCommand(pin: String): Result<Unit> = Result.Success(Unit)
     }
 
     @Test

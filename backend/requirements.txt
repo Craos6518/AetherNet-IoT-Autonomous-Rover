@@ -1,12 +1,31 @@
-fastapi==0.111.0
-uvicorn[standard]==0.30.1
-sqlalchemy[asyncio]==2.0.30
-asyncpg==0.29.0
-pydantic==2.7.4
-pydantic-settings==2.3.3
-python-multipart==0.0.9
-paho-mqtt==2.1.0
-python-dotenv==1.0.1
-pytest==8.2.2
-pytest-asyncio==0.23.3
-httpx==0.27.0
+# =============================================================================
+# requirements.txt — Deps Backend Pinneadas | 6º Semestre UTP | FOSS RNF-3.1
+# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Experiencia: 2 años Python (pip freeze), 2 años JS/React (package-lock.json),
+#              1 año C (pin ArduinoJson 6.21.3), 1 año PostgreSQL (asyncpg), 2 años electrónica
+# Analogía JS: este archivo es `package-lock.json` — versiones exactas para CI reproducible.
+# Analogía C: como `lib_deps = ArduinoJson@6.21.3` en platformio.ini — pin para no romper con update.
+# Analogía PostgreSQL: asyncpg 0.29.0 es como `pg@8.11` en Node — driver Postgres pinneado.
+# FOSS: todas MIT/BSD — sin dependencias propietarias (RNF-3.1, como firmware y stats).
+# Generado: `pip freeze > requirements.txt` (no a mano) — ver pyproject.toml para rangos.
+# Instalación: `pip install -r requirements.txt` (o `pip install -e .` desde pyproject.toml) — ver Dockerfile:11
+# CI: .github/workflows/ci.yml usa este archivo para cache pip (como npm ci en Node)
+# =============================================================================
+# Core FastAPI — como dependencies en package.json (Express + middleware)
+fastapi==0.111.0        # FastAPI — Express en Python, con Pydantic + Swagger auto (/docs) — como express + swagger-jsdoc
+uvicorn[standard]==0.30.1 # ASGI server — como `node server.js` pero para FastAPI (con uvloop, httptools) — FOSS
+sqlalchemy[asyncio]==2.0.30 # ORM async — como Prisma/Drizzle en Node, pero para Postgres con async (ver models.py:1)
+asyncpg==0.29.0         # driver Postgres async — como `pg` en Node pero nativo async (rápido, binario) — 1 año exp
+pydantic==2.7.4         # validación — como Zod en JS, para schemas.py (Field, BaseModel) — FOSS
+pydantic-settings==2.3.3 # settings desde .env — como dotenv + Zod para env vars (ver config.py:1)
+python-multipart==0.0.9 # para FormData en FastAPI — como multer en Express (por si POST multipart, aunque aquí JSON)
+# MQTT — como mqtt.js en Node, pero paho-mqtt en Python (FOSS EPL)
+paho-mqtt==2.1.0        # cliente MQTT — para backend que escuche aethernet/# (futuro, ahora solo HTTP)
+# Env — como dotenv en Node
+python-dotenv==1.0.1    # carga .env — como dotenv en Node, usado por pydantic-settings y config.py
+# Test — como devDependencies en package.json (Jest + supertest)
+pytest==8.2.2           # tests — como Jest en React, para tests/test_health.py 7 tests
+pytest-asyncio==0.23.3  # async tests — como jest con async/await, para FastAPI async handlers
+httpx==0.27.0           # cliente HTTP async — como axios en Node, para TestClient en tests (ver test_health.py:12)
+# Nota: pytest-cov, ruff, mypy están en pyproject.toml dev deps — aquí solo runtime + test mínimo para Docker/Ci ligero
+# Para dev completo: `pip install -e .[dev]` (instala ruff/mypy además) — ver pyproject.toml:5

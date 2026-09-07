@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- =============================================================================
+     AndroidManifest.xml — Manifiesto App | 6º Semestre UTP | RF-1.1
+     Autor: Est. Tec. Desarrollo Software + Ing. Sistemas (UTP) — 2 años React/HTML
+     FOSS: Android (Apache 2.0) — RNF-3.1. Template Android Studio con INTERNET,
+     cleartextTraffic para HTTP LAN (192.168.x.x:8000 sin HTTPS) y AetherControlApp.
+     Analogía React: como package.json + index.html — declara permisos y app class.
+     ============================================================================= -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- INTERNET para Retrofit HTTP y Paho MQTT TCP 1883 — como fetch necesita internet -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application

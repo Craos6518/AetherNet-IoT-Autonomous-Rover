@@ -13,6 +13,7 @@ Plataforma distribuida de domótica modular, telemetría estadística y robótic
 4. `docs/sprints.md` — planeación Scrum y estado actual del proyecto; consúltalo antes de proponer trabajo, para no adelantar tareas de un sprint cuya base aún no existe.
 5. `docs/roadmap.md` — conocimientos necesarios por materia para desplegar cada componente; útil si el agente necesita explicar o justificar una elección técnica a un colaborador nuevo.
 6. `docs/backlog.md` — backlog operativo por materia (MoSCoW + sprint asignado). Es la fuente de verdad de "qué falta hacer" — un agente debe consultarlo antes de proponer nuevo trabajo, y actualizar el estado de un ítem cuando lo complete.
+7. `notebooks/README.md` + `docs/notebooks/README.md` — índice notebooks centralizados en `notebooks/` (canónico, `stats/notebooks/` solo espejo).
 
 Si una tarea contradice algo en estos seis archivos, el agente debe señalarlo antes de implementar, no asumir cuál documento tiene prioridad.
 
@@ -26,7 +27,8 @@ Si una tarea contradice algo en estos seis archivos, el agente debe señalarlo a
 | Firmware Gateway | C++ (ESP32), UART, nRF24L01, arduino-cli | `firmware/gateway-esp32/` |
 | Firmware Acceso/Potencia | C++ (Arduino MEGA), teclado 4x4, servo MG90S, LED RGB local | `firmware/mega-access/` |
 | Firmware Rover | C++ (Arduino UNO), L298N, HC-SR04, TCRT5000 | `firmware/rover-uno/` |
-| Análisis estadístico | Python (Pandas/SciPy) o R — EMA, prueba t-Student | `stats/` |
+| Análisis estadístico | Python (Pandas/SciPy) o R — EMA, prueba t-Student | `stats/` + `notebooks/` (canónico, `stats/notebooks/` espejo) |
+| Notebooks | Jupyter (Kotlin + Python) | `notebooks/` (canónico) + `docs/notebooks/` redirección + `stats/notebooks/` espejo |
 | CI/CD | GitHub Actions + `arduino-cli` | `.github/workflows/` |
 
 > Ajusta las rutas de arriba si la estructura real del repo difiere; este mapa es orientativo hasta que exista un `README.md` de estructura de carpetas.
