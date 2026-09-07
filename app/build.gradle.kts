@@ -65,6 +65,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     // DataStore Preferences
     implementation(libs.datastore.preferences)
+    // MOV-03: MQTT Paho FOSS (EPL 1.0, RNF-3.1) — tcp://host:1883 + fallback ws://host:9001
+    implementation(libs.paho.mqttv3)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlinx.coroutines.test)

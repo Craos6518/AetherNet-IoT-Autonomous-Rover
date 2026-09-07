@@ -1,5 +1,10 @@
 package com.aethernet.aethercontrol.data.repository
 
+import com.aethernet.aethercontrol.data.mqtt.AccessEventMqtt
+import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState
+import com.aethernet.aethercontrol.data.mqtt.MqttManager
+import com.aethernet.aethercontrol.data.mqtt.RoverTelemetryMqtt
+import com.aethernet.aethercontrol.data.mqtt.SecurityEventMqtt
 import com.aethernet.aethercontrol.data.remote.ApiService
 import com.aethernet.aethercontrol.data.remote.dto.AccessEventCreate
 import com.aethernet.aethercontrol.data.remote.dto.RoverTelemetryCreate
@@ -11,14 +16,18 @@ import com.aethernet.aethercontrol.util.Result
 import com.aethernet.aethercontrol.util.safeCall
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Implementación real — MOV-01 4.2 (RF-1.1).
- * Inyectada vía ServiceLocator, no vía constructor de Activity.
- * Sin lógica MQTT — // MOV-03 comentario.
+ * Implementación real — MOV-01 4.2 + MOV-03 (RF-1.1).
+ * Inyectada vía ServiceLocator, MQTT delegado a MqttManager (no en ViewModel).
  */
 class AetherRepositoryImpl(
-    private val api: ApiService
+    private val api: ApiService,
+    private val mqtt: MqttManager? = null
 ) : AetherRepository {
 
     override suspend fun getHealth() = safeCall { api.getHealth() }
@@ -51,5 +60,21 @@ class AetherRepositoryImpl(
         }
     }
 
-    // MOV-03: MQTT/WebSocket suscripción a telemetría se añadirá aquí (no en ViewModel)
+    // MOV-03: MQTT/WebSocket suscripción a telemetría — delega a MqttManager, fallback HTTP si null (tests)
+    override val mqttConnectionState: StateFlow<MqttConnectionState>
+        get() = mqtt?.connectionState ?: MutableStateFlow<MqttConnectionState>(MqttConnectionState.Disconnected)
+    override val roverTelemetryFlow: SharedFlow<RoverTelemetryMqtt>
+        get() = mqtt?.roverTelemetry ?: MutableSharedFlow()
+    override val accessEventFlow: SharedFlow<AccessEventMqtt>
+        get() = mqtt?.accessEvents ?: MutableSharedFlow()
+    override val securityEventFlow: SharedFlow<SecurityEventMqtt>
+        get() = mqtt?.securityEvents ?: MutableSharedFlow()
+
+    override suspend fun connectMqtt(httpBaseUrl: String) {
+        mqtt?.connect(httpBaseUrl)
+    }
+
+    override fun disconnectMqtt() {
+        mqtt?.disconnect()
+    }
 }
