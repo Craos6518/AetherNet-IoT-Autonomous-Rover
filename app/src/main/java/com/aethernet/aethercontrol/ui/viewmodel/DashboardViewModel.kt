@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState
 import com.aethernet.aethercontrol.data.repository.AetherRepository
 import com.aethernet.aethercontrol.domain.model.DashboardUiState
+import com.aethernet.aethercontrol.domain.model.LedColor
+import com.aethernet.aethercontrol.domain.model.LedState
+import com.aethernet.aethercontrol.domain.model.LedUiState
 import com.aethernet.aethercontrol.util.Result
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -34,6 +37,9 @@ class DashboardViewModel(
     private var ledPollingJob: Job? = null
     private var mqttJob: Job? = null
     private var mqttStateJob: Job? = null
+    private var mqttAccessJob: Job? = null
+    private var mqttSecurityJob: Job? = null
+    private var ledExpiryJob: Job? = null
 
     init {
         refreshHealth()
@@ -123,6 +129,75 @@ class DashboardViewModel(
                 _uiState.update { it.copy(lastRover = telem, lastSync = System.currentTimeMillis(), isConnected = true) }
             }
         }
+        // MOV-03 FIX: LED vía MQTT push <50ms (no solo HTTP poll). Cuando MQTT está Connected se para polling,
+        // por eso aquí colectamos access/security y pintamos LedUiState directo con ventana 5s/1s/10s espejo led.cpp
+        mqttAccessJob?.cancel()
+        mqttAccessJob = viewModelScope.launch {
+            repo.accessEventFlow.collect { ev ->
+                val now = System.currentTimeMillis()
+                if (ev.success) {
+                    // HU-01 verde 5s DOOR_AUTO_LOCK_MS config.h:52 — luego auto OFF
+                    _uiState.update {
+                        it.copy(
+                            ledState = LedUiState(
+                                color = LedColor.GREEN,
+                                state = LedState.GREEN_UNLOCKED,
+                                label = "Verde desbloqueado",
+                                lastEventAt = now,
+                                source = "access",
+                                isLoading = false,
+                                error = null
+                            ),
+                            lastSync = now,
+                            isConnected = true
+                        )
+                    }
+                    scheduleLedExpiry(5000L)
+                } else {
+                    // fallo PIN rojo 1s LED_RED_FAIL_MS config.h:62 — luego OFF
+                    _uiState.update {
+                        it.copy(
+                            ledState = LedUiState(
+                                color = LedColor.RED,
+                                state = LedState.RED_FAIL,
+                                label = "Rojo fallo PIN",
+                                lastEventAt = now,
+                                source = "access",
+                                isLoading = false,
+                                error = null
+                            ),
+                            lastSync = now,
+                            isConnected = true
+                        )
+                    }
+                    scheduleLedExpiry(1000L)
+                }
+            }
+        }
+        mqttSecurityJob?.cancel()
+        mqttSecurityJob = viewModelScope.launch {
+            repo.securityEventFlow.collect { ev ->
+                if (ev.event_type.equals("intrusion", ignoreCase = true)) {
+                    val now = System.currentTimeMillis()
+                    _uiState.update {
+                        it.copy(
+                            ledState = LedUiState(
+                                color = LedColor.RED,
+                                state = LedState.RED_INTRUSION,
+                                label = "Rojo intrusión",
+                                lastEventAt = now,
+                                source = "security",
+                                isLoading = false,
+                                error = null
+                            ),
+                            lastSync = now,
+                            isConnected = true
+                        )
+                    }
+                    scheduleLedExpiry(10000L) // HU-02 rojo 10s (LedStateMapper RED_INTRUSION_WINDOW_MS)
+                }
+            }
+        }
         mqttStateJob?.cancel()
         mqttStateJob = viewModelScope.launch {
             repo.mqttConnectionState.collect { st ->
@@ -138,12 +213,37 @@ class DashboardViewModel(
         }
     }
 
+    private fun scheduleLedExpiry(delayMs: Long) {
+        ledExpiryJob?.cancel()
+        ledExpiryJob = viewModelScope.launch {
+            delay(delayMs)
+            // solo revierte a Apagado si no ha llegado otro evento más reciente dentro de la ventana
+            val age = System.currentTimeMillis() - (_uiState.value.ledState.lastEventAt ?: 0L)
+            if (age >= delayMs - 100) {
+                _uiState.update {
+                    it.copy(
+                        ledState = LedUiState(
+                            color = LedColor.OFF,
+                            state = LedState.OFF,
+                            label = "Apagado",
+                            lastEventAt = it.ledState.lastEventAt,
+                            source = it.ledState.source,
+                            isLoading = false,
+                            error = null
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     fun disconnectMqtt() {
         repo.disconnectMqtt()
-        mqttJob?.cancel()
-        mqttJob = null
-        mqttStateJob?.cancel()
-        mqttStateJob = null
+        mqttJob?.cancel(); mqttJob = null
+        mqttStateJob?.cancel(); mqttStateJob = null
+        mqttAccessJob?.cancel(); mqttAccessJob = null
+        mqttSecurityJob?.cancel(); mqttSecurityJob = null
+        ledExpiryJob?.cancel(); ledExpiryJob = null
         _uiState.update { it.copy(mqttState = MqttConnectionState.Disconnected) }
     }
 
