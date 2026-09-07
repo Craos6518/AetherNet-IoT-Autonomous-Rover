@@ -9,6 +9,7 @@ import com.aethernet.aethercontrol.data.remote.dto.SecurityEventCreate
 import com.aethernet.aethercontrol.data.remote.dto.SecurityEventOut
 import com.aethernet.aethercontrol.data.remote.dto.SensorEventCreate
 import com.aethernet.aethercontrol.data.remote.dto.SensorEventOut
+import com.aethernet.aethercontrol.domain.model.LedUiState
 import com.aethernet.aethercontrol.util.Result
 
 /**
@@ -31,4 +32,7 @@ interface AetherRepository {
 
     suspend fun getRoverTelemetry(limit: Int = 50): Result<List<RoverTelemetryOut>>
     suspend fun postRoverTelemetry(payload: RoverTelemetryCreate): Result<RoverTelemetryOut>
+
+    /** MOV-02: deriva LedUiState del último evento (RF-1.1 HU-01/HU-02, solo lectura). */
+    suspend fun getLedState(): Result<LedUiState>
 }
