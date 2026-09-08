@@ -44,7 +44,8 @@ static void applyMode(LedMode m) {
         case LedMode::OFF:              setLedColor(0, 0, 0); break;     // Negro — apagado
         case LedMode::GREEN_UNLOCKED:   setLedColor(0, 255, 0); break;   // Verde puro — éxito HU-01
         case LedMode::RED_FAIL:
-        case LedMode::RED_CLEAR:        setLedColor(255, 0, 0); break;   // Rojo — error o clear (mismo color, distinta duración)
+        case LedMode::RED_CLEAR:
+        case LedMode::RED_INTRUSION:    setLedColor(255, 0, 0); break;   // Rojo — error/clear/intrusión (mismo color, distinta duración)
         case LedMode::BLUE_TAP:         setLedColor(0, 0, 255); break;   // Azul — tap dígito
     }
 }
@@ -73,6 +74,7 @@ void setLedMode(LedMode mode) {
     if (mode == LedMode::RED_FAIL) modeDurationMs = LED_RED_FAIL_MS;       // 1000ms
     else if (mode == LedMode::BLUE_TAP) modeDurationMs = LED_BLUE_TAP_MS;  // 50ms
     else if (mode == LedMode::RED_CLEAR) modeDurationMs = LED_CLEAR_FLASH_MS; // 100ms
+    else if (mode == LedMode::RED_INTRUSION) modeDurationMs = LED_RED_INTRUSION_MS; // 3000ms HU-02
     else modeDurationMs = 0;
     applyMode(mode); // Aplica color inmediatamente
 }
