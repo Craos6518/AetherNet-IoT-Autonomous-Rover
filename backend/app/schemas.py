@@ -18,7 +18,11 @@ from datetime import datetime  # para timestamp — como Date en JS pero con TZ
 from typing import Any  # para metadata JSON flexible — como Record<string, any> en TS
 from uuid import UUID  # para id/session_id — como crypto.randomUUID() en JS
 
-from pydantic import BaseModel, ConfigDict, Field  # BaseModel = Zod schema, Field = z.string().max()
+from pydantic import (  # BaseModel = Zod schema, Field = z.string().max()
+    BaseModel,
+    ConfigDict,
+    Field,
+)
 
 
 # ---------------------------------------------------------------------------

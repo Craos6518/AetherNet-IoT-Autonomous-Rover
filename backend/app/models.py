@@ -23,8 +23,12 @@ from sqlalchemy import (
     String,  # VARCHAR(n) — texto con límite (como string @db.VarChar(64) en Prisma)
     Text,  # TEXT — texto largo sin límite (para description en security_events)
 )
-from sqlalchemy.dialects.postgresql import UUID  # UUID nativo Postgres — columna UUID (no VARCHAR)
-from sqlalchemy.sql import func  # func.now() — NOW() en SQL (como Date.now() pero en DB)
+from sqlalchemy.dialects.postgresql import (
+    UUID,  # UUID nativo Postgres — columna UUID (no VARCHAR)
+)
+from sqlalchemy.sql import (
+    func,  # func.now() — NOW() en SQL (como Date.now() pero en DB)
+)
 
 from app.database import Base  # DeclarativeBase — clase base para todos los modelos ORM
 

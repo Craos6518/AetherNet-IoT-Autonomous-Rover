@@ -30,19 +30,34 @@ Lifespan: crea tablas vía SQLAlchemy si no existen (complemento a init.sql).
 FOSS: FastAPI + SQLAlchemy + asyncpg — 100% open source, sin AWS/GCP (RNF-3.1).
 """
 
-from contextlib import asynccontextmanager  # para lifespan async — como try/finally en JS pero para startup/shutdown
+from contextlib import (
+    asynccontextmanager,  # para lifespan async — como try/finally en JS pero para startup/shutdown
+)
 
-from fastapi import Depends, FastAPI  # FastAPI = Express, Depends = DI como useContext en React
-from fastapi.middleware.cors import CORSMiddleware  # CORS — como cors() en Express, permite App Android en LAN
+from fastapi import (  # FastAPI = Express, Depends = DI como useContext en React
+    Depends,
+    FastAPI,
+)
+from fastapi.middleware.cors import (
+    CORSMiddleware,  # CORS — como cors() en Express, permite App Android en LAN
+)
 from sqlalchemy import text  # para SELECT 1 en health check (raw SQL)
-from sqlalchemy.ext.asyncio import AsyncSession  # sesión async — como pool.query en pg Node pero async/await
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,  # sesión async — como pool.query en pg Node pero async/await
+)
 
 # Importar modelos para que Base.metadata conozca las tablas — side-effect registra en metadata
 # Si no importas, create_all() no crea nada porque Base no sabe qué tablas existen (como no importar modelos en Sequelize)
 import app.models  # type: ignore[import]  # noqa — side-effect intencional, mypy lo ignora
 from app.config import get_settings  # settings desde .env (como process.env en Node)
-from app.database import Base, engine, get_db  # Base metadata, engine asyncpg, get_db Depends
-from app.routers.events import router as events_router  # router /api/* — como app.use('/api', eventsRouter) en Express
+from app.database import (  # Base metadata, engine asyncpg, get_db Depends
+    Base,
+    engine,
+    get_db,
+)
+from app.routers.events import (
+    router as events_router,  # router /api/* — como app.use('/api', eventsRouter) en Express
+)
 from app.schemas import HealthResponse  # schema Pydantic para /health — como Zod schema
 
 settings = get_settings()  # singleton cacheado con @lru_cache — lee .env una vez (como dotenv.config())

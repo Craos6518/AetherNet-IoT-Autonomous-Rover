@@ -10,10 +10,18 @@
 # FOSS: SQLAlchemy 2.0 + asyncpg (MIT) + PostgreSQL 15 — RNF-3.1, sin RDS.
 # Origen: DEVOPS-01 docker-compose.yml — servicio postgres + backend.
 # =============================================================================
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine  # async engine — como Pool en pg Node pero async
-from sqlalchemy.orm import DeclarativeBase  # base para models — como BaseEntity en TypeORM
+from sqlalchemy.ext.asyncio import (  # async engine — como Pool en pg Node pero async
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.orm import (
+    DeclarativeBase,  # base para models — como BaseEntity en TypeORM
+)
 
-from app.config import get_settings  # lee DATABASE_URL desde .env (como process.env.DATABASE_URL en Node)
+from app.config import (
+    get_settings,  # lee DATABASE_URL desde .env (como process.env.DATABASE_URL en Node)
+)
 
 settings = get_settings()  # singleton cacheado — lee .env una vez (ver config.py:21)
 
@@ -44,7 +52,7 @@ async_session_maker = async_sessionmaker(
 # --------------------------------------------------------------------------
 class Base(DeclarativeBase):
     """Base para AccessEvent, SensorEvent, etc. — registra metadata para create_all() en main.py:36."""
-    pass  # vacío — solo marca herencia (como `class Base extends DeclarativeBase` en TS)
+    # vacío — solo marca herencia (como `class Base extends DeclarativeBase` en TS)
 
 
 # --------------------------------------------------------------------------
