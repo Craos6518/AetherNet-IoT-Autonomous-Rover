@@ -26,7 +26,7 @@ Backlog operativo detallado del Área 5. IDs EST-01..07 provienen de `docs/backl
 
 ### EST-09 — Instrumentación de latencias para t-Student *(nuevo, coordinada)*
 | M · Sprint 3 · Depende de DEVOPS-13 (tramas) · Origen RNF-2.2 |
-**Qué hacer exactamente:** acordar formato de timestamp: cada comando del Rover lleva `t_app` (epoch ms al publicar) y cada telemetría devuelve `t_gw_rx`; gateway imprime deltas por serial; script captura 50 muestras por protocolo (RF vía nRF24 vs Wi-Fi/MQTT directo a actuador relé) en CSV `stats/data/latency_rf.csv` y `latency_wifi.csv`.
+**Qué hacer exactamente:** acordar formato de timestamp: cada comando del Rover lleva `t_app` (epoch ms al publicar) y cada telemetría devuelve `t_gw_rx`; gateway imprime deltas por serial; script captura 50 muestras por protocolo (RF vía nRF24 vs Wi-Fi/MQTT directo a bombillo/LED local) en CSV `stats/data/latency_rf.csv` y `latency_wifi.csv`.
 **Alcance IN:** solo medición y almacenamiento crudo.
 **Criterios:**
 - [ ] ≥50 pares de latencias válidas por protocolo registradas

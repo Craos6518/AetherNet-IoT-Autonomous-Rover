@@ -19,7 +19,7 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 - Bluetooth API clásica (SPP) para el fallback de RF-1.3 — distinto del BLE, ojo con esa confusión común.
 - Manejo de permisos en runtime (Android 12+): `BLUETOOTH_CONNECT`, `ACCESS_FINE_LOCATION` para escaneo BT.
 
-**Se despliega en:** Sprint 2 (pantallas base de relés) → Sprint 3 (Joystick + telemetría).
+**Se despliega en:** Sprint 2 (pantallas base de luces/bombillo) → Sprint 3 (Joystick + telemetría).
 
 **Habilita:** RF-1.1, RF-1.2, RF-1.3, HU-01 (interfaz de desbloqueo).
 
@@ -33,7 +33,7 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 
 **Conocimientos a adquirir**
 - Orquestación con `docker-compose` de múltiples servicios interdependientes (FastAPI + PostgreSQL + Mosquitto) — RNF-1.1.
-- Configuración de broker Mosquitto MQTT (topics, ACLs, persistencia) — usado por RF-2.1 y RF-4.2.
+- Configuración de broker Mosquitto MQTT (topics, ACLs, persistencia) — usado por RF-2.1 y RF-4.1.
 - GitHub Actions: sintaxis de workflows, runners, cacheo de dependencias.
 - `arduino-cli`: compilación headless de sketches C++, gestión de boards/cores por línea de comandos — necesario para RNF-1.2.
 - Testing: PyTest para FastAPI, Jest si la app usa alguna capa JS (o solo JUnit/Kotlin test si es 100% nativo).
@@ -54,14 +54,14 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 **Conocimientos a adquirir**
 - Node-RED: flujos, nodos `mqtt in`/`mqtt out`, function nodes en JavaScript, debug/inject nodes.
 - Telegram Bot API: creación del bot vía BotFather, envío de mensajes vía HTTP request node.
-- **`tuya-local`**: cómo obtener el `local_key` y `device_id` de un dispositivo Tuya (típicamente vía Tuya IoT Platform o herramientas como `tuya-cli`/`tinytuya`), y cómo se integra como nodo o llamada HTTP dentro de Node-RED — crítico porque es la pieza que mantiene el proyecto 100% FOSS sin depender de Tuya Cloud (ver nota de diseño en `docs/hardware-inventory.md`).
+- ~~`tuya-local`~~ — **CANCELADO 2026-09-01** (ADR-001, R-01 políticas API propietaria — viola RNF-3.1). Ya no se requiere `local_key`; Node-RED solo dispara Telegram.
 - Home Assistant (opcional según cuánto se use como capa intermedia vs. Node-RED puro).
 
 **Se despliega en:** Sprint 4.
 
-**Habilita:** RF-4.1, RF-4.2, HU-02 (bombillo Tuya parpadeando en rojo).
+**Habilita:** RF-4.1, HU-02 (Telegram + LED RGB local). RF-4.2 cancelado.
 
-**Riesgo a validar temprano:** no todos los bombillos "compatibles con Smart Life" exponen el protocolo local de `tuya-local`; conviene confirmar el modelo específico del bombillo **antes** de llegar al Sprint 4 (esto ya quedó como pendiente en `docs/hardware-inventory.md`).
+**Nota 2026-09-01:** riesgo `tuya-local` cerrado por cancelación (ADR-001, R-01 políticas API).
 
 ---
 
@@ -73,7 +73,7 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 **Conocimientos a adquirir**
 - Redacción de Historias de Usuario con formato INVEST + criterios de aceptación BDD (`Dado/Cuando/Entonces`) — ya aplicado en `requirements.md`, pero el equipo debe poder extender el patrón para nuevas HU.
 - WBS (Work Breakdown Structure) para descomponer cada sprint en tareas verificables.
-- Matriz de riesgos — particularmente relevante para riesgos de integración hardware/software (ej. el riesgo de `tuya-local` arriba mencionado).
+- Matriz de riesgos — particularmente relevante para riesgos de integración hardware/software.
 - Planning Poker para estimación relativa entre tareas de firmware, app y backend (que tienen complejidades muy distintas entre sí).
 - Diagrama de Gantt para visualizar dependencias entre sprints (ver `docs/sprints.md`, sección "Depende de").
 
@@ -90,11 +90,13 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 - Python básico (o R) para manipulación de datos.
 
 **Conocimientos a adquirir**
-- Media Móvil Exponencial (EMA): entender el rol de `α = 2/(N+1)` en el trade-off entre suavizado y latencia de respuesta — se usa con `α = 0.2` según HU-03.
+- Media Móvil Exponencial (EMA): entender el rol de `α = 2/(N+1)` en el trade-off entre suavizado y latencia de respuesta — se usa con `α = 0.2` según HU-03. Prototipado en `stats/ema_filter.py:15` y validado en banco `firmware/test-ema-uno` + `notebooks/EMA_Estadistica.ipynb:2`.
 - Filtro de Kalman (mencionado como alternativa/complemento a EMA en la matriz del PDF) — al menos su intuición conceptual (predicción + corrección) aunque se implemente la versión EMA.
-- Pandas/SciPy para análisis descriptivo e inferencial sobre los datos históricos almacenados en PostgreSQL.
-- Prueba de hipótesis $t$-Student de dos muestras (RF vs. Wi-Fi) — plantear correctamente $H_0$/$H_1$, verificar supuestos (normalidad, varianzas) antes de aplicarla.
-- Conexión Python → PostgreSQL (`psycopg2`/`SQLAlchemy`) para extraer el histórico de eventos.
+- Pandas/SciPy para análisis descriptivo e inferencial sobre los datos históricos almacenados en PostgreSQL (`stats/materias/estadistica.md`, `notebooks/EMA_Estadistica.ipynb:6` barrido α Monte Carlo 100×).
+- Prueba de hipótesis $t$-Student de dos muestras (RF vs. Wi-Fi) — plantear correctamente $H_0$/$H_1$, verificar supuestos (normalidad, varianzas) antes de aplicarla (`stats/notebooks/README.md` espejo de `notebooks/`).
+- Conexión Python → PostgreSQL (`psycopg2`/`SQLAlchemy`) para extraer el histórico de eventos (`stats/visualize_ema.py`, `stats/serial_plot_ema.py`).
+
+**Notebooks centralizados:** `notebooks/EMA_Estadistica.ipynb` (canónico, ver `notebooks/README.md` y `docs/notebooks/README.md`). `stats/notebooks/` es espejo de compatibilidad — no editar.
 
 **Se despliega en:** Sprint 4 (aunque el diseño del algoritmo puede prototiparse desde antes, en paralelo al Sprint 1-2).
 
@@ -106,7 +108,7 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 
 - **C++ para microcontroladores** (Arduino UNO/MEGA, ESP32/ESP8266): interrupciones, lectura analógica/digital, comunicación serial. Es la base común de DevOps (CI/CD del firmware), Estadística (dónde corre el EMA) y Automatizaciones (eventos que disparan Node-RED.
 - **Protocolo MQTT**: entender pub/sub, topics y QoS es necesario para entender cómo se comunican App, Backend, Node-RED y ESP32 entre sí.
-- **Redes LAN**: todo el sistema (App, ESP32, ESP8266, bombillo Tuya, servidor Docker) vive en la misma subred — sin este entendimiento, cualquier debugging de conectividad se vuelve adivinanza.
+- **Redes LAN**: todo el sistema (App, ESP32/ESP8266, servidor Docker) vive en la misma subred LAN.
 
 ## Orden sugerido de aprendizaje (si el equipo parte de cero)
 
@@ -114,5 +116,5 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 2. C++ básico en Arduino + protocolo UART/RF — para tener algo físico funcionando pronto.
 3. MQTT — es el "idioma común" que conecta casi todos los componentes.
 4. Kotlin/Compose — en paralelo al punto 3, ya que la app es el punto de entrada visible para evaluadores.
-5. Node-RED + `tuya-local` — una vez los eventos ya existen (de los pasos 2-3).
+5. Node-RED (Telegram) — una vez los eventos ya existen (de los pasos 2-3).
 6. Estadística aplicada (EMA, prueba t) — al final, cuando ya hay datos reales fluyendo para analizar.

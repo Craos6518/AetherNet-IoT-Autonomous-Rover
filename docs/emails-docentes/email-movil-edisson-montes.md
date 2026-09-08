@@ -38,7 +38,7 @@ Solo alcanzamos **una semana de clases** antes del evento. Agradezco mucho que h
 | Unidad Syllabus (enfoque Xamarin) | Equivalente en Kotlin/Compose (lo que hago) | Qué avanzo en casa (emulador + celular propio) |
 |-----------------------------------|---------------------------------------------|------------------------------------------------|
 | **U1: Plataforma .NET** (Framework, IDE, C#, colecciones) | **Kotlin + Android Studio + Gradle**: Null-safety, Coroutines, Flow, Colecciones, Build system | ✅ Proyecto base MVVM + Hilt + dependencias listo |
-| **U2: Front Móvil** (XAML, Pages, StackLayout/Grid, Views) | **Compose**: `State`/`StateFlow`, Material3 (`Column`, `Row`, `Box`, `LazyColumn`), Recomposición automática | 🟡 Pantallas: Dashboard (telemetría), Relés (encender/apagar), PIN cerrojo, Alertas |
+| **U2: Front Móvil** (XAML, Pages, StackLayout/Grid, Views) | **Compose**: `State`/`StateFlow`, Material3 (`Column`, `Row`, `Box`, `LazyColumn`), Recomposición automática | 🟡 Pantallas: Dashboard (telemetría), Luces/bombillo Tuya, PIN cerrojo, Alertas |
 | **U3: Back Móvil** (Xamarin.Forms, MVVM, Emuladores) | **MVVM nativo**: `ViewModel` + `StateFlow` + `Repository` + DI (Hilt), Emulador + Device físico | 🟡 `Repository` unificado (MQTT + Bluetooth), `ViewModel` por pantalla, tests unitarios |
 | **U4: Datos y Entorno** (REST/JSON, APIs nativas, Hardware, Permisos, Multiplataforma) | **MQTT/WebSocket + Bluetooth SPP (RF-1.3) + Permisos runtime Android 12+** | 🟡 Cliente MQTT (reconexión, QoS), Módulo Bluetooth SPP, Pantalla permisos |
 

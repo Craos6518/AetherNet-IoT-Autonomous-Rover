@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MOV-01: permite cleartext HTTP a backend local (10.0.2.2:8000) para emulador.
+     Requerido desde Android 9 (API 28) donde cleartext está bloqueado por defecto.
+     RF-1.1 / RNF-3.1: backend FOSS local sin TLS en LAN. En producción usar HTTPS o
+     limitar a domain-config específico; para Sprint 1 se habilita base-config en debug. -->
+<network-security-config>
+    <!-- Permite HTTP solo a hosts de desarrollo local -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">10.0.0.2</domain>
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="true">192.168.1.0</domain>
+    </domain-config>
+    <!-- Fallback: para emulador AVD, base-config true evita "CLEARTEXT not permitted".
+         Si quieres endurecer, cambia a false y deja solo domain-config. -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

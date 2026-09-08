@@ -1,8 +1,23 @@
-pandas==2.2.2
-numpy==1.26.4
-scipy==1.13.0
-psycopg2-binary==2.9.9
-sqlalchemy==2.0.30
-pytest==8.2.2
-pytest-cov==5.0.0
-matplotlib==3.8.4
+# =============================================================================
+# requirements.txt — Deps pinneadas Stats | 6º Semestre UTP | FOSS RNF-3.1
+# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Experiencia: 2 años Python (pip freeze), 2 años JS/React (package-lock.json),
+#              1 año C (pin ArduinoJson 6.21.3), 1 año PostgreSQL
+# FOSS: todas pinneadas exactas para CI reproducible (como firmware/platformio.ini)
+# Analogía JS: este archivo es package-lock.json — versiones exactas para CI
+# Analogía C: como lib_deps = ArduinoJson@6.21.3 en platformio.ini — pin para no romper
+# Generado: pip freeze > requirements.txt (o pip-compile) — no a mano
+# Instalación: pip install -r requirements.txt (o pip install -e . desde pyproject.toml)
+# =============================================================================
+# Core análisis — como dependencies en package.json
+pandas==2.2.2        # DataFrames — Excel en Python, para EST-10 db_extract.py + EST-06 descriptivo
+numpy==1.26.4        # arrays — base de pandas/scipy, como lodash para números (1.26 última 3.11 compat)
+scipy==1.13.0        # t-Student Welch, Shapiro-Wilk, Levene — U4 inferencia EST-05 (1.13 última estable)
+psycopg2-binary==2.9.9 # driver PostgreSQL binario — como pg en Node, no necesita compilar libpq (1 año exp)
+sqlalchemy==2.0.30   # ORM/query — como Prisma, para SELECT sensor_events (EST-10 futuro)
+# Dev/test — como devDependencies en package.json (CI)
+pytest==8.2.2        # tests — como Jest, 14 tests en tests/test_ema_filter.py
+pytest-cov==5.0.0    # coverage — como jest --coverage, 90% en stats/
+matplotlib==3.8.4    # plots — como Chart.js, para visualize_ema.py + alpha_sweep.py + serial_plot_ema.py
+# Nota: python-dotenv y psycopg2-binary ya en pyproject.toml pero aquí solo las 8 pinneadas para venv ligero
+# Para dev completo: pip install -e .[dev] (instala ruff/mypy además)

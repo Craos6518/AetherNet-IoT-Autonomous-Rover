@@ -1,16 +1,33 @@
+# =============================================================================
+# pyproject.toml — Config Backend | 6º Semestre UTP | FOSS RNF-3.1
+# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Experiencia: 2 años Python (ruff, mypy, pytest), 2 años JS/React (eslint, tsc, jest.config),
+#              1 año PostgreSQL, 1 año C
+# Analogía JS: este archivo es `eslint.config.js` + `tsconfig.json` + `jest.config.js` en uno —
+# configura lint (ruff), type check (mypy) y tests (pytest) para backend.
+# Analogía C: como `platformio.ini` pero para Python — check_options y lint ignore.
+# FOSS: ruff (MIT), mypy (MIT), pytest (MIT) — RNF-3.1.
+# Usado por: `ruff check .`, `mypy .`, `pytest` — ver CI .github/workflows/ci.yml
+# =============================================================================
 [tool.ruff.lint]
-# B008 es falso positivo para FastAPI Depends — ignorar globalmente (práctica común)
-# S110/BLE001: lifespan con pass intencional si DB no está disponible en tests/build
-# RUF100: allow unused noqa in older code, CI uses ruff 0.16.4
-ignore = ["B008", "S110", "BLE001", "RUF100"]
+# B008 es falso positivo para FastAPI Depends — ignorar globalmente (práctica común FastAPI)
+# FastAPI usa `Depends(get_db)` que ruff marca como B008 (no usar función en default), pero es intencional DI
+# Como /* eslint-disable no-unused-vars */ para un pattern válido en Express middleware
+# S110/BLE001: lifespan con pass intencional si DB no está disponible en tests/build (ver main.py:37)
+# Si DB no está (CI sin Postgres), no crashear — graceful degraded (como try/catch en Express)
+# RUF100: allow unused noqa in older code, CI usa ruff 0.16.4 — compatibilidad
+ignore = ["B008", "S110", "BLE001", "RUF100"]  # ignora estos lints global — como extends en ESLint
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
-testpaths = ["tests"]
-pythonpath = ["."]
+# pytest config — como jest.config.js (tool.pytest.ini_options en pyproject.toml)
+asyncio_mode = "auto"  # auto detecta async tests — como jest con --experimental-vm-modules para async
+testpaths = ["tests"]  # dónde buscar tests — como testMatch en Jest (tests/test_health.py)
+pythonpath = ["."]  # añade backend/ al PYTHONPATH — para `from app.main import app` (como baseUrl en TS)
 
 [tool.mypy]
-python_version = "3.12"
-ignore_missing_imports = true
-# FastAPI app instance shadows package name `app` — mypy false positive
-disable_error_code = "assignment,attr-defined,misc"
+# mypy config — como tsconfig.json strict (tool.mypy)
+python_version = "3.12"  # target 3.12 — como "target": "es2022" en TS (backend usa python:3.12-slim en Dockerfile:1)
+ignore_missing_imports = true  # ignora libs sin stubs (como skipLibCheck en TS) — asyncpg, paho-mqtt sin stubs
+# FastAPI app instance shadows package name `app` — mypy false positive (app es variable y paquete)
+# Como `const app = express()` que shadow `app` folder en Node — mypy se confunde, ignoramos
+disable_error_code = "assignment,attr-defined,misc"  # desactiva estos checks para app.main:app
