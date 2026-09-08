@@ -34,7 +34,8 @@ enum class LedMode : uint8_t {
     GREEN_UNLOCKED,  // Verde sólido mientras doorUnlocked (sincronizado a DOOR_AUTO_LOCK_MS=5000)
     RED_FAIL,        // Rojo 1s — PIN erróneo (feedback error, como toast rojo en React)
     BLUE_TAP,        // Azul 50ms — dígito pulsado (feedback táctil, como ripple Material)
-    RED_CLEAR        // Rojo 100ms — '*' borra buffer (confirma borrado)
+    RED_CLEAR,       // Rojo 100ms — '*' borra buffer (confirma borrado)
+    RED_INTRUSION    // Rojo 3s — intrusión láser HU-02 (alerta sostenida, no bloqueante)
 };
 
 void ledInit(); // Configura pines 44/45/46 como OUTPUT y apaga LED (llamar en setup)

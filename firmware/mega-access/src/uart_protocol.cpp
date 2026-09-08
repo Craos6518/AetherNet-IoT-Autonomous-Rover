@@ -2,6 +2,7 @@
 #include "config.h"       // GATEWAY_SERIAL (Serial2), GATEWAY_BAUD (38400), STATUS_INTERVAL_MS
 #include "door.h"         // isDoorUnlocked() — para STATUS door_locked
 #include "keypad_control.h" // processPinAttempt() — para CMD:ACCESS remoto
+#include "laser.h"        // isLaserArmed(), isLaserBeamIntact(), setLaserArmed()
 #include <ArduinoJson.h>  // Para parsear CMD:ACCESS json y construir STATUS json
 
 // --- Timer para throttling STATUS — static privado (como useRef en React) ---
@@ -64,11 +65,23 @@ void processGatewayCommand(const String& cmd) {
             Serial.println(params); // Log para debug — App mandó JSON malformado sin "pin"
         }
     } else if (type == "STATUS") {
-        // Poll del Gateway — pide estado actual (door, RAM, uptime)
+        // Poll del Gateway — pide estado actual (door, laser, RAM, uptime)
         sendStatusToGateway(); // Responde inmediato con STATUS:{json}
+    } else if (type == "LASER") {
+        // CMD:LASER:true/false desde Gateway (App o Node-RED arma/desarma trampa)
+        // params = "true" o "false" (texto plano, no JSON)
+        bool armed = (params == "true" || params == "1");
+        // Si params es JSON {"armed":true}, parsea
+        if (params.startsWith(F("{"))) {
+            StaticJsonDocument<64> doc;
+            if (!deserializeJson(doc, params) && doc.containsKey("armed")) {
+                armed = doc["armed"].as<bool>();
+            }
+        }
+        setLaserArmed(armed);
+        sendStatusToGateway(); // Ack con nuevo estado
     } else {
-        // RELAY/LASER eliminados en esta rama (sin hardware 2026-08-26) — ignora silencioso
-        // Antes había CMD:RELAY y CMD:LASER, ahora no hay relés ni láser en cerrojo
+        // RELAY eliminado (sin hardware) — ignora silencioso
         Serial.print(F("CMD ignored (unknown type): "));
         Serial.println(type);
     }
@@ -85,12 +98,20 @@ void sendAccessEvent(const String& jsonPayload) {
     Serial.println(jsonPayload);
 }
 
+void sendSecurityEvent(const String& jsonPayload) {
+    GATEWAY_SERIAL.print(F("SECURITY:"));
+    GATEWAY_SERIAL.println(jsonPayload);
+    Serial.print(F("[UART TX] SECURITY:"));
+    Serial.println(jsonPayload);
+}
+
 // sendStatusToGateway() — Envía estado periódico al Gateway (cada 5s + al boot + on CMD:STATUS)
 // El Gateway lo reenvía a MQTT aethernet/mega/status y App lo muestra en dashboard.
 void sendStatusToGateway() {
-    StaticJsonDocument<256> doc; // 256 bytes — para door_locked, free_ram, uptime, etc.
+    StaticJsonDocument<256> doc; // 256 bytes — para door_locked, laser, free_ram, uptime
     doc["door_locked"] = !isDoorUnlocked(); // true si bloqueada (invertido de isDoorUnlocked)
-    doc["laser_armed"] = false; // Reservado para mega-laser (HU-02) — fijo false en cerrojo
+    doc["laser_armed"] = isLaserArmed(); // HU-02 — true si barrera armada
+    doc["laser_beam_intact"] = isLaserBeamIntact(); // true = haz intacto
     doc["free_ram"] = freeMemory(); // RAM libre — si baja mucho, hay leak de String (MEGA 8KB)
     doc["uptime_ms"] = millis(); // Tiempo desde boot — para detectar reinicios (como uptime en Linux)
 

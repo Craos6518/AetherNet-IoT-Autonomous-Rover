@@ -23,14 +23,14 @@ Ya no hay capa ambiental de habitación completa.
 
 ## Detalle de pines — MEGA Cerrojo (RF-2.2 / HU-01)
 
-Fuente: `firmware/mega-access/src/config.h` (branch `feature/firmware-mega-cerrojo`, actualizado 2026-08-26):
+Fuente: `firmware/mega-access/src/config.h` (branch `feature/firmware-mega-laser-v2` = `cerrojo` + `laser`, actualizado 2026-08-26 cerrojo + RF-2.3 HU-02):
 
 - **Keypad 4x4:** Rows `22,24,26,28` | Cols `30,32,34,36` — `Keypad@3.1.1`.
 - **Servo MG90S:** Pin `9` PWM — `0°` bloqueada / `90°` desbloqueada (`SERVO_LOCKED/SERVO_UNLOCKED`).
 - **LED RGB local (ánodo común):** `44(R),45(G),46(B)` PWM con `LED_COMMON_ANODE` invertido — HU-01 verde sólido mientras `doorUnlocked` (ventana `DOOR_AUTO_LOCK_MS=5000`), OFF al re-bloquear; rojo 1s en PIN erróneo, azul 50ms por dígito (no bloqueante).
 - **Matriz de relés:** **eliminada** — no hay hardware en el inventario actual; todo rastro de `RELAY_PINS / relayStates / CMD:RELAY` removido del firmware en esta rama (ver decisión 2026-08-26).
-- **Láser KY-008:** `TX 8 / RX 7` reservados pero **deshabilitados en esta rama**; se implementan en `feature/firmware-mega-laser` (HU-02, RF-2.3).
-- **UART a Gateway ESP32:** `Serial2` `RX16/TX17` `115200` bd.
+- **Láser KY-008:** `TX 8 / RX 7` **activo en `feature/firmware-mega-laser-v2`** (RF-2.3 HU-02, `laser.cpp` no bloqueante, `SECURITY:` vía UART); deshabilitado en `feature/firmware-mega-cerrojo`.
+- **UART a Gateway ESP32:** `Serial2` `RX16/TX17` `38400` bd (estable con divisor 5V→3.3V; ver `config.h:77`).
 
 ## Pendiente de definición
 

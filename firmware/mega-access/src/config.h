@@ -60,12 +60,11 @@ static const int SERVO_UNLOCKED = 90;  // 90° = cerrojo abierto — puerta desb
 // HIGH (5V) = sin diferencial = apagado. Por eso analogWrite(255) apaga y 0 enciende al máximo.
 // Si fuera cátodo común, sería directo: 255 = brillo máximo. Lo aprendí midiendo con multímetro.
 
-// Láser KY-008 — RESERVADO para feature/firmware-mega-laser (RF-2.3, HU-02)
-// Se define para no perder el pinout, pero NO se usa en esta rama (cerrojo).
-// En HU-02 el láser detecta intrusión y dispara Telegram + LED rojo.
-// Por ahora comentado para que no compile ni ocupe RAM.
-// #define LASER_TX_PIN 8  // Emisor láser — pin digital
-// #define LASER_RX_PIN 7  // Receptor — pin digital con interrupción
+// Láser KY-008 — ACTIVO en feature/firmware-mega-laser-v2 (RF-2.3, HU-02)
+// HU-02: barrera láser detecta intrusión si se interrumpe el haz → SECURITY vía UART → Telegram + LED rojo.
+// Hardware: KY-008 emisor (láser rojo 650nm) en pin 8, receptor fotoresistencia/LDR en pin 7 con pullup.
+#define LASER_TX_PIN 8  // Emisor láser — OUTPUT digital (HIGH = láser ON)
+#define LASER_RX_PIN 7  // Receptor — INPUT_PULLUP (HIGH = haz intacto, LOW = haz interrumpido)
 
 // UART hacia Gateway ESP32 — MEGA Serial2: TX=16, RX=17 (baud 38400 estable)
 // MEGA tiene 4 UARTs: Serial (USB 0/1), Serial1 (18/19), Serial2 (16/17), Serial3 (14/15)
@@ -105,4 +104,9 @@ static const unsigned long KEYPAD_HOLD_MS = 500;     // 500ms para detectar tecl
 static const unsigned long LED_RED_FAIL_MS = 1000;   // Rojo 1s en PIN erróneo — feedback error (como toast error en React)
 static const unsigned long LED_BLUE_TAP_MS = 50;     // Azul 50ms por dígito — feedback táctil (como ripple en Material)
 static const unsigned long LED_CLEAR_FLASH_MS = 100; // Rojo 100ms en '*' borra — confirma borrado
+static const unsigned long LED_RED_INTRUSION_MS = 3000; // Rojo 3s en intrusión láser HU-02 — alerta sostenida sin bloquear
 // Estos timings son UX físico — el usuario siente si el sistema responde. 50ms es perceptible pero no molesto.
+
+// Láser KY-008 — timings no bloqueantes (laser.cpp)
+static const unsigned long LASER_CHECK_INTERVAL_MS = 50;      // Poll cada 50ms — suficiente sin saturar loop
+static const unsigned long LASER_INTRUSION_COOLDOWN_MS = 3000; // Cooldown 3s tras disparo — evita spam SECURITY si haz queda interrumpido
