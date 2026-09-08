@@ -426,21 +426,23 @@ graph TB
 
 ### Mapa de conexiones P5
 
-**Mermaid:**
+**Mermaid — LDR discreta:**
 ```mermaid
 graph LR
-  LASER[KY-008 TX 8] -. haz .-> LDR[LDR RX 7]
-  LDR --> MEGA[MEGA P3]
-  MEGA --> LED[LED RGB rojo 1s]
-  MEGA -->|UART SECURITY| ESP32[ESP32 → MQTT seguridad]
+  LASER[KY-008 S:8 VCC:5V] -. haz 650nm .-> LDR[LDR discreta + 10k→GND]
+  LDR -->|5V→LDR→●→7 INPUT<br/>●→10k→GND| MEGA[MEGA P3 pin7]
+  MEGA --> LED[LED RGB 44-46 rojo 3s RED_INTRUSION]
+  MEGA -->|UART SECURITY 38400| ESP32[ESP32 → MQTT aethernet/seguridad/intrusion]
 ```
 
-**ASCII (sobre P3):**
+**ASCII (sobre P3) — LDR discreta + 10k fija:**
 ```
-P3 MEGA (igual) + añadido P5:
-  8 ●─→ KY-008 VCC/GND + láser (haz ─ ─ ─ →)
-  7 ●←─ LDR módulo (frente láser, puerta)
-         LDR OUT ●─→ 7 (intrusion = corte haz)
+P3 MEGA (igual) + añadido P5 discreto:
+  8 ●─→ KY-008 (VCC→5V GND→GND S→8) haz ─ ─ ─ → [LDR]
+  5V ●─→ LDR pata1
+  LDR pata2 ●─┬─→ 7 (MEGA INPUT, sin PULLUP)
+              └─→ 10kΩ → GND
+  Haz intacto: LDR ~5k → V=3.3V → 7=HIGH | Corte: LDR ~500k → 0.1V → 7=LOW → SECURITY
 ```
 
 **Netlist P5 (sobre P3, pines reservados):**
@@ -449,9 +451,10 @@ P3 MEGA (igual) + añadido P5:
 |---|---|---|---|---|
 | VCC | → | 5V | Rojo | — |
 | GND | → | GND | Negro | — |
-| TX (Laser) | → | 8 | — | `config.h:37` reservado (deshabilitado P3) |
-| RX (LDR) | → | 7 | — | Módulo receptor láser + LDR |
-| LED ROJO | → | 44-46 | — | `LED ROJO 1s` en intrusión `mega-cerrojo-pines.md:71` |
+| TX (Laser) | → | 8 | Naranja | `config.h:66` `LASER_TX_PIN 8` HIGH=ON (KY-008 VCC→5V GND→GND S→8) |
+| LDR pata 1 | → | 5V | Rojo | LDR discreta pata 1 a 5V (ver Fritzing: LDR + 10k divisor) |
+| LDR pata 2 ● | → | 7 + 10k→GND | Amarillo/Negro | Nodo ●→7 `INPUT` sin pullup `laser.cpp:15` (HIGH=haz ~3.3V, LOW=corte ~0.1V) Resistencia fija 10kΩ a GND |
+| LED ROJO | → | 44-46 | — | `LED ROJO 3s` en intrusión `laser.cpp:46` `RED_INTRUSION` (P5 Mermaid 1s → impl 3s + cooldown) |
 
 > Sprint 2 P3 deja 7/8 vacíos. P5 los cablea. En Fritzing: añade láser arriba puerta + LDR opuesta, línea punteada haz.
 

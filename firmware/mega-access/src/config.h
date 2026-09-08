@@ -60,11 +60,12 @@ static const int SERVO_UNLOCKED = 90;  // 90° = cerrojo abierto — puerta desb
 // HIGH (5V) = sin diferencial = apagado. Por eso analogWrite(255) apaga y 0 enciende al máximo.
 // Si fuera cátodo común, sería directo: 255 = brillo máximo. Lo aprendí midiendo con multímetro.
 
-// Láser KY-008 — ACTIVO en feature/firmware-mega-laser-v2 (RF-2.3, HU-02)
+// Láser KY-008 + LDR DISCRETA — ACTIVO en feature/firmware-mega-laser-v2 (RF-2.3, HU-02)
 // HU-02: barrera láser detecta intrusión si se interrumpe el haz → SECURITY vía UART → Telegram + LED rojo.
-// Hardware: KY-008 emisor (láser rojo 650nm) en pin 8, receptor fotoresistencia/LDR en pin 7 con pullup.
-#define LASER_TX_PIN 8  // Emisor láser — OUTPUT digital (HIGH = láser ON)
-#define LASER_RX_PIN 7  // Receptor — INPUT_PULLUP (HIGH = haz intacto, LOW = haz interrumpido)
+// Hardware: KY-008 emisor (láser 650nm) en pin 8 + LDR discreta + resistencia fija 10kΩ a GND formando divisor.
+// NO usar INPUT_PULLUP: divisor externo ya da nivel lógico, pullup interno 30k distorsiona umbral digital.
+#define LASER_TX_PIN 8  // Emisor láser — OUTPUT digital (HIGH = láser ON, LOW = OFF/armed false)
+#define LASER_RX_PIN 7  // LDR discreta — INPUT sin pullup (divisor 5V→LDR→●→10k→GND, ●→7: HIGH=haz intacto ~3.3V, LOW=corte ~0.1V)
 
 // UART hacia Gateway ESP32 — MEGA Serial2: TX=16, RX=17 (baud 38400 estable)
 // MEGA tiene 4 UARTs: Serial (USB 0/1), Serial1 (18/19), Serial2 (16/17), Serial3 (14/15)

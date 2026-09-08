@@ -12,13 +12,14 @@ static unsigned long lastIntrusionMs = 0; // Para cooldown
 
 void laserInit() {
     pinMode(LASER_TX_PIN, OUTPUT);
-    pinMode(LASER_RX_PIN, INPUT_PULLUP);
+    // LDR DISCRETA + 10k fija a GND: divisor externo ya da nivel lógico, NO usar PULLUP interno (30k distorsiona umbral)
+    pinMode(LASER_RX_PIN, INPUT); // INPUT sin pullup — LDR 5V→●→10k→GND, ●→7
     digitalWrite(LASER_TX_PIN, HIGH); // Láser ON al boot
     laserArmed = true;
-    lastBeamState = digitalRead(LASER_RX_PIN); // Lee inicial (pullup → HIGH si haz llega)
+    lastBeamState = digitalRead(LASER_RX_PIN); // Lee inicial: HIGH=haz intacto (LDR iluminada ~5k → 3.3V)
     lastCheckMs = millis();
     // Deja lastIntrusionMs en 0 para permitir primer disparo inmediato
-    Serial.println(F("Laser KY-008 init — TX:8 HIGH, RX:7 PULLUP, armed=true"));
+    Serial.println(F("Laser KY-008 + LDR discreta init — TX:8 HIGH, RX:7 INPUT (divisor 10k), armed=true"));
 }
 
 void handleLaser() {
