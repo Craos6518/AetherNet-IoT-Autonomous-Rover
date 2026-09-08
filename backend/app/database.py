@@ -10,6 +10,10 @@
 # FOSS: SQLAlchemy 2.0 + asyncpg (MIT) + PostgreSQL 15 — RNF-3.1, sin RDS.
 # Origen: DEVOPS-01 docker-compose.yml — servicio postgres + backend.
 # =============================================================================
+from collections.abc import (
+    AsyncGenerator,  # para tipar get_db yield — como Generator en TS
+)
+
 from sqlalchemy.ext.asyncio import (  # async engine — como Pool en pg Node pero async
     AsyncSession,
     async_sessionmaker,
@@ -58,7 +62,7 @@ class Base(DeclarativeBase):
 # --------------------------------------------------------------------------
 # Depends get_db — inyección de sesión por request (como middleware en Express)
 # --------------------------------------------------------------------------
-async def get_db() -> AsyncSession:  # type: AsyncGenerator[AsyncSession] — yield sesión
+async def get_db() -> AsyncGenerator[AsyncSession, None]:  # yield sesión — como Generator en TS
     """
     Depends para FastAPI — cada request obtiene su propia sesión (como req.db en Express).
     Uso: @app.get("/api") async def handler(db: AsyncSession = Depends(get_db))
