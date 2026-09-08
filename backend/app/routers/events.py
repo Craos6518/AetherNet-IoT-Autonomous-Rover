@@ -14,14 +14,33 @@ y `SELECT * FROM ... ORDER BY timestamp DESC LIMIT 50` — ORM lo traduce.
 Endpoints habilitan HU-01 (access), HU-03 (sensor EMA), HU-02 (security), RF-3.1 (rover).
 """
 
-from uuid import UUID  # para session_id en rover telemetry — como UUID en JS crypto.randomUUID()
+from uuid import (
+    UUID,  # para session_id en rover telemetry — como UUID en JS crypto.randomUUID()
+)
 
-from fastapi import APIRouter, Depends, Query, status  # APIRouter = Router en Express, Query = req.query, status = http codes
-from sqlalchemy import desc, select  # desc = ORDER BY DESC, select = SELECT * FROM — como Prisma findMany
-from sqlalchemy.ext.asyncio import AsyncSession  # sesión async — como db client en Node con async/await
+from fastapi import (  # APIRouter = Router en Express, Query = req.query, status = http codes
+    APIRouter,
+    Depends,
+    Query,
+    status,
+)
+from sqlalchemy import (  # desc = ORDER BY DESC, select = SELECT * FROM — como Prisma findMany
+    desc,
+    select,
+)
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,  # sesión async — como db client en Node con async/await
+)
 
-from app.database import get_db  # Depends que inyecta sesión — como middleware que pone req.db
-from app.models import AccessEvent, RoverTelemetry, SecurityEvent, SensorEvent  # ORM models — como Prisma models
+from app.database import (
+    get_db,  # Depends que inyecta sesión — como middleware que pone req.db
+)
+from app.models import (  # ORM models — como Prisma models
+    AccessEvent,
+    RoverTelemetry,
+    SecurityEvent,
+    SensorEvent,
+)
 from app.schemas import (  # Pydantic schemas — como Zod schemas para req.body y res
     AccessEventCreate,
     AccessEventOut,

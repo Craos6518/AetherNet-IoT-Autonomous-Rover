@@ -11,9 +11,13 @@
 # FOSS: pydantic-settings (MIT) — validación y parsing de env, FOSS RNF-3.1.
 # Origen: DEVOPS-08 / DEVOPS-11 — .env.example y secrets.h pattern (no commitear secretos).
 # =============================================================================
-from functools import lru_cache  # cachea singleton — como memo() en React, evita re-leer .env cada vez
+from functools import (
+    lru_cache,  # cachea singleton — como memo() en React, evita re-leer .env cada vez
+)
 
-from pydantic_settings import BaseSettings  # BaseSettings lee env vars y .env auto — como Zod con env
+from pydantic_settings import (
+    BaseSettings,  # BaseSettings lee env vars y .env auto — como Zod con env
+)
 
 
 class Settings(BaseSettings):
