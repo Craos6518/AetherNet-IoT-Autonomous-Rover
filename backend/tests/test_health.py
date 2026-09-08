@@ -160,3 +160,33 @@ def test_list_endpoints_return_empty(client):
 
     r = client.get("/api/rover/telemetry")
     assert r.status_code == 200  # rover telemetry también — RF-3.1 (events.py:141)
+
+
+# Test agregado por estudiante Movil - verifica que /health no crashea si la DB esta caida
+# Lo vi en un video de FastAPI health checks - debe devolver degraded no 500
+def test_health_degraded_when_db_down(client, mock_db_session):
+    """GET /health debe dar 200 degraded si DB lanza excepcion, no 500."""
+    # Simulo que la DB esta caida - como cuando el postgres no esta levantado
+    mock_db_session.execute = AsyncMock(side_effect=Exception("connection refused"))
+
+    # Tengo que re-inyectar el mock que falla
+    from app.database import get_db
+    from app.main import app
+
+    async def override_fail():
+        yield mock_db_session
+
+    app.dependency_overrides[get_db] = override_fail
+
+    # Uso un cliente nuevo con el override que falla
+    with TestClient(app) as c2:
+        r = c2.get("/health")
+        assert r.status_code == 200  # no debe ser 500
+        assert r.json()["status"] == "degraded"  # debe avisar que esta degraded
+        assert "error" in r.json()["database"]  # debe decir error
+
+    app.dependency_overrides.clear()
+    # Restauro el mock original para no afectar otros tests
+    mock_db_session.execute = AsyncMock(
+        return_value=MagicMock(scalars=lambda: MagicMock(all=lambda: []))
+    )

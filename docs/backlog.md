@@ -39,8 +39,8 @@ Cada ítem referencia su RF/HU de origen y el sprint donde debe quedar cerrado s
 | DEVOPS-03 | Esquema inicial de PostgreSQL (tabla de eventos/accesos) | M | 1 | DEVOPS-01 | RNF-2.2 |
 | DEVOPS-04 | Pipeline GitHub Actions con `arduino-cli` (compilación de firmware en cada push) | M | 1 | — | RNF-1.2 |
 | DEVOPS-05 | Prueba de comunicación SPI/RF entre ESP32 y Arduino UNO (nRF24L01) | M | 1 | — | RF-3.1 |
-| DEVOPS-06 | Endpoints FastAPI mínimos (health check, registro de eventos) | M | 2 | DEVOPS-01, DEVOPS-03 | RF-2.1 |
-| DEVOPS-07 | Tests PyTest para endpoints de FastAPI | S | 2 | DEVOPS-06 | RNF (DevOps) |
+| DEVOPS-06 | Endpoints FastAPI mínimos (health, registro eventos) — ✅ Done `feature/backend-endpoints` 2026-09-07 (8 endpoints POST/GET 4 recursos + /health degraded, validación limit 1..200, filtros sensor_type/event_type/session_id, ruff/mypy/pytest 21 verde, docker integration verificado) | M | 2 | DEVOPS-01, DEVOPS-03 | RF-2.1 |
+| DEVOPS-07 | Tests PyTest para endpoints de FastAPI — ✅ Done `feature/backend-endpoints` 2026-09-07 (`test_events.py` 14 tests + `test_health.py` 7, total 21 verdes, mock DB + integración) | S | 2 | DEVOPS-06 | RNF (DevOps) |
 | DEVOPS-08 | Documentar variables de entorno / `.env.example` (sin credenciales reales) | S | 2 | DEVOPS-01 | — |
 | DEVOPS-09 | Pipeline de despliegue local (script de arranque único: `docker-compose up`) | C | 4 | todo lo anterior | — |
 
