@@ -26,7 +26,8 @@ void uartInit(); // Inicializa Serial2 38400 + resetea timer STATUS (llamar en s
 void handleGatewayUart(); // Lee líneas CMD:* del ESP32 sin bloquear (llamar cada loop)
 void processGatewayCommand(const String& cmd); // Parsea "CMD:TYPE:PARAMS" y rutea (interno, pero testeable)
 void sendAccessEvent(const String& jsonPayload); // Envía "ACCESS:{json}\n" al Gateway (llamado por keypad)
-void sendStatusToGateway(); // Envía "STATUS:{json}\n" con door_locked, free_ram, uptime
+void sendSecurityEvent(const String& jsonPayload); // Envía "SECURITY:{json}\n" al Gateway (laser HU-02)
+void sendStatusToGateway(); // Envía "STATUS:{json}\n" con door_locked, laser_armed, beam, free_ram, uptime
 void sendPeriodicStatus(); // Throttled cada 5s — evita spam UART (llamar cada loop)
 
 // helper AVR — cuánto RAM libre queda (MEGA 8KB, hay que vigilar leaks de String)

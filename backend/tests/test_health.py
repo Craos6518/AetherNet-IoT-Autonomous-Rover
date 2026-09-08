@@ -162,7 +162,6 @@ def test_list_endpoints_return_empty(client):
     assert r.status_code == 200  # rover telemetry también — RF-3.1 (events.py:141)
 
 
-
 # Test agregado por estudiante Movil - verifica que /health no crashea si la DB esta caida
 # Lo vi en un video de FastAPI health checks - debe devolver degraded no 500
 def test_health_degraded_when_db_down(client, mock_db_session):
