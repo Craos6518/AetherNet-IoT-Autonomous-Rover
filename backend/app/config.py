@@ -17,6 +17,7 @@ from functools import (
 
 from pydantic_settings import (
     BaseSettings,  # BaseSettings lee env vars y .env auto — como Zod con env
+    SettingsConfigDict,
 )
 
 
@@ -39,10 +40,12 @@ class Settings(BaseSettings):
     api_host: str = "0.0.0.0"  # 0.0.0.0 escucha en todas las interfaces (para Docker)
     api_port: int = 8000  # 8000 FastAPI — ver Dockerfile:17 EXPOSE 8000 y gateway BACKEND_PORT 8000
 
-    class Config:
-        """Config Pydantic — dónde buscar env vars."""
-        env_file = ".env"  # archivo .env en backend/ — gitignored (como .env.local en React)
-        env_file_encoding = "utf-8"  # encoding — como utf8 en fs.readFile
+    # Config como estudiante - simple, ignora variables extra de docker-compose (POSTGRES_USER etc)
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",  # ignora POSTGRES_USER, POSTGRES_PASSWORD etc que no son del backend
+    )
 
 
 # --------------------------------------------------------------------------
