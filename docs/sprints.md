@@ -26,13 +26,15 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 
 ---
 
-## Sprint 3 (Semanas 5-6): Rover Tanque Autónomo & Telemetría
+## Sprint 3 (Semanas 5-6): Rover Tanque Autónomo & Telemetría — ✅ CERRADO 2026-09-11
 
-- Montaje mecánico del chasis oruga con motorreductores 9-12V y L298N.
-- Algoritmo anti-caída (3x TCRT5000) y evasión de obstáculos (HC-SR04). → RF-3.2
-- Joystick virtual en Jetpack Compose enviando comandos de baja latencia. → RF-1.2
+- Montaje mecánico del chasis oruga con motorreductores 9-12V y L298N. → ✅ Done `firmware/rover-uno/rover-uno.ino:42` L298N ENA5/IN6/IN7/IN3-8/IN4-9/ENB11 + `firmware/README.md:5` §5
+- Algoritmo anti-caída (3x TCRT5000) y evasión de obstáculos (HC-SR04). → RF-3.2 ✅ Done `rover-uno.ino:375` `executeAutoMode` (TCRT A0/A1/A2 `IR_THRESHOLD 500` + HC-SR04 `EMA_ALPHA 0.2` `rover-uno.ino:86` + `OBSTACLE 30cm/CRITICAL 15cm`)
+- Joystick virtual en Jetpack Compose enviando comandos de baja latencia. → RF-1.2 ✅ Done `MOV-05` `feature/app-joystick-virtual` + `MOV-06` `feature/app-joystick-latency` (throttle 50ms, deadband 60, latencia <10ms RF / <50ms MQTT)
+- Fallback Bluetooth SPP si cae Wi-Fi → RF-1.3 ✅ Done `MOV-07` `feature/app-bluetooth-fallback` (HC-06 SPP, `BLUETOOTH_CONNECT`)
+- Telemetría Rover ACK payload RF → MQTT `aethernet/rover/telemetry:69` → App/Backend (RF-3.1) ✅ Done `rover-uno.ino:257` `prepareAckPayload/writeAckPayload` + `gateway-esp32.ino:226` `handleRfCommunication` + `MqttManager` + `DashboardScreen` `Rover L/R US`
 
-**Depende de:** Sprint 1 (enlace RF ESP32 ↔ UNO probado).
+**Depende de:** Sprint 1 (enlace RF ESP32 ↔ UNO probado `DEVOPS-05` ✅ `docs/testing-rf-sprint1.md:32`).
 
 ---
 
@@ -49,9 +51,9 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 
 ## Estado actual
 
-- Sprint activo: **Sprint 2 (Semanas 3-4) — En curso, fase cierre documental (Sprint 1 ✅ CERRADO 2026-09-01)**
-- Rama de revisión: **`docs/revision-sprint2-completa`** — branch desde `sprint/2-domotica-acceso@ec5d70b` para auditar y sincronizar TODA la documentación vs código real (ver `docs/revision-sprint2.md`)
-- Última actualización: **2026-09-10 — Revisión Sprint 2 completa**
+- Sprint activo: **Sprint 4 (Semanas 7-8) — En curso (Sprint 1 ✅ CERRADO 2026-09-01 | Sprint 2 ✅ CERRADO 2026-09-10 | Sprint 3 ✅ CERRADO 2026-09-11)**
+- Rama de revisión: **`docs/revision-sprint2-completa`** → **Sprint 3 cerrado 2026-09-11** — `MOV-05/06/07` Done, `FW-ROVER` chasis + anti-caída/evasión completo
+- Última actualización: **2026-09-11 — Cierre Sprint 3 Rover & Telemetría**
   - **2026-09-10 (esta revisión):** rama `docs/revision-sprint2-completa` creada desde `sprint/2-domotica-acceso` tip `ec5d70b`; auditoría doc↔código identifica desalineación `architecture.md` (Node-RED deuda), `gantt.md`/`backlog.md` y `prd.md` (alcance LowCode); se sincronizan 9 docs + se crea `docs/revision-sprint2.md` (bitácora + trazabilidad RF→archivo)
   - **2026-09-09:** `ec5d70b` docs(admin,estadística): `Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` (99KB, 14 secciones, WBS 40 paquetes, costos COP 176k/1.176M) + `docs/Administracion de proyectos/README.md` + `docs/Estadistica/CONTRASTE_Admin_vs_Estadistica.md` + bench 36.5k filas (`water_turbidity 31.5k` + `gesture 5k`) + `stats/water_turbidity_analysis.py:1` 364 líneas + `stats/data/water_turbidity_report.json` + PNGs `water_us_vs_true.png`/`water_ir_by_angle.png`
   - **2026-09-07 23:41:** `c7ce065` merge `feature/firmware-mega-laser-v2` → `sprint/2-domotica-acceso` (RF-2.3 HU-02): `firmware/mega-access/src/laser.{h,cpp}` barrera KY-008 no bloqueante + `LDR discreta 10k INPUT` (`config.h:8/7` sin PULLUP) + `firmware/test-laser-uno/test-laser-uno.ino` banco aislado + `laserInit/handleLaser/triggerIntrusionAlert` + `LED rojo 3s` no bloqueante + `SECURITY:` UART 38400 → Gateway → `POST /api/security-events` + `aethernet/seguridad/intrusion:72`
@@ -78,4 +80,5 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
   - [x] PM-02: `docs/tablero-scrum.md:49` `https://github.com/users/Craos6518/projects/14` (Kanban 6 cols)
   - [x] PM-04: `docs/gantt.md:7` Mermaid Sprints 1-4 + deuda — actualizar LOW-01 a bloqueado 2026-08-31
   - [x] EST-01: `stats/ema_filter.py` + bench `a051dd4` 531 muestras (adelantado Sprint 1-2)
-- Próximo (Sprint 2 cierre): `feature/firmware-mega-cerrojo` ✅ Done (RF-2.2 HU-01), `feature/firmware-mega-laser-v2` ✅ Done (RF-2.3 HU-02 `c7ce065`), LED RGB `hardware-inventory.md:9` (HU-01 verde 5s / HU-02 rojo 3s), `feature/app-pantallas-domotica` ✅ Done, `feature/app-mqtt-telemetria` ✅ Done, `feature/app-pin-cerrojo` ✅ Done, `feature/backend-endpoints` ✅ Done (DEVOPS-06/07 21 tests). **Pendiente Sprint 2:** merge `sprint/2-domotica-acceso` → `develop` + `sprints.md`/`backlog.md`→ `docs/archivo/`. ~~`feature/automation-mqtt-sub` (LOW-02)~~ → **DEUDA TÉCNICA / CANCELADO 2026-09-09** asesor (no Node-RED) — solo Telegram directo `automation/flows/intrusion_alert.json` como referencia, no deploy. `EST-01..06` datasets 36.5k adelantados — `EST-02/03/07` quedan Sprint 4.
+- **2026-09-11 — Cierre Sprint 3 (esta actualización):** `MOV-05` ✅ Done `feature/app-joystick-virtual` (Compose Canvas X,Y→PWM + `aethernet/rover/command:69`), `MOV-06` ✅ Done `feature/app-joystick-latency` (throttle 50ms + deadband 60 + <10ms RF), `MOV-07` ✅ Done `feature/app-bluetooth-fallback` (HC-06 SPP fallback), `FW-ROVER` ✅ Done `rover-uno.ino:42` L298N + `rover-uno.ino:375` anti-caída TCRT + evasión HC-SR04 EMA `rover-uno.ino:86` + failsafe 500ms `rover-uno.ino:247` + `gateway-esp32.ino:241` `handleRoverCommand` → `sprints.md`/`backlog.md`/`gantt.md` actualizados — Sprint 4 (LOW-03/05 Telegram + EST-02/03/04..07 + MOV-08..10) activo.
+- Próximo (Sprint 2 cierre histórico): `feature/firmware-mega-cerrojo` ✅ Done (RF-2.2 HU-01), `feature/firmware-mega-laser-v2` ✅ Done (RF-2.3 HU-02 `c7ce065`), LED RGB `hardware-inventory.md:9` (HU-01 verde 5s / HU-02 rojo 3s), `feature/app-pantallas-domotica` ✅ Done, `feature/app-mqtt-telemetria` ✅ Done, `feature/app-pin-cerrojo` ✅ Done, `feature/backend-endpoints` ✅ Done (DEVOPS-06/07 21 tests) — merge `sprint/2-domotica-acceso` → `develop` completado. ~~`feature/automation-mqtt-sub` (LOW-02)~~ → **DEUDA TÉCNICA / CANCELADO 2026-09-09** asesor (no Node-RED) — solo Telegram directo `automation/flows/intrusion_alert.json` como referencia, no deploy. `EST-01..06` datasets 36.5k adelantados — `EST-02/03/07` quedan Sprint 4.
