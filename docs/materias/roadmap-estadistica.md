@@ -2,7 +2,7 @@
 
 **Alcance de este roadmap:** todos los temas estadísticos necesarios para COMPLETAR la parte analítica del proyecto: filtrado en tiempo real (firmware), validación offline (Python) e inferencia sobre datos históricos (PostgreSQL→Pandas). Mapeo académico completo en [`estadistica.md`](estadistica.md).
 
-**Estado al Aug 2026:** EMA prototipado y testeado ✅ · EMA en firmware Rover ✅ · **falta:** EMA para KY-037, extracción de histórico desde Postgres, t-Student de latencias, reporte con KPI.
+**Estado al 2026-09-10 (`docs/revision-sprint2-completa` — ver `docs/revision-sprint2.md`):** EMA prototipado y testeado ✅ · EMA en firmware Rover ✅ · **falta:** EMA para KY-037, extracción de histórico desde Postgres, t-Student de latencias, reporte con KPI — **36.5k validación externa ya disponible** (`stats/Dataset/` + `stats/water_turbidity_analysis.py` + §7c Welch/ANOVA).
 
 Backlog operativo detallado: [`backlog-estadistica.md`](backlog-estadistica.md)
 

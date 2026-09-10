@@ -14,6 +14,7 @@ main ─────────────────────────
       ├─ sprint/3-rover-telemetria ─────────────────────► Sprint 3 (Semanas 5-6)
       └─ sprint/4-lowcode-estadistica-cierre ───────────► Sprint 4 (Semanas 7-8)
            │
+           ├─ docs/revision-sprint2-completa ──────────► revisión documental (esta rama, desde sprint/2@ec5d70b)
            └─ feature/* ────────────────────────────────► trabajo atómico por ID de backlog
 ```
 
@@ -24,7 +25,7 @@ main ─────────────────────────
 - **`hotfix/critical`**: fail-safe, parches de seguridad láser/rover. Branch desde `main` o `develop`, PR directo a ambas.
 - **`release/v1.0-sprint4`**: preparación de entrega final (docs, PDF, tag).
 
-## 2. Mapa completo de ramas creadas (35)
+## 2. Mapa completo de ramas creadas (36 — incluye `docs/revision-sprint2-completa`)
 
 ### Nivel 0 — Troncales (2)
 | Rama | Base | Propósito |
@@ -36,7 +37,7 @@ main ─────────────────────────
 | Rama | Sprint | Habilita (sprints.md) | Issues clave |
 |---|---|---|---|
 | `sprint/1-infra-firmware-base` | 1 | RNF-1.1/1.2, RF-2.1/3.1 | DEVOPS-01..05, MOV-01, LOW-01, EST-01, PM-03/04 |
-| `sprint/2-domotica-acceso` | 2 | RF-2.2, HU-01 | MOV-02..04, DEVOPS-06..08, LOW-02, FW mega-access |
+| `sprint/2-domotica-acceso` | 2 | RF-2.2, HU-01, RF-2.3 | MOV-02..04, DEVOPS-06..08, FW-MEGA cerrojo+laser v2 ✅, LOW-02 deuda |
 | `sprint/3-rover-telemetria` | 3 | RF-3.2, RF-1.2 | MOV-05..07, FW rover-uno/gateway, RF-3.3 fail-safe |
 | `sprint/4-lowcode-estadistica-cierre` | 4 | RF-4.1/4.2, RNF-2.1/2.2 | LOW-03..05, EST-02..07, MOV-08..10, cierre E2E |
 
@@ -61,7 +62,7 @@ main ─────────────────────────
 | `feature/app-mqtt-telemetria` | MOV-03 | RF-1.1 | Cliente MQTT/WebSocket |
 | `feature/app-pin-cerrojo` | MOV-04 | HU-01 | PIN desde app |
 | `feature/backend-endpoints` | DEVOPS-06,07,08 | RF-2.1 | `backend/app/routers/events.py:8`, `schemas.py`, tests |
-| `feature/automation-mqtt-sub` | LOW-02 | RF-4.1 | Node-RED `automation/flows/intrusion_alert.json` |
+| `feature/automation-mqtt-sub` | LOW-02 ⛔ deuda 2026-09-09 | RF-4.1 Won't | Node-RED no deploy — `automation/flows/intrusion_alert.json` referencia |
 
 #### Sprint 3 — Rover Tanque & Telemetría (6)
 | Rama | Backlog ID | RF/HU | Contenido |
@@ -76,9 +77,9 @@ main ─────────────────────────
 #### Sprint 4 — LowCode, Estadística y Cierre (8)
 | Rama | Backlog ID | RF/HU | Contenido |
 |---|---|---|---|
-| `feature/automation-telegram-bot` | LOW-03 | RF-4.1, HU-02 | BotFather + Node-RED Telegram |
-| `feature/automation-tuya-local` | LOW-04 | RF-4.2, HU-02 | `tuya-local` bombillo |
-| `feature/automation-intrusion-alert` | LOW-05 | HU-02 | Flujo completo láser→Telegram+bombillo rojo |
+| `feature/automation-telegram-bot` | LOW-03 | RF-4.1, HU-02 | BotFather + Telegram HTTP directo (Node-RED deuda) |
+| `feature/automation-tuya-local` | LOW-04 ❌ CANCELADO ADR-001 | RF-4.2 Won't | `tuya-local` bombillo — cancelado |
+| `feature/automation-intrusion-alert` | LOW-05 | HU-02 | Flujo láser→Telegram+LED rojo (sin bombillo, Node-RED deuda) |
 | `feature/stats-ema-firmware` | EST-02,03 | RNF-2.1, HU-03 | EMA C++ α=0.2 HC-SR04 + KY-037 |
 | `feature/stats-analitica-tstudent` | EST-04,05,06,07 | RNF-2.2 | psycopg2, t-Student, KPI >85% |
 | `feature/app-dashboard-consolidado` | MOV-08,09 | RF-1.1 | Dashboard + reconexión MQTT |
