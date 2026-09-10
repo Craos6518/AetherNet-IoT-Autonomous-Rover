@@ -39,7 +39,7 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 ## Sprint 4 (Semanas 7-8): LowCode, Filtrado Estadístico y Cierre
 
 - Filtro de Kalman / EMA en Python para procesar datos de sensores (HC-SR04, KY-037). → RNF-2.1, HU-03
-- Flujos en Node-RED con bot de Telegram para notificaciones de seguridad. → RF-4.1, HU-02
+- ~~Flujo Node-RED suscripción MQTT~~ — **DEUDA TÉCNICA / CANCELADO 2026-09-09** (LOW-02 asesor: no se usará Node-RED) + Bot de Telegram directo para notificaciones de seguridad. → RF-4.1, HU-02
 - ~~Integración del bombillo Tuya vía `tuya-local`~~ — **CANCELADO 2026-09-01** (ADR-001, R-01 políticas API propietaria). Intrusión solo vía LED RGB local + Telegram. → RF-4.2 cancelado, HU-02 simplificada
 - Pruebas de integración End-to-End, documentación y pruebas unitarias.
 
@@ -73,4 +73,4 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
   - [x] PM-02: `docs/tablero-scrum.md:49` `https://github.com/users/Craos6518/projects/14` (Kanban 6 cols)
   - [x] PM-04: `docs/gantt.md:7` Mermaid Sprints 1-4 + deuda — actualizar LOW-01 a bloqueado 2026-08-31
   - [x] EST-01: `stats/ema_filter.py` + bench `a051dd4` 531 muestras (adelantado Sprint 1-2)
-- Próximo (Sprint 2): `feature/firmware-mega-cerrojo` (RF-2.2/HU-01 teclado 4x4+MG90S), `feature/firmware-mega-laser` (RF-2.3/KY-008), LED RGB `hardware-inventory.md:9` (HU-01 verde / HU-02 rojo), `feature/automation-mqtt-sub` (LOW-02). `feature/app-pantallas-domotica` ✅ Done, `feature/app-mqtt-telemetria` ✅ Done, `feature/app-pin-cerrojo` ✅ Done, `feature/backend-endpoints` ✅ Done (DEVOPS-06/07). LOW-01 pivot a skill si se confirma bloqueo.
+- Próximo (Sprint 2): `feature/firmware-mega-cerrojo` (RF-2.2/HU-01 teclado 4x4+MG90S), `feature/firmware-mega-laser` (RF-2.3/KY-008), LED RGB `hardware-inventory.md:9` (HU-01 verde / HU-02 rojo). `feature/app-pantallas-domotica` ✅ Done, `feature/app-mqtt-telemetria` ✅ Done, `feature/app-pin-cerrojo` ✅ Done, `feature/backend-endpoints` ✅ Done (DEVOPS-06/07). ~~`feature/automation-mqtt-sub` (LOW-02)~~ → **DEUDA TÉCNICA 2026-09-09** asesor (no Node-RED). LOW-01 pivot a skill si se confirma bloqueo.

@@ -53,14 +53,14 @@ Cada ítem referencia su RF/HU de origen y el sprint donde debe quedar cerrado s
 | ID | Tarea | Prioridad | Sprint | Depende de | Origen |
 |---|---|---|---|---|---|
 | LOW-01 | ~~Confirmar bombillo `tuya-local`~~ — **CANCELADO 2026-09-01** (ADR-001, R-01 políticas API) | W | — | — | RF-4.2 cancelado |
-| LOW-02 | Flujo Node-RED: suscripción a topics MQTT de eventos | M | 2 | DEVOPS-02 | RF-4.1 |
-| LOW-03 | Bot de Telegram: creación vía BotFather + nodo de envío de mensajes | M | 4 | LOW-02 | RF-4.1, HU-02 |
+| LOW-02 | ~~Flujo Node-RED: suscripción a topics MQTT de eventos~~ — **DEUDA TÉCNICA / CANCELADO 2026-09-09** (indicación asesor: no se usará Node-RED en esta iteración; se documenta como deuda, no se implementa) | W | — | — | RF-4.1 → Won't |
+| LOW-03 | Bot de Telegram: creación vía BotFather + nodo de envío de mensajes | M | 4 | DEVOPS-02 (directo, LOW-02 deuda) | RF-4.1, HU-02 |
 | LOW-04 | ~~Integración `tuya-local` en Node-RED~~ — **CANCELADO 2026-09-01** (ADR-001) | W | — | — | RF-4.2 cancelado |
 | LOW-05 | Flujo de alerta de intrusión (láser → Telegram + LED RGB rojo) | M | 4 | LOW-03, MEGA-láser | HU-02 (sin bombillo) |
-| LOW-06 | Cuadro de mando ejecutivo no-code (dashboard Node-RED opcional) | C | 4 | LOW-02 | Entregable PDF |
-| LOW-07 | Manejo de reconexión si Node-RED pierde el broker MQTT | C | 4 | LOW-02 | — |
+| LOW-06 | Cuadro de mando ejecutivo no-code (dashboard Node-RED opcional) | C | 4 | — (LOW-02 deuda) | Entregable PDF |
+| LOW-07 | Manejo de reconexión si Node-RED pierde el broker MQTT | W | — | — (LOW-02 deuda) | — |
 
-**Riesgo del área:** ~~LOW-01~~ cancelado 2026-09-01. HU-02 ahora solo depende de Telegram + LED RGB local; RF-4.2 fuera de alcance.
+**Riesgo del área:** ~~LOW-01~~ cancelado 2026-09-01 + ~~LOW-02~~ deuda técnica 2026-09-09 (asesor). HU-02 ahora solo depende de Telegram directo + LED RGB local; RF-4.1/4.2 fuera de Node-RED en esta iteración.
 
 ---
 

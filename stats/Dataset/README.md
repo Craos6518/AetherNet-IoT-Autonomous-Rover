@@ -1,6 +1,13 @@
-# Dataset — Water level identification with distance sensors
+# Datasets — Validación externa del filtro EMA (AetherNet)
 
-> **Ubicación canónica:** `stats/Dataset/` (31.500 filas, 3.4 MB)
+> **Ubicación canónica:** `stats/Dataset/` (36.500 filas, 3.7 MB) — espejo en `docs/Estadistica/Datasets/` para entrega académica.
+> Ambos datasets ya versionados en el repo, sin descarga adicional. Ver también `docs/Estadistica/Datasets/README.md`.
+
+---
+
+## Dataset 1 — Water level identification with distance sensors
+
+> 31.500 filas, 3.4 MB (3 archivos × 10.500)
 
 ## Fuente
 
@@ -41,7 +48,7 @@ gyr_acc_x, gyr_acc_y, gyr_acc_z, gyr_x, gyr_y, gyr_z, angle, water_level
 
 Ver `stats/water_turbidity_analysis.py:1` y `notebooks/EMA_Estadistica.ipynb §7c` para reproducciones, y `stats/data/water_turbidity_report.json:1` para métricas versionables.
 
-## Uso
+## Uso (Dataset 1)
 
 ```bash
 python3 stats/water_turbidity_analysis.py   # → stats/data/water_turbidity_report.json + PNGs
@@ -49,3 +56,53 @@ jupyter lab notebooks/EMA_Estadistica.ipynb  # §7c
 ```
 
 No requiere descarga adicional — los 3 CSV ya están versionados en este repo (derivado CC BY-SA 4.0, citar).
+
+---
+
+## Dataset 2 — Hand Gesture Dataset (complementario HC-SR04)
+
+> 5.000 filas, 341 KB — **mismo sensor que AetherNet (HC-SR04)**, con movimiento real en el tiempo.
+
+### Fuente
+
+- **Kaggle:** https://www.kaggle.com/datasets/marisolgil/hand-gesture-dataset
+- **Autora:** Marisol Gil Valenzuela (Ing. Industrial y de Sistemas, Univ. de Sonora; maestría en IA e IoT)
+- **Licencia:** **CC0 — Dominio público** (sin restricciones, sin atribución obligatoria) — https://creativecommons.org/publicdomain/zero/1.0/ — 100% compatible RNF-3.1 FOSS
+- **Cita (DOI):** Marisol Gil. (2026). Hand Gesture Dataset [Dataset]. Kaggle. https://doi.org/10.34740/kaggle/dsv/16239431
+- **Fecha:** 2026, versión 1 — 5.000 filas, 5 gestos × 50 fotogramas × 20 Hz
+
+### Contenido
+
+Mediciones **HC-SR04** reales durante 5 tipos de gestos de mano capturados a **20 Hz (50 ms)**:
+
+- `gesto` — 5 niveles: `acercar / alejar / estático cerca / estático lejos / ninguno`
+- `mano` — `derecha / izquierda`
+- `velocidad_subjetiva` — `lenta / normal / rápida`
+- 50 fotogramas por gesto (≈2.5 s), con `velocidad_cm_s`, `aceleracion_cm_s2`, `tendencia` ya calculadas
+
+Columnas (`gesture_dataset.csv:1`):
+```
+frame_id, timestamp_ms, sujeto_id, mano, velocidad_subjetiva, gesto,
+distancia_cm, velocidad_cm_s, aceleracion_cm_s2, tendencia, valido
+```
+- `distancia_cm` — misma unidad y sensor que `HC-SR04` del Rover (AetherNet)
+- `valido` — 1 = lectura válida, 0 = inválida (filtrado)
+
+Diseño: 5.000 filas completas (cumple mínimo 100 observaciones), con variables cualitativas (`gesto`, `mano`, `velocidad_subjetiva`) y cuantitativas (`distancia_cm`, `velocidad_cm_s`).
+
+### Relevancia AetherNet
+
+- **Mismo hardware:** `HC-SR04` idéntico al del Rover — valida EMA α=0.2 sobre sensor real, no solo principio time-of-flight genérico.
+- **Movimiento temporal:** único dataset con **serie temporal real** (50 frames @ 20 Hz) — permite medir **retardo de reacción** del EMA ante cambio real de distancia (p. ej. aparición súbita de obstáculo), que el dataset 1 de turbidez **no puede** evaluar (mediciones repetidas sin movimiento).
+- **Complemento perfecto:** Dataset 1 (turbidez) → robustez y reducción >85% en volumen grande controlado; Dataset 2 (gestos) → rapidez de respuesta en movimiento real.
+
+### Uso (Dataset 2)
+
+```bash
+python3 stats/gesture_analysis.py        # (si existe) → stats/data/gesture_report.json
+jupyter lab notebooks/EMA_Estadistica.ipynb  # §7d — análisis gestos + retardo EMA
+# Análisis directo
+python3 -c "import pandas as pd; df=pd.read_csv('stats/Dataset/gesture_dataset.csv'); print(df.groupby('gesto')['distancia_cm'].describe())"
+```
+
+Ambos CSV ya versionados en `stats/Dataset/gesture_dataset.csv` y espejo `docs/Estadistica/Datasets/gesture_dataset.csv` (CC0, sin restricciones).
