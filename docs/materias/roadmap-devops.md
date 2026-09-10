@@ -2,7 +2,7 @@
 
 **Alcance de este roadmap:** todos los temas necesarios para COMPLETAR el área DevOps del proyecto: infraestructura contenerizada, CI/CD, broker MQTT, base de datos, API backend y los 3 firmwares. Convención heredada de `docs/backlog.md`: el firmware base vive en esta área.
 
-**Estado al Aug 2026:** `docker-compose.yml` ✅ · `ci.yml` con 6 jobs ✅ · 3 firmwares compilables ✅ · **`backend/app/main.py` NO existe** (el job `docker-build` del CI falla al hacer curl a `/health`) · credenciales Wi-Fi/MQTT hardcodeadas en el gateway ⚠️ · job Android desactivado pese a que Gradle ya existe ⚠️
+**Estado al 2026-09-10 (`docs/revision-sprint2-completa` — ver `docs/revision-sprint2.md`):** `docker-compose.yml` ✅ · `ci.yml` 1.5.1 6 jobs ✅ · 3 firmwares compilables ✅ · `backend/app/main.py:1` ✅ FastAPI 1.0.0-sprint1 + 8 endpoints `routers/events.py:25` + `GET /health` `degraded` + credenciales en `secrets.h`/`backend/.env.example` ✅ (R-12 resuelto, R-13 documentado) · RF nRF24L01 validado HW `testing-rf-sprint1.md:32` · laser v2 `c7ce065` · `app` MVVM+MQTT `MqttManager` <50ms ✅
 
 Backlog operativo detallado: [`backlog-devops.md`](backlog-devops.md)
 

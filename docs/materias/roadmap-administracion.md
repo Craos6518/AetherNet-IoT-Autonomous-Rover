@@ -2,7 +2,7 @@
 
 **Alcance de este roadmap:** todos los temas de gestión necesarios para planear, medir, controlar y CERRAR el proyecto con entregables académicos defendibles. Área transversal: no produce código, pero sin ella las otras áreas trabajan a ciegas.
 
-**Estado al Aug 2026:** backlog + sprints + riesgos documentados ✅ · **falta:** tablero Scrum visual, Gantt, línea base de costos, evidencias de ceremonias.
+**Estado al 2026-09-10 (`docs/revision-sprint2-completa` — ver `docs/revision-sprint2.md`):** backlog + sprints + riesgos documentados ✅ · **falta:** tablero Scrum visual, Gantt, línea base de costos, evidencias de ceremonias.
 
 Backlog operativo detallado: [`backlog-administracion.md`](backlog-administracion.md)
 

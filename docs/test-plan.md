@@ -33,7 +33,7 @@ Estrategia de validación por subsistema. Los criterios de aceptación BDD (`Dad
 | Interrupción del láser → mensaje en Telegram | E2E | Cortar la barrera con el sistema completo activo, verificar llegada del mensaje y medir tiempo transcurrido |
 | ~~Interrupción del láser → bombillo Tuya~~ — cancelado | — | Cancelado 2026-09-01 (R-01). Intrusión se verifica por LED RGB rojo + Telegram |
 | Tasa de falsos positivos del láser | No funcional | Dejar el sistema armado N horas sin interrupción real; contar alertas disparadas — objetivo del PRD: 0% |
-| Flujo Node-RED de intrusión completo (`LOW-05`) | Integración | Simular publicación del evento MQTT manualmente (ej. con `mosquitto_pub`) y verificar que Node-RED reacciona sin depender del hardware físico |
+| Flujo intrusión completo (`LOW-05`) — Telegram directo (Node-RED deuda 2026-09-09) | Integración | Simular `mosquitto_pub -t aethernet/seguridad/intrusion -m '{"sensor_id":"laser-01"}'` y verificar que Gateway/Backend dispara `POST https://api.telegram.org/bot.../sendMessage` sin depender del hardware físico; flujo referencia `automation/flows/intrusion_alert.json` |
 
 ### HU-03 — Filtrado Estadístico de Telemetría
 
@@ -81,3 +81,4 @@ Estrategia de validación por subsistema. Los criterios de aceptación BDD (`Dad
 ## 6. Pendiente de definición
 
 - Valor final calibrado del timeout de fail-stop (rango de referencia: 300-500 ms) — debe ajustarse empíricamente en Sprint 3 según la tasa real de pérdida de paquetes RF observada.
+- Datasets externos 36.5k ya disponibles para validar EST-05/06 offline (`stats/Dataset/` + `stats/water_turbidity_analysis.py` Welch/ANOVA §7c) previo a capturar histórico real PG.

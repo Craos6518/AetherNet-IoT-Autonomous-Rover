@@ -28,7 +28,7 @@ AetherNet es una plataforma integral de domótica y robótica móvil orientada a
 ### ✅ Dentro del Alcance (In-Scope)
 *   Aplicación nativa de Android en Kotlin (MVVM, Jetpack Compose).
 *   Backend local contenerizado en Docker (FastAPI, PostgreSQL, Mosquitto MQTT).
-*   Automatización LowCode mediante Node-RED.
+*   Automatización LowCode — **Node-RED en deuda técnica 2026-09-09** (asesor: no se deploya esta iteración; flujo `automation/flows/intrusion_alert.json` como referencia exportable); notificaciones vía **Telegram Bot directo** (RF-4.1, HU-02).
 *   ~~Control local de bombillería inteligente vía IP (`tuya-local`)~~ — **CANCELADO 2026-09-01** (ver `docs/adr/adr-001-cancelacion-tuya.md`, `docs/risk-register.md:16` R-01 — políticas API propietaria viola RNF-3.1). Iluminación de intrusión solo vía LED RGB local.
 *   Firmware C++ en microcontroladores interconectados por RF (2.4 GHz), UART y Wi-Fi.
 *   Implementación de algoritmos estadísticos (Media Móvil Exponencial) en el firmware.

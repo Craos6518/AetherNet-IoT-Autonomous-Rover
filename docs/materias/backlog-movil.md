@@ -2,7 +2,7 @@
 
 Backlog operativo detallado del Área 1. IDs MOV-01..10 provienen de `docs/backlog.md`; nuevos continúan la serie (MOV-11+). Cada tarea define qué hacer exactamente, alcance IN/OUT y criterios de aceptación.
 
-> Estado real: `DashboardViewModel.kt` es esqueleto con TODOs; Room definido sin usar; Gradle existe; cero pantallas funcionales.
+> Estado real 2026-09-10: MOV-01 ✅ Done `f03190b` MVVM real + MOV-02 ✅ `LedStatusCard` + MOV-03 ✅ `MqttManager` Paho <50ms + MOV-04 ✅ `PinViewModel`/`PinScreen` 35 tests verdes — ver `docs/sprints.md:52` y `docs/backlog.md` Área 1. Pendiente: MOV-05..10 (Sprint 3-4 joystick/BT/dashboard).
 
 ---
 

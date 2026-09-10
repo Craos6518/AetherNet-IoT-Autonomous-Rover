@@ -27,8 +27,8 @@ AetherNet IoT es un sistema distribuido de domótica modular, control de acceso 
 * **RF-3.2:** El vehículo debe esquivar obstáculos frontales usando el sensor HC-SR04 y evitar caídas en bordes utilizando la matriz de sensores infrarrojos TCRT5000.
 * **RF-3.3 (fail-safe RF):** Si el Rover no recibe un paquete RF válido del Gateway dentro de una ventana de timeout definida (a calibrar en firmware, valor de referencia inicial: 300-500 ms), debe detener inmediatamente ambos motores (fail-stop) hasta recibir un nuevo comando válido. El Rover no debe continuar en movimiento ni intentar maniobras autónomas adicionales mientras el enlace esté caído — ver `docs/architecture.md` §6 y riesgo relacionado en `docs/risk-register.md`.
 
-### 2.4. Automatización y LowCode (Node-RED)
-* **RF-4.1:** El motor de reglas debe capturar eventos críticos (ej. intrusión) y enviar una notificación push/mensaje a través de un Bot de Telegram.
+### 2.4. Automatización y LowCode (Telegram directo — Node-RED deuda 2026-09-09)
+* **RF-4.1:** El sistema debe capturar eventos críticos (ej. intrusión láser RF-2.3) y enviar una notificación push/mensaje a través de un Bot de Telegram — **implementación Sprint 2-4 vía HTTP directo `api.telegram.org` sin Node-RED** (flujo `automation/flows/intrusion_alert.json` queda como referencia exportable; Node-RED **DEUDA TÉCNICA 2026-09-09** por indicación asesor, ver `docs/sprints.md:42`, `docs/backlog.md:56` LOW-02).
 * **RF-4.2:** ~~El sistema debe cambiar el estado y color de un bombillo inteligente (protocolo Tuya Local) en respuesta a eventos de sensores sin depender de la nube externa.~~ — **CANCELADO 2026-09-01** (ADR-001, R-01 — políticas de integración API propietaria viola RNF-3.1 + `local_key` inaccesible). Fuera de alcance; HU-02 se cumple solo con LED RGB local + Telegram.
 
 ---
@@ -66,7 +66,7 @@ AetherNet IoT es un sistema distribuido de domótica modular, control de acceso 
 * **Criterios de Aceptación (BDD):**
   * *Dado* que el sistema está en modo "Armado",
   * *Cuando* la señal del láser KY-008 se interrumpe,
-  * *Entonces* Node-RED envía un mensaje con prioridad alta a Telegram y el LED RGB local pasa a rojo (bombillo Tuya cancelado ADR-001, R-01 políticas API).
+  * *Entonces* el sistema envía un mensaje con prioridad alta a Telegram (vía Bot API directo — Node-RED en deuda 2026-09-09, `automation/flows/intrusion_alert.json` referencia) y el LED RGB local pasa a rojo 3s (bombillo Tuya cancelado ADR-001, R-01 políticas API).
 
 ### HU-03: Filtrado Estadístico de Telemetría
 **Como** analista de datos/desarrollador,

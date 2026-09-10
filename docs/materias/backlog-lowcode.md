@@ -2,7 +2,7 @@
 
 **Nota:** el backlog original (`docs/backlog.md` Área 3) define esta área operativa, pero no tiene PDF académico propio. Se documenta aquí para que "todos los temas necesarios para completar el proyecto" queden cubiertos — HU-02 y RF-4.x dependen íntegramente de este área.
 
-**Estado al 2026-09-01 — CANCELADO Tuya (ADR-001):** bombillo/`tuya-local` cancelado por políticas API propietaria (RNF-3.1) + `local_key` (R-01). Flujo vigente: `mqtt-intrusion → function-parse → telegram-alert/http-telegram` + LED RGB local. Pendiente: despliegue Node-RED, bot Telegram, pruebas E2E.
+**Estado al 2026-09-10 (`docs/revision-sprint2-completa`) — CANCELADO Tuya (ADR-001) + DEUDA Node-RED 2026-09-09:** bombillo/`tuya-local` cancelado (RNF-3.1, R-01) + `LOW-02` Node-RED **DEUDA TÉCNICA** (asesor: no deploy esta iteración). Flujo vigente: `SECURITY:` MEGA laser→Gateway `aethernet/seguridad/intrusion` → Telegram HTTP directo + LED RGB rojo 3s (`laser.cpp` `c7ce065`). `automation/flows/intrusion_alert.json` queda como referencia JSON exportable. Pendiente: `LOW-03` bot Telegram directo (Sprint 4), `LOW-05` E2E.
 
 ---
 

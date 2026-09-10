@@ -2,7 +2,7 @@
 
 Backlog operativo detallado del Área 2. Cada tarea define **qué hacer exactamente, alcance (IN/OUT) y criterios de aceptación verificables**. Los IDs DEVOPS-01..09 provienen de `docs/backlog.md` y se mantienen; los nuevos continúan la serie (DEVOPS-10+). Prioridad MoSCoW: M=Must, S=Should, C=Could.
 
-> Estado real verificado al Aug 2026: `main.py` inexistente, credenciales hardcodeadas en `gateway.ino`, conflicto de pines en `access_control.ino`, Gradle presente pero job Android desactivado.
+> Estado real 2026-09-10: DEVOPS-01..05 ✅ Done (Docker 3 servicios + Mosquitto `aethernet/#` + `init.sql` 4 tablas + `ci.yml` 1.5.1 + RF `c7ce065` laser v2 validado HW), DEVOPS-06/07 ✅ Done 21 tests + DEVOPS-08 ✅ `.env.example`/`secrets.h.example`, DEUDA 1→2 saldada 2026-08-29, EST-01 + datasets 36.5k adelantados. Ver `docs/sprints.md:52` y `docs/backlog.md` Área 2.
 
 ---
 

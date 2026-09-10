@@ -2,7 +2,7 @@
 
 **Alcance de este roadmap:** todos los temas necesarios para COMPLETAR la App Android "AetherControl" en Kotlin/Jetpack Compose con MVVM. Equivalencias con el programa académico (.NET/Xamarin→Kotlin/Compose) ya documentadas en [`programacion-movil.md`](programacion-movil.md).
 
-**Estado al Aug 2026:** Gradle KTS ✅ · MVVM skeleton con `DashboardUiState` sellado ✅ · Room definido ✅ · **cliente MQTT inexistente (TODOs)** · **cero pantallas funcionales más allá del esqueleto** · job Android en CI desactivado.
+**Estado al 2026-09-10 (`docs/revision-sprint2-completa` — ver `docs/revision-sprint2.md`):** Gradle KTS ✅ · MVVM skeleton con `DashboardUiState` sellado ✅ · Room definido ✅ · **cliente MQTT ✅ `MqttManager` Paho 1.2.5 + `RoverTelemetryMqtt`/`AccessEventMqtt` + `aethernet/#` + `LedStatusCard` + `PinViewModel/Screen` 35 tests ✅ — ver `docs/sprints.md:52`. Pendiente: joystick/BT/dashboard (MOV-05..10 Sprint 3-4).
 
 Backlog operativo detallado: [`backlog-movil.md`](backlog-movil.md)
 
