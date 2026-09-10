@@ -197,7 +197,8 @@ automation/.node-red/projects/
 # IDE / Editor — como .gitignore de un repo React: ignora config local
 # =============================================================================
 .vscode/*
-!.vscode/extensions.json # rescata — como `!extensions.json` en React (recomendaciones)
+!.vscode/extensions.json
+!.vscode/settings.json
 !.vscode/settings.json.example
 !.vscode/tasks.json.example
 !.vscode/launch.json.example
