@@ -7,8 +7,8 @@ Generado Task 1 — 2026-09-11. Fuente: `find docs -type f | sort` (118 archivos
 - `docs/Administracion de proyectos/` (con espacio, 3 archivos: Plantilla 111K + Proyecto 100K + README 3.2K) **duplica** `docs/Administracion-Proyectos/` (hyphen, 1 README + capturas/)
 - `calendar/` raíz (6 archivos: 4 .ics + 1 .vcs + 1 .csv + README 7K) — debe vivir bajo Administración
 - `docs/Estadistica/` (keep): `Anteproyecto_AetherNet-3.docx` 82K + `Contraste_Admin...docx` 14K + `CONTRASTE...md` 15K + `Datasets/` espejo 4 CSV 3.7MB + `README.md` 1.1K + `fotos/` vacía — ya canónico
-- `docs/presentaciones/` (4 .html 37-73K + 1 guion .md 7.7K) — opcional mover a Administración
-- Transversales keep: `docs/fritzing/` (21 archivos), `docs/logs/firmware_sprint3/` (15 logs), `docs/UTP/` (4 PDFs), `docs/adr/`, `docs/archivo/`, `docs/emails-docentes/`
+- `docs/<Materia>/` (4 .html 37-73K + 1 guion .md 7.7K) — opcional mover a Administración
+- Transversales keep: `docs/fritzing/` (21 archivos), `docs/logs/firmware_sprint3/` (15 logs), `docs/<Materia>/` (4 PDFs), `docs/adr/`, `docs/archivo/`, `docs/<Materia>/`
 - Espejos verificados: `stats/Dataset/` 3.7MB canónico ↔ `docs/Estadistica/Datasets/` espejo (diff sin diff esperado); `notebooks/` 7 ipynb canónico ↔ `stats/docs/Estadistica/notebook/EMA_Estadistica.ipynb` espejo solo EMA
 
 ## Mapa Origen→Destino
@@ -31,11 +31,11 @@ Generado Task 1 — 2026-09-11. Fuente: `find docs -type f | sort` (118 archivos
 | `docs/Estadistica/CONTRASTE_Admin_vs_Estadistica.md` | KEEP (actualizar refs espacio→hyphen) | `edit` | `docs/Administracion de proyectos/Proyecto_AetherNet...docx` | 2 |
 | `docs/Estadistica/Datasets/` | KEEP espejo de `stats/Dataset/` | `diff -r` verify | `docs/roadmap.md:93`, `docs/architecture.md:56` | — |
 | `stats/Dataset/` | KEEP canónico | — | — | — |
-| `docs/presentaciones/*.html` (4) + `guion-estadistica-*.md` | OPCIÓN A: KEEP / OPCIÓN B: `docs/Administracion-Proyectos/presentaciones/` | `git mv` si B | `docs/README.md:19` | ~3 |
+| `docs/<Materia>/*.html` (4) + `guion-estadistica-*.md` | OPCIÓN A: KEEP / OPCIÓN B: `docs/Administracion-Proyectos/presentaciones/` | `git mv` si B | `docs/README.md:19` | ~3 |
 | `docs/fritzing/*` | KEEP | — | `notebooks/*.ipynb`, `docs/hardware-inventory.md` | ~20 |
 | `docs/logs/firmware_sprint3/` | KEEP | — | `docs/Firmware/notebook/Firmware_Notebook.ipynb`, `Diario_DevOps.ipynb` | ~5 |
-| `docs/UTP/*.pdf` | KEEP | — | `docs/materias/*.md` | ~6 |
-| `docs/adr/` `docs/archivo/` `docs/emails-docentes/` | KEEP | — | `docs/backlog.md`, `docs/roadmap.md` | — |
+| `docs/<Materia>/*.pdf` | KEEP | — | `docs/materias/*.md` | ~6 |
+| `docs/adr/` `docs/archivo/` `docs/<Materia>/` | KEEP | — | `docs/backlog.md`, `docs/roadmap.md` | — |
 
 ## Refs detectadas (resumen)
 
