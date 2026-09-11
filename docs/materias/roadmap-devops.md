@@ -76,6 +76,24 @@ Backlog operativo detallado: [`backlog-devops.md`](backlog-devops.md)
 
 ---
 
+## Búsquedas Google por tema
+
+| Tema | Búsqueda sugerida (copiar a Google) |
+|---|---|
+| Docker Compose multi-servicio | docker compose FastAPI PostgreSQL Mosquitto tutorial |
+| Mosquitto ACL aethernet/# | Mosquitto MQTT ACL aethernet topic access control |
+| arduino-cli CI | arduino-cli GitHub Actions compile ESP32 MEGA UNO tutorial |
+| Trivy SARIF | Trivy security scan GitHub Actions SARIF |
+| FastAPI health degraded | FastAPI health check degraded database tutorial |
+| Prometheus Grafana MVP | Prometheus Grafana Mosquitto MQTT monitoring docker |
+
+**Datasheets / spec oficial:**
+
+- Mosquitto.conf man page — buscar "mosquitto.conf documentation"
+- Docker Compose spec — buscar "docker compose specification"
+
+---
+
 ## Orden crítico de ejecución
 
 1. **DEVOPS bloque 4 primero dentro de lo nuevo**: sin `main.py` el CI está roto silenciosamente (job docker-build fallará) y ninguna otra área puede probar integración.
