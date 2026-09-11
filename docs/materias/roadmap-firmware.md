@@ -18,4 +18,19 @@ Alcance: todos los temas necesarios para completar firmware MEGA/Gateway/Rover c
 - TCRT5000 Vishay datasheet reflective optical sensor
 - L298N datasheet STMicroelectronics dual H-bridge
 - ESP32-WROOM-32U datasheet Espressif
-- MG90S datasheet tower pro servo
+- MG90S datasheet Tower Pro servo
+
+---
+
+## Búsquedas Google por bloque (copiar tal cual)
+
+| Tema | Búsqueda sugerida |
+|---|---|
+| millis no bloqueante | arduino millis non blocking delay without delay tutorial |
+| nRF24L01 RF24 | nRF24L01 RF24 library arduino datasheet 2.4GHz |
+| HC-SR04 EMA | HC-SR04 ultrasonic datasheet timing EMA exponential moving average |
+| TCRT5000 threshold | TCRT5000 datasheet analogRead threshold infrared line tracking |
+| L298N vs TB6612 | L298N voltage drop 2V vs TB6612FNG datasheet |
+| Servo MG90S | MG90S servo datasheet PWM 0-90 degrees Arduino |
+| UART divisor | UART baudrate 38400 voltage divider 5V 3.3V ESP32 |
+| KY-008 LDR | KY008 laser datasheet LDR voltage divider Arduino |

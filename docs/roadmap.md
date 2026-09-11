@@ -104,11 +104,64 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 
 ---
 
+## 6. Firmware — C++ Embebido (MEGA/Gateway/Rover)
+
+**Conocimientos previos:** C++ básico Arduino (setup/loop, pinMode, digitalRead).
+
+**Conocimientos a adquirir:**
+- millis() no bloqueante vs delay() — crítico para no congelar láser/TCRT (`firmware/mega-access/src/laser.cpp:15` 50ms CHECK).
+- Librería RF24 (nRF24L01 SPI CE/CSN, channel 76 2MBPS) — `firmware/gateway-esp32/gateway-esp32.ino:59`, `firmware/rover-uno/rover-uno.ino:372`.
+- HC-SR04 TRIG2 ECHO3 + EMA α=0.2 en firmware (`rover-uno.ino:259`), TCRT5000 analogRead threshold 500 (`test-rover-sensors.ino`).
+- L298N (drop 1.8V) vs TB6612FNG, Servo MG90S PWM 0°/90°, KY-008 + LDR divisor 10k, UART 38400 5V→3.3V.
+- **Se despliega:** Sprint 1-3. **Habilita:** RF-2.1/2.2/2.3/3.1/3.2, HU-01/02/03/04.
+
+**Datasheets (búsqueda Google sugerida):**
+- `nRF24L01+ datasheet Nordic Semiconductor pdf`
+- `HC-SR04 datasheet ultrasonic distance sensor timing diagram`
+- `TCRT5000 Vishay datasheet reflective optical sensor`
+- `L298N datasheet STMicroelectronics dual H-bridge`
+- `ESP32-WROOM-32U datasheet Espressif`
+- `MG90S datasheet Tower Pro servo`
+
+Ver roadmap detallado: `docs/materias/roadmap-firmware.md` · Diario: `notebooks/Firmware_Notebook.ipynb` · Fotos: `docs/Firmware/fotos/`
+
+---
+
+## 7. Hardware — Electrónica
+
+**Conocimientos a adquirir:** inventario `docs/hardware-inventory.md`, fritzing `docs/fritzing/AetherNet-P*.png`, pines MEGA 44/45/46 LED, 22/24/26/28 ROW, 30/32/34/36 COL, 9 servo, 8 TX láser, 7 LDR, 16/17 UART, calce TT 6V 1:48 impacto -77% torque.
+
+**Datasheets:** same que Firmware + `KY-008 laser datasheet`, `LDR GL5528 datasheet`, `TP4056 charging module datasheet`, `MT3608 StepUp datasheet`
+
+Ver roadmap: `docs/materias/roadmap-hardware.md` · Diario: `notebooks/Diario_Hardware.ipynb`
+
+---
+
+## 8. LowCode — Telegram Bot (Node-RED deuda)
+
+**Conocimientos:** BotFather `/newbot`, `POST https://api.telegram.org/bot<token>/sendMessage` + `parse_mode Markdown`, flujo JSON `automation/flows/intrusion_alert.json` como referencia (deuda 2026-09-09).
+
+**Búsquedas:** ver `docs/materias/roadmap-lowcode.md` · Diario: `notebooks/Diario_LowCode.ipynb`
+
+---
+
 ## Vista consolidada: conocimiento transversal (no ligado a una sola materia)
 
 - **C++ para microcontroladores** (Arduino UNO/MEGA, ESP32/ESP8266): interrupciones, lectura analógica/digital, comunicación serial. Es la base común de DevOps (CI/CD del firmware), Estadística (dónde corre el EMA) y Automatizaciones (eventos que disparan Telegram directo; Node-RED en deuda).
 - **Protocolo MQTT**: entender pub/sub, topics y QoS es necesario para entender cómo se comunican App, Backend, Gateway (ESP32↔MEGA UART) y Rover (nRF24L01) entre sí — topics canónicos `aethernet/#` (`acl.conf:1`, `architecture.md` §7).
 - **Redes LAN**: todo el sistema (App, ESP32/ESP8266, servidor Docker) vive en la misma subred LAN.
+
+## Búsquedas Google consolidadas (todas las materias)
+
+| Materia | Búsqueda ejemplo |
+|---|---|
+| Firmware | nRF24L01 RF24 library arduino datasheet 2.4GHz |
+| Hardware | KY008 laser datasheet LDR voltage divider Arduino |
+| Móvil | Eclipse Paho Android MQTT client tutorial 2024 StateFlow |
+| Estadística | exponential moving average alpha 0.2 Welch t-test SciPy |
+| DevOps | docker compose FastAPI PostgreSQL Mosquitto tutorial |
+| LowCode | Telegram Bot API sendMessage BotFather tutorial |
+| Administración | risk register matrix probability impact Scrum |
 
 ## Orden sugerido de aprendizaje (si el equipo parte de cero)
 
