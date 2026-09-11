@@ -58,3 +58,23 @@ Backlog operativo detallado: [`backlog-estadistica.md`](backlog-estadistica.md)
 1. **EST-01 ya cumplida** — capitalizarla: barrido de α (barato, puro Python) cierra la justificación técnica.
 2. Instrumentación de timestamps de latencia (con DevOps) ANTES del Sprint 4: sin datos no hay t-Student.
 3. Captura real del KY-037 antes de escribir su filtro (evita refactor ciego).
+
+---
+
+## Búsquedas Google por tema (copiar tal cual)
+
+| Tema | Búsqueda sugerida |
+|---|---|
+| EMA α=0.2 trade-off | exponential moving average alpha smoothing factor 0.2 tutorial |
+| HC-SR04 ruido gaussiano | HC-SR04 ultrasonic sensor noise gaussian distribution datasheet |
+| Welch t-Student | Welch t-test unequal variances SciPy tutorial |
+| ANOVA turbidez | ANOVA water turbidity sensor angle Python |
+| Kalman vs EMA | Kalman filter vs exponential moving average Arduino |
+| Pandas describe | Pandas descriptive statistics water quality dataset Kaggle |
+| SciPy stats | SciPy stats ttest_ind ANOVA tutorial |
+
+## Datasheets/Datasets
+
+- `water-level_turbidity` Kaggle 31.5k CC BY-SA 4.0 — buscar "water turbidity sensor dataset Kaggle"
+- `gesture_dataset.csv` 5k CC0 — buscar "gesture sensor dataset Kaggle"
+- `HC-SR04 datasheet` — buscar "HC-SR04 ultrasonic datasheet"

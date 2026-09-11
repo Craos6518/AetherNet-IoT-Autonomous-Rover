@@ -86,8 +86,10 @@ La aplicación más importante de la materia está **duplicada en dos áreas**, 
 |---|---|---|
 | EST-02 | EMA para KY-037 (sonido) en firmware | Pendiente (Sprint 4) |
 | EST-04 | Extracción de histórico desde PostgreSQL (`psycopg2`/SQLAlchemy) | Pendiente — requiere datos reales de DEVOPS-03 |
-| EST-05 | **Prueba t-Student** de dos muestras (latencia RF vs. Wi-Fi) | Pendiente — nota: la prueba de hipótesis formal NO aparece en el PDF del programa (el PDF cubre hasta confiabilidad); se hereda del entregable del proyecto integrador. Verificar supuestos (normalidad, varianzas) antes de aplicarla |
+| EST-05 | **Prueba t-Student** de dos muestras (latencia RF vs. Wi-Fi) | 🔄 Adelantado parcial 36.5k — Welch t-Student + ANOVA implementado en `stats/water_turbidity_analysis.py` con dataset externo 31.5k (`water-level_turbidity-*.csv`) + 5k `gesture_dataset.csv`; PNGs `docs/fritzing/water_us_vs_true.png` y `docs/fritzing/water_ir_by_angle.png` ✅ 2026-09-09; pendiente validación final con latencias RF vs Wi-Fi reales (EST-09). Nota: la prueba formal NO aparece en el PDF del programa (el PDF cubre hasta confiabilidad); se hereda del entregable del proyecto integrador. Verificar supuestos (normalidad, varianzas) antes de aplicarla |
+| EST-06 | Análisis descriptivo sensores (Pandas `describe`, outliers >3σ, serie crudo vs filtrado) | 🔄 Adelantado parcial 36.5k — descriptivo U1 implementado en `stats/water_turbidity_analysis.py` (`descriptive_by_group`) con 31.5k filas `water-level_turbidity`; PNGs `water_us_vs_true.png` + `water_ir_by_angle.png`; pendiente con datos PG reales |
 | EST-07 | Reporte final con % reducción de ruido | Pendiente (Sprint 4) |
+| Gráficos nuevos | Gráficos nuevos: water_us_vs_true.png + water_ir_by_angle.png ✅ 2026-09-10 + ky037-ema.png pendiente EST-03 | `water_us_vs_true.png` 87k + `water_ir_by_angle.png` 45k existentes en `docs/fritzing/`; `ky037-ema.png` pendiente EST-03 Sprint 4 |
 | U3 (Bayes) | Sin aplicación formal — oportunidad de mejora opcional | Registrado |
 
 ---
