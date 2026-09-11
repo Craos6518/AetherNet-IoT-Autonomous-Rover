@@ -64,13 +64,13 @@ Mismo que ICS pero para clientes que solo aceptan `.vcs` (Outlook legacy).
 
 ```bash
 # Contar eventos
-grep -c "BEGIN:VEVENT" calendar/*.ics
+grep -c "BEGIN:VEVENT" docs/Administracion-Proyectos/calendario/*.ics
 # → AetherNet_8semanas_Trabajo_Sprints.ics 109 (5 sprints + 104 diarios)
 # → AetherNet_Clases_UTP_2026-2.ics 8
 # → AetherNet_Completo_8semanas.ics 117
 
 # Verificar timezone
-grep "TZID:America/Bogota" calendar/AetherNet_8semanas_Trabajo_Sprints.ics | head -1
+grep "TZID:America/Bogota" docs/Administracion-Proyectos/calendario/AetherNet_8semanas_Trabajo_Sprints.ics | head -1
 
 # Probar import en Thunderbird/Outlook antes de Google si quieres
 ```

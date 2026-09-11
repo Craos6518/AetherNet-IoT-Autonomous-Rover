@@ -26,7 +26,6 @@
 | `DevOps/` | `devops.md` + `roadmap-*.md` + `backlog-*.md` + `notebook/Diario_DevOps.ipynb` | Docker/CI |
 | `Automatizacion-LowCode/` | `roadmap-lowcode.md` + `backlog-lowcode.md` + `notebook/Diario_LowCode.ipynb` | Telegram |
 | `materias/` | **Redirección** → `docs/<Materia>/` canónico (ver arriba) | Mapeo PDF UTP |
-| `calendar/` | **Redirección** → `docs/Administracion-Proyectos/calendario/` | ICS/VCS/CSV |
 
 ## Notebooks + Datasets — Centralización 2026-09-11
 

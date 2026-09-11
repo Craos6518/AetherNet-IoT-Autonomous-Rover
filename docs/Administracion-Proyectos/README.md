@@ -9,9 +9,9 @@ Carpeta canónica para la asignatura **TS683 Administración y Planeación de Pr
 | `Plantilla Proyecto.docx` | Plantilla institucional original (14 secciones) — no editar, es la fuente base. |
 | `Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` | **Documento implementado** — plantilla diligenciada con datos reales de AetherNet. Trabajo individual: **Andres Felipe Martinez Henao** (09/09/2026) — 99 KB, 12 tablas, 671 párrafos. |
 | `README.md` | Este índice. |
-| `calendario/` | 6 archivos `*.ics`/`*.vcs`/`*.csv`/`README.md` — ver `calendario/README.md` (antes `calendar/`). |
+| `calendario/` | 6 archivos `*.ics`/`*.vcs`/`*.csv`/`README.md` — ver `calendario/README.md`. |
 | `capturas/` | `tablero-kanban.png`, `gantt.png`, `risk-register.png` — checklist fotos |
-| `presentaciones/` | Slides `*.html` (si se mueve desde `docs/<Materia>/`) |
+| `presentacion-administracion-2026-08-26.html` | Slides administración | — |
 
 ## Documento implementado — 14 secciones
 
