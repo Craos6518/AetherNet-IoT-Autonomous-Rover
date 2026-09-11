@@ -1,6 +1,6 @@
 # Diario de Campo — Automatización LowCode
 
-> **Notebook:** `notebooks/Diario_LowCode.ipynb` · **Flujo:** `automation/flows/intrusion_alert.json` (referencia, NO deploy — deuda 2026-09-09) · **Telegram directo:** `backend/app/routers/events.py` → `api.telegram.org/bot.../sendMessage`
+> **Notebook:** `docs/Automatizacion-LowCode/notebook/Diario_LowCode.ipynb` · **Flujo:** `automation/flows/intrusion_alert.json` (referencia, NO deploy — deuda 2026-09-09) · **Telegram directo:** `backend/app/routers/events.py` → `api.telegram.org/bot.../sendMessage`
 
 ## Capturas — checklist
 

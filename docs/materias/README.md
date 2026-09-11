@@ -1,23 +1,23 @@
-# Documentación Académica por Materia
+# Documentación Académica por Materia — Redirección
 
-Mapeo entre el contenido oficial de cada asignatura UTP (PDFs en `docs/UTP/`) y su aplicación real en el proyecto AetherNet IoT & Autonomous Rover: **qué se ve en el programa → qué se aplica → en qué área/archivo está aplicado**.
+> **Nuevo canónico:** cada materia vive en su carpeta `docs/<Materia>/` (ver `docs/README.md`). Esta carpeta `docs/materias/` queda como **índice redirect** para no romper links antiguos. Editar en la carpeta de la materia, no aquí.
 
-| Materia | Código | Área del proyecto | Documento académico | Roadmap de temas | Backlog operativo |
-|---|---|---|---|---|---|
-| Estadística | TS4D3 | Área 5 — Filtrado y Analítica (`stats/`, firmware Rover) | [estadistica.md](estadistica.md) | [roadmap-estadistica.md](roadmap-estadistica.md) | [backlog-estadistica.md](backlog-estadistica.md) |
-| DevOps | Electiva | Área 2 — Infraestructura, CI/CD y Firmware base (`.github/`, `docker-compose.yml`, `firmware/`, `backend/`) | [devops.md](devops.md) | [roadmap-devops.md](roadmap-devops.md) | [backlog-devops.md](backlog-devops.md) |
-| Administración y Planeación de Proyectos | TS683 | Área 4 — Gestión (`docs/sprints.md`, `backlog.md`, `risk-register.md`) | [administracion-proyectos.md](administracion-proyectos.md) | [roadmap-administracion.md](roadmap-administracion.md) | [backlog-administracion.md](backlog-administracion.md) |
-| Programación Móvil | TS6C3 | Área 1 — App AetherControl (`app/`) | [programacion-movil.md](programacion-movil.md) | [roadmap-movil.md](roadmap-movil.md) | [backlog-movil.md](backlog-movil.md) |
-| Automatizaciones LowCode *(sin asignatura)* | — | Área 3 — Node-RED, Telegram (`automation/`) — Tuya cancelado ADR-001 | — | [roadmap-lowcode.md](roadmap-lowcode.md) | [backlog-lowcode.md](backlog-lowcode.md) |
-| Firmware (C++/arduino-cli) | — | `firmware/*` + `docs/Firmware/` | [firmware.md](firmware.md) | [roadmap-firmware.md](roadmap-firmware.md) | — |
-| Hardware (Electrónica) | — | `docs/Hardware/` + `docs/hardware-inventory.md` + `docs/fritzing/` | [hardware.md](hardware.md) | [roadmap-hardware.md](roadmap-hardware.md) | — |
+## Mapa canónico actual (git mv preserva historia)
 
-**Cómo usar estos documentos:**
-- **Documento académico:** mapeo "qué se ve en el programa del PDF → qué se aplica → dónde está aplicado" (para sustentación/informe).
-- **Roadmap por materia:** TODOS los temas necesarios para completar esa área del proyecto, con profundidad requerida y requisito que habilita.
-- **Backlog por materia:** tareas operativas ultra-específicas (qué hacer exactamente, alcance IN/OUT, criterios de aceptación verificables). Los IDs heredados de `docs/backlog.md` se mantienen; los nuevos continúan la serie. En conflicto, gana el backlog específico por materia.
+| Materia | Código | Carpeta canónica | Documento académico | Roadmap | Backlog | Notebook |
+|---|---|---|---|---|---|---|
+| Estadística | TS4D3 | `docs/Estadistica/` | [estadistica.md](../Estadistica/estadistica.md) | [roadmap-estadistica.md](../Estadistica/roadmap-estadistica.md) | [backlog-estadistica.md](../Estadistica/backlog-estadistica.md) | [notebook/EMA_Estadistica.ipynb](../Estadistica/notebook/EMA_Estadistica.ipynb) |
+| DevOps | Electiva | `docs/DevOps/` | [devops.md](../DevOps/devops.md) | [roadmap-devops.md](../DevOps/roadmap-devops.md) | [backlog-devops.md](../DevOps/backlog-devops.md) | [notebook/Diario_DevOps.ipynb](../DevOps/notebook/Diario_DevOps.ipynb) |
+| Administración y Planeación | TS683 | `docs/Administracion-Proyectos/` | [administracion-proyectos.md](../Administracion-Proyectos/administracion-proyectos.md) | [roadmap-administracion.md](../Administracion-Proyectos/roadmap-administracion.md) | [backlog-administracion.md](../Administracion-Proyectos/backlog-administracion.md) | [notebook/Diario_Administracion.ipynb](../Administracion-Proyectos/notebook/Diario_Administracion.ipynb) |
+| Programación Móvil | TS6C3 | `docs/Programacion-Movil/` | [programacion-movil.md](../Programacion-Movil/programacion-movil.md) | [roadmap-movil.md](../Programacion-Movil/roadmap-movil.md) | [backlog-movil.md](../Programacion-Movil/backlog-movil.md) | [notebook/AetherControl_Notebook.ipynb](../Programacion-Movil/notebook/AetherControl_Notebook.ipynb) |
+| Automatizaciones LowCode | — | `docs/Automatizacion-LowCode/` | — | [roadmap-lowcode.md](../Automatizacion-LowCode/roadmap-lowcode.md) | [backlog-lowcode.md](../Automatizacion-LowCode/backlog-lowcode.md) | [notebook/Diario_LowCode.ipynb](../Automatizacion-LowCode/notebook/Diario_LowCode.ipynb) |
+| Firmware | — | `docs/Firmware/` | [firmware.md](../Firmware/firmware.md) | [roadmap-firmware.md](../Firmware/roadmap-firmware.md) | — | [notebook/Firmware_Notebook.ipynb](../Firmware/notebook/Firmware_Notebook.ipynb) |
+| Hardware | — | `docs/Hardware/` | [hardware.md](../Hardware/hardware.md) | [roadmap-hardware.md](../Hardware/roadmap-hardware.md) | — | [notebook/Diario_Hardware.ipynb](../Hardware/notebook/Diario_Hardware.ipynb) |
 
-Notas:
-- La quinta área operativa del backlog (Área 3 — Automatizaciones LowCode: Node-RED, Telegram — tuya-local cancelado 2026-09-01) no tiene asignatura con PDF propio.
-- Programación Móvil: el PDF académico usa .NET/Xamarin; el proyecto aplica los mismos patrones (MVVM, UI declarativa, REST/servicios, permisos) en Kotlin/Jetpack Compose — la equivalencia está documentada unidad por unidad.
-- Cada documento incluye sección de brechas honestas (temas del programa sin aplicación o pendientes), trazables a ítems de `docs/backlog.md`.
+**Cómo usar:**
+- **Documento académico:** mapeo PDF UTP → aplicación → archivo (en la carpeta de la materia).
+- **Roadmap:** temas necesarios con búsquedas Google/datasheets (en la carpeta de la materia).
+- **Backlog:** tareas operativas (en la carpeta de la materia).
+- **Notebook:** diario de campo `.ipynb` canónico (en `docs/<Materia>/notebook/`).
+
+*Historia preservada con `git mv` — `git log --follow` sigue encontrando el archivo.*

@@ -53,7 +53,7 @@ AetherNet es un sistema distribuido de 3 capas que vive completo dentro de una m
 | **Backend** (`backend/`) | FastAPI (API REST + WebSockets, 8 endpoints `routers/events.py:25`), Mosquitto (bus `aethernet/#` + `$SYS/#`, `acl.conf:1`), PostgreSQL (4 tablas `models.py:34`) | Reglas de automatización (Telegram directo esta iteración; Node-RED deuda); UI |
 | **App AetherControl** (`app/`) | Dashboard en tiempo real, joystick virtual, envío de PIN, fallback Bluetooth SPP | Almacenamiento persistente (consume el histórico vía backend, no lo posee) |
 | **Telegram Bot** (`automation/flows/intrusion_alert.json` referencia) | Notificación directa intrusión: `aethernet/seguridad/intrusion` → HTTP `api.telegram.org/bot.../sendMessage` (RF-4.1 HU-02). Node-RED **DEUDA 2026-09-09** — flujo existe como JSON pero no se deploya | Control de acceso físico (MEGA Edge) |
-| **stats/** + `notebooks/EMA_Estadistica.ipynb` | Filtro EMA (y prototipo Kalman) sobre lecturas HC-SR04; prueba t-Student/Welch + ANOVA; validación externa 36.5k filas (`water_turbidity` 31.5k + `gesture` 5k, `water_turbidity_analysis.py:1` + `water_turbidity_report.json`, bitácora canónica `notebooks/`, espejo `stats/notebooks/`, `docs/Estadistica/Datasets/`) | Actuar sobre motores directamente — EMA corre en firmware (ver §4), `stats/`+`notebooks/` son análisis offline/histórico |
+| **stats/** + `docs/Estadistica/notebook/EMA_Estadistica.ipynb` | Filtro EMA (y prototipo Kalman) sobre lecturas HC-SR04; prueba t-Student/Welch + ANOVA; validación externa 36.5k filas (`water_turbidity` 31.5k + `gesture` 5k, `water_turbidity_analysis.py:1` + `water_turbidity_report.json`, bitácora canónica `notebooks/`, espejo `stats/notebooks/`, `docs/Estadistica/Datasets/`) | Actuar sobre motores directamente — EMA corre en firmware (ver §4), `stats/`+`notebooks/` son análisis offline/histórico |
 
 ## 3. Protocolos de comunicación
 
@@ -73,15 +73,15 @@ AetherNet es un sistema distribuido de 3 capas que vive completo dentro de una m
 ```
 Sensor (HC-SR04 / KY-037)
    → lectura analógica/digital en firmware (UNO/gateway)
-   → filtro EMA en tiempo real: S_t = α·Y_t + (1-α)·S_{t-1}, α=0.2 (stats/ema_filter.py:15, rover-uno.ino:259, notebooks/EMA_Estadistica.ipynb:2)
+   → filtro EMA en tiempo real: S_t = α·Y_t + (1-α)·S_{t-1}, α=0.2 (stats/ema_filter.py:15, rover-uno.ino:259, docs/Estadistica/notebook/EMA_Estadistica.ipynb:2)
    → valor suavizado usado para decisión inmediata (evasión de obstáculos)
    → evento/lectura publicado por MQTT
    → persistido en PostgreSQL (tabla de eventos/sensores, backend/app/models.py, init.sql)
    → extraído posteriormente por stats/ (psycopg2/SQLAlchemy, stats/serial_plot_ema.py, visualize_ema.py)
-   → análisis descriptivo + prueba t-Student/Welch + ANOVA (validado externo 36.5k `water_turbidity_analysis.py` + `water_turbidity_report.json`) → notebooks/EMA_Estadistica.ipynb §7c (canónico, docs/notebooks/README.md) + `docs/Estadistica/Datasets/` → docs/reporte final (EST-07)
+   → análisis descriptivo + prueba t-Student/Welch + ANOVA (validado externo 36.5k `water_turbidity_analysis.py` + `water_turbidity_report.json`) → docs/Estadistica/notebook/EMA_Estadistica.ipynb §7c (canónico, docs/notebooks/README.md) + `docs/Estadistica/Datasets/` → docs/reporte final (EST-07)
 ```
 
-El EMA corre **en el firmware** (decisión en tiempo real); el análisis estadístico más pesado (t-Student, descriptivos) corre **offline en `stats/`** sobre el histórico ya persistido y se documenta en `notebooks/EMA_Estadistica.ipynb` (canónico centralizado). No son el mismo paso — confundirlos es un error común al implementar EST-02 vs. EST-04/05.
+El EMA corre **en el firmware** (decisión en tiempo real); el análisis estadístico más pesado (t-Student, descriptivos) corre **offline en `stats/`** sobre el histórico ya persistido y se documenta en `docs/Estadistica/notebook/EMA_Estadistica.ipynb` (canónico centralizado). No son el mismo paso — confundirlos es un error común al implementar EST-02 vs. EST-04/05.
 
 ## 5. Flujo de evento: HU-02 (alerta de intrusión)
 

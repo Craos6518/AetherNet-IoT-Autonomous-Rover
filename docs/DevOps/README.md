@@ -1,6 +1,6 @@
 # Diario de Campo — DevOps
 
-> **Notebook:** `notebooks/Diario_DevOps.ipynb` · **Infra:** `docker-compose.yml` + `.github/workflows/ci.yml` + `backend/mosquitto/config/`
+> **Notebook:** `docs/DevOps/notebook/Diario_DevOps.ipynb` · **Infra:** `docker-compose.yml` + `.github/workflows/ci.yml` + `backend/mosquitto/config/`
 
 ## Capturas / logs — checklist
 

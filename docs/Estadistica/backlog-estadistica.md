@@ -2,7 +2,7 @@
 
 Backlog operativo detallado del Área 5. IDs EST-01..07 provienen de `docs/backlog.md`; nuevos continúan la serie (EST-08+).
 
-> Estado real 2026-09-10: `stats/ema_filter.py:15` α=0.2 + tests ✅ + bench 531 + `water_turbidity_analysis.py` 36.5k (31.5k CC BY-SA 4.0 + 5k CC0) + `water_turbidity_report.json` + `notebooks/EMA_Estadistica.ipynb` §7c Welch+t + `firmware/test-ema-uno` ✅ — validación externa completa. Pendiente: EST-02/03 port C++ KY-037/HC-SR04 (Sprint 4), EST-04/05 t-Student con histórico real PG.
+> Estado real 2026-09-10: `stats/ema_filter.py:15` α=0.2 + tests ✅ + bench 531 + `water_turbidity_analysis.py` 36.5k (31.5k CC BY-SA 4.0 + 5k CC0) + `water_turbidity_report.json` + `docs/Estadistica/notebook/EMA_Estadistica.ipynb` §7c Welch+t + `firmware/test-ema-uno` ✅ — validación externa completa. Pendiente: EST-02/03 port C++ KY-037/HC-SR04 (Sprint 4), EST-04/05 t-Student con histórico real PG.
 
 ---
 
@@ -74,7 +74,7 @@ Backlog operativo detallado del Área 5. IDs EST-01..07 provienen de `docs/backl
 
 ### EST-07 — Reporte final estadístico
 | M · Sprint 4 · Depende de EST-02, EST-05, EST-06, EST-08 |
-**Qué hacer exactamente:** consolidar en `docs/materias/informe-estadistica.md`: metodología EMA (fórmula, α elegido + evidencia del barrido), resultados de reducción de ruido vs KPI >85%, resultado t-Student completo, conclusiones y limitaciones (supuestos, tamaño muestral). Este documento ES el entregable académico de la materia.
+**Qué hacer exactamente:** consolidar en `docs/Estadistica/informe-estadistica.md`: metodología EMA (fórmula, α elegido + evidencia del barrido), resultados de reducción de ruido vs KPI >85%, resultado t-Student completo, conclusiones y limitaciones (supuestos, tamaño muestral). Este documento ES el entregable académico de la materia.
 **Criterios:**
 - [ ] KPI PRD evaluado explícitamente (cumple/no cumple con número)
 - [ ] Todas las cifras trazables a scripts versionados (comando de reproducción incluido)

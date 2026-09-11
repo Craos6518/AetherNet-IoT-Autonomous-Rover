@@ -34,7 +34,7 @@ stats/
 ├── visualize_ema.py           # 140 líneas — CLI matplotlib (single vs compare, CSV/PNG)
 ├── serial_plot_ema.py         # 150 líneas — puente Serial 115200 UNO → gráfica viva + CSV
 ├── notebooks/                 # ⚠️ espejo de notebooks/ (canónico) — ver notebooks/README.md
-│   ├── EMA_Estadistica.ipynb  # espejo de notebooks/EMA_Estadistica.ipynb — no editar, editar canónico
+│   ├── EMA_Estadistica.ipynb  # espejo de docs/Estadistica/notebook/EMA_Estadistica.ipynb — no editar, editar canónico
 │   └── README.md              # explica espejo → notebooks/
 └── data/
     ├── ema_demo.json           # Demo 20 muestras α=0.2, σ8, 89.3% reducción (generado por ema_filter.py:main)
@@ -49,7 +49,7 @@ stats/
 
 ## 2. Fundamento teórico — EMA (lo que vi en clase y apliqué)
 
-**Definición** (`ema_filter.py:5` y `notebooks/EMA_Estadistica.ipynb §2`):
+**Definición** (`ema_filter.py:5` y `docs/Estadistica/notebook/EMA_Estadistica.ipynb §2`):
 
 ```
 S_0 = Y_0                         # primer valor inicializa (EMAFilter:27)
@@ -220,7 +220,7 @@ cd stats && pytest tests/ -v                  # 14 passed
 pytest --cov=. --cov-report=term-missing      # 90% coverage
 ```
 
-Todos verdes en `feature/stats-ema-prototipo` (`notebooks/EMA_Estadistica.ipynb` celda 4).
+Todos verdes en `feature/stats-ema-prototipo` (`docs/Estadistica/notebook/EMA_Estadistica.ipynb` celda 4).
 
 ---
 
@@ -310,7 +310,7 @@ python stats/experiments/alpha_sweep.py
 
 ---
 
-## 9. `notebooks/EMA_Estadistica.ipynb:1` — Bitácora viva TS4D3 (10 celdas, **canónica en `notebooks/`**)
+## 9. `docs/Estadistica/notebook/EMA_Estadistica.ipynb:1` — Bitácora viva TS4D3 (10 celdas, **canónica en `notebooks/`**)
 
 > **Materia Estadística UTP → Proyecto. Todos los números reproducibles (`notebooks §9`). Centralizada en `notebooks/` (ver `notebooks/README.md` y `docs/notebooks/README.md`). `stats/notebooks/` es espejo.**
 
@@ -330,7 +330,7 @@ python stats/experiments/alpha_sweep.py
 
 **§7-7b Banco físico:** wiring `TRIG→D2 ECHO→D3` (`test-ema-uno.ino:9`), flasheo `arduino-cli compile/upload/monitor`, Fritzing `docs/fritzing/ema-uno-esquematico.md`, captura real `serial_plot_ema.py --seconds 30` → `ema-real-531.csv:1` (532 líneas) y `docs/fritzing/ema-real-531.png` (rampa 3→26 cm en 30s, `raw std 3-4 cm` vs `ema std 3 cm`, 0 cruces 30 cm, proxy reducción ~60% porque ruido real interior es bajo — no hay picos 150 cm).
 
-**§8 Roadmap Sprint 3-4 (dependencias `docs/materias/backlog-estadistica.md:84`):**
+**§8 Roadmap Sprint 3-4 (dependencias `docs/Estadistica/backlog-estadistica.md:84`):**
 
 ```
 EST-01 ✅ → EST-08 (α) ──────────────┐
@@ -404,8 +404,8 @@ python serial_plot_ema.py -p /dev/ttyACM0                              # vivo
 python serial_plot_ema.py -p /dev/ttyACM0 --seconds 30 --save data/ema-real-531.csv --png docs/fritzing/ema-real-531.png
 
 # Notebook (canónico centralizado)
-jupyter lab notebooks/EMA_Estadistica.ipynb  # canónico — celdas 1-10 reproducibles (ver docs/notebooks/README.md)
-# espejo: jupyter lab stats/notebooks/EMA_Estadistica.ipynb  # solo compatibilidad
+jupyter lab docs/Estadistica/notebook/EMA_Estadistica.ipynb  # canónico — celdas 1-10 reproducibles (ver docs/notebooks/README.md)
+# espejo: jupyter lab stats/docs/Estadistica/notebook/EMA_Estadistica.ipynb  # solo compatibilidad
 ```
 
 **CI (`.github/workflows/ci.yml:stats-test`):** `pip install pytest pytest-cov`, `pytest -v --tb=short` con `pythonpath stats/.` — valida 14 tests en cada push (RNF-1.2). Notebook centralizado en `notebooks/`.
@@ -423,7 +423,7 @@ HC-SR04 (UNO D2/D3) ──NewPing──► raw cm ──EMA α0.2──► ultra
         │ stats/ema_filter.py:32 ←── prototipo offline (simula gauss) ──┐              FastAPI POST /api/sensor-events
         │ stats/tests/test_ema_filter.py:99 ←── valida KPI >85% ────────┤              PostgreSQL sensor_events
         │ stats/experiments/alpha_sweep.py ←── justifica α=0.2 ─────────┘                     │
-        │ notebooks/EMA_Estadistica.ipynb (canónico, stats/notebooks/ espejo) ←── bitácora TS4D3     ▼
+        │ docs/Estadistica/notebook/EMA_Estadistica.ipynb (canónico, stats/notebooks/ espejo) ←── bitácora TS4D3     ▼
         │                                                                              stats/db_extract.py (EST-10 futuro)
         │                                                                              Pandas + SciPy t-Student (EST-05)
         └────────────────────────────────────────────────────────────────────────────────────► Informe EST-07 (PDF)

@@ -1,8 +1,8 @@
 # Roadmap por Materia — Automatización LowCode (Telegram + Node-RED deuda)
 
-**Alcance:** notificaciones HU-02 vía Telegram Bot API directo (RF-4.1). Node-RED deuda técnica 2026-09-09 — solo flujo JSON `automation/flows/intrusion_alert.json` como referencia. Ver `docs/materias/backlog-lowcode.md`, `notebooks/Diario_LowCode.ipynb`.
+**Alcance:** notificaciones HU-02 vía Telegram Bot API directo (RF-4.1). Node-RED deuda técnica 2026-09-09 — solo flujo JSON `automation/flows/intrusion_alert.json` como referencia. Ver `docs/Automatizacion-LowCode/backlog-lowcode.md`, `docs/Automatizacion-LowCode/notebook/Diario_LowCode.ipynb`.
 
-Backlog operativo detallado: [`backlog-lowcode.md`](backlog-lowcode.md) · Diario ejecutable: [`../../notebooks/Diario_LowCode.ipynb`](../../notebooks/Diario_LowCode.ipynb)
+Backlog operativo detallado: [`backlog-lowcode.md`](backlog-lowcode.md) · Diario ejecutable: [`../../docs/Automatizacion-LowCode/notebook/Diario_LowCode.ipynb`](../../docs/Automatizacion-LowCode/notebook/Diario_LowCode.ipynb)
 
 ---
 
@@ -24,9 +24,9 @@ Backlog operativo detallado: [`backlog-lowcode.md`](backlog-lowcode.md) · Diari
 
 **LOW-02 Node-RED deuda técnica (2026-09-09):** flujo `automation/flows/intrusion_alert.json` queda solo como **referencia JSON exportable** (asesor: no deploy esta iteración). `mqtt in → function-parse-intrusion → telegram-alert → http-telegram → debug` no se ejecuta en runtime.
 
-**HU-02 vigente:** solo **LED RGB rojo 3 s** (`firmware/mega-access/src/laser.cpp` + `led.h` pines 44/45/46) + **Telegram Bot API directo** (`backend/app/routers/events.py` `POST /api/security-events` RF-4.1) + **App dashboard** (`aethernet/seguridad/intrusion`). HU-02 solo LED RGB + Telegram. Ver `docs/materias/backlog-lowcode.md` LOW-02/LOW-05 y `docs/adr/adr-001-cancelacion-tuya.md` para Tuya cancelado.
+**HU-02 vigente:** solo **LED RGB rojo 3 s** (`firmware/mega-access/src/laser.cpp` + `led.h` pines 44/45/46) + **Telegram Bot API directo** (`backend/app/routers/events.py` `POST /api/security-events` RF-4.1) + **App dashboard** (`aethernet/seguridad/intrusion`). HU-02 solo LED RGB + Telegram. Ver `docs/Automatizacion-LowCode/backlog-lowcode.md` LOW-02/LOW-05 y `docs/adr/adr-001-cancelacion-tuya.md` para Tuya cancelado.
 
-**Flujo HU-02 validado sin Node-RED:** `MEGA laser KY-008 → UART SECURITY:{"event_type":"intrusion"} → Gateway ESP32 → MQTT aethernet/seguridad/intrusion → (Telegram directo + LED rojo + App)` — ver `notebooks/Diario_LowCode.ipynb` celda Estado con diagrama Mermaid.
+**Flujo HU-02 validado sin Node-RED:** `MEGA laser KY-008 → UART SECURITY:{"event_type":"intrusion"} → Gateway ESP32 → MQTT aethernet/seguridad/intrusion → (Telegram directo + LED rojo + App)` — ver `docs/Automatizacion-LowCode/notebook/Diario_LowCode.ipynb` celda Estado con diagrama Mermaid.
 
 ---
 

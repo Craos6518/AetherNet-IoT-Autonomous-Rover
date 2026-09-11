@@ -90,13 +90,13 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 - Python básico (o R) para manipulación de datos.
 
 **Conocimientos a adquirir**
-- Media Móvil Exponencial (EMA): entender el rol de `α = 2/(N+1)` en el trade-off entre suavizado y latencia de respuesta — se usa con `α = 0.2` según HU-03. Prototipado en `stats/ema_filter.py:15` y validado en banco `firmware/test-ema-uno` + `notebooks/EMA_Estadistica.ipynb:2` + validación externa 36.5k `stats/water_turbidity_analysis.py:1` (`water_level_turbidity` 31.5k CC BY-SA 4.0 + `gesture` 5k CC0, ver `stats/Dataset/README.md` / `docs/Estadistica/Datasets/README.md`).
+- Media Móvil Exponencial (EMA): entender el rol de `α = 2/(N+1)` en el trade-off entre suavizado y latencia de respuesta — se usa con `α = 0.2` según HU-03. Prototipado en `stats/ema_filter.py:15` y validado en banco `firmware/test-ema-uno` + `docs/Estadistica/notebook/EMA_Estadistica.ipynb:2` + validación externa 36.5k `stats/water_turbidity_analysis.py:1` (`water_level_turbidity` 31.5k CC BY-SA 4.0 + `gesture` 5k CC0, ver `stats/Dataset/README.md` / `docs/Estadistica/Datasets/README.md`).
 - Filtro de Kalman (mencionado como alternativa/complemento a EMA en la matriz del PDF) — al menos su intuición conceptual (predicción + corrección) aunque se implemente la versión EMA.
-- Pandas/SciPy para análisis descriptivo e inferencial sobre los datos históricos almacenados en PostgreSQL + validación externa (`stats/materias/estadistica.md`, `notebooks/EMA_Estadistica.ipynb:6` barrido α Monte Carlo 100×, `stats/water_turbidity_analysis.py` Welch `t-Student` + ANOVA sobre `us_value` vs `water_level` por turbidez/angle).
+- Pandas/SciPy para análisis descriptivo e inferencial sobre los datos históricos almacenados en PostgreSQL + validación externa (`stats/materias/estadistica.md`, `docs/Estadistica/notebook/EMA_Estadistica.ipynb:6` barrido α Monte Carlo 100×, `stats/water_turbidity_analysis.py` Welch `t-Student` + ANOVA sobre `us_value` vs `water_level` por turbidez/angle).
 - Prueba de hipótesis $t$-Student de dos muestras (RF vs. Wi-Fi) — plantear correctamente $H_0$/$H_1$, verificar supuestos (normalidad, varianzas) antes de aplicarla (`stats/notebooks/README.md` espejo de `notebooks/`).
 - Conexión Python → PostgreSQL (`psycopg2`/`SQLAlchemy`) para extraer el histórico de eventos (`stats/visualize_ema.py`, `stats/serial_plot_ema.py`).
 
-**Notebooks centralizados:** `notebooks/EMA_Estadistica.ipynb` (canónico, ver `notebooks/README.md` y `docs/notebooks/README.md`; espejo `stats/notebooks/` no editar) + datasets externos 36.5k (`stats/Dataset/` canónico, espejo `docs/Estadistica/Datasets/`, reporte `stats/data/water_turbidity_report.json` + PNGs `water_us_vs_true.png`/`water_ir_by_angle.png`).
+**Notebooks centralizados:** `docs/Estadistica/notebook/EMA_Estadistica.ipynb` (canónico, ver `notebooks/README.md` y `docs/notebooks/README.md`; espejo `stats/notebooks/` no editar) + datasets externos 36.5k (`stats/Dataset/` canónico, espejo `docs/Estadistica/Datasets/`, reporte `stats/data/water_turbidity_report.json` + PNGs `water_us_vs_true.png`/`water_ir_by_angle.png`).
 
 **Se despliega en:** Sprint 4 (aunque el diseño del algoritmo puede prototiparse desde antes, en paralelo al Sprint 1-2 — **ya adelantado:** `stats/ema_filter.py` Sprint 1-2 + `water_turbidity_analysis.py` 36.5k validación externa §7c).
 
@@ -123,7 +123,7 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 - `ESP32-WROOM-32U datasheet Espressif`
 - `MG90S datasheet Tower Pro servo`
 
-Ver roadmap detallado: `docs/materias/roadmap-firmware.md` · Diario: `notebooks/Firmware_Notebook.ipynb` · Fotos: `docs/Firmware/fotos/`
+Ver roadmap detallado: `docs/Firmware/roadmap-firmware.md` · Diario: `docs/Firmware/notebook/Firmware_Notebook.ipynb` · Fotos: `docs/Firmware/fotos/`
 
 ---
 
@@ -133,7 +133,7 @@ Ver roadmap detallado: `docs/materias/roadmap-firmware.md` · Diario: `notebooks
 
 **Datasheets:** same que Firmware + `KY-008 laser datasheet`, `LDR GL5528 datasheet`, `TP4056 charging module datasheet`, `MT3608 StepUp datasheet`
 
-Ver roadmap: `docs/materias/roadmap-hardware.md` · Diario: `notebooks/Diario_Hardware.ipynb`
+Ver roadmap: `docs/Hardware/roadmap-hardware.md` · Diario: `docs/Hardware/notebook/Diario_Hardware.ipynb`
 
 ---
 
@@ -141,7 +141,7 @@ Ver roadmap: `docs/materias/roadmap-hardware.md` · Diario: `notebooks/Diario_Ha
 
 **Conocimientos:** BotFather `/newbot`, `POST https://api.telegram.org/bot<token>/sendMessage` + `parse_mode Markdown`, flujo JSON `automation/flows/intrusion_alert.json` como referencia (deuda 2026-09-09).
 
-**Búsquedas:** ver `docs/materias/roadmap-lowcode.md` · Diario: `notebooks/Diario_LowCode.ipynb`
+**Búsquedas:** ver `docs/Automatizacion-LowCode/roadmap-lowcode.md` · Diario: `docs/Automatizacion-LowCode/notebook/Diario_LowCode.ipynb`
 
 ---
 

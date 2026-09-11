@@ -137,7 +137,7 @@ Ambas compatibles con RNF-3.1 100% FOSS. Dataset1 exige citar Ranieri et al. en 
 
 1. **En Administración §6 WBS 6.3 y §9.1:** añadir nota “Validado con datasets externos 31.5k (turbidez) + 5k (gestos HC-SR04) — ver `docs/Estadistica/Datasets/README.md` y `stats/Dataset/README.md`”.
 2. **En Administración §14 Anexos:** añadir Anexo G “Datasets externos” con las dos fichas de §5 de este contraste (ya listo para copiar).
-3. **En Estadística Sprint4:** ejecutar `python3 stats/water_turbidity_analysis.py` y gestos → generar `water_turbidity_report.json` + PNGs y reportar reducción % y retardo en `notebooks/EMA_Estadistica.ipynb §7c/7d`.
+3. **En Estadística Sprint4:** ejecutar `python3 stats/water_turbidity_analysis.py` y gestos → generar `water_turbidity_report.json` + PNGs y reportar reducción % y retardo en `docs/Estadistica/notebook/EMA_Estadistica.ipynb §7c/7d`.
 4. **En informe final EST-07:** incluir citas CC BY-SA 4.0 y CC0 (ver §5) y referenciar `stats/Dataset/` y `docs/Estadistica/Datasets/` como fuentes.
 
 Sin estas 4 líneas, ambos docs quedan **consistentes pero desconectados**; con ellas, Administración absorbe la evidencia externa y Estadística deja de ser “ejercicio aislado”.
@@ -160,6 +160,6 @@ Sin estas 4 líneas, ambos docs quedan **consistentes pero desconectados**; con 
 - docs/hardware-inventory.md (HC-SR04, TCRT5000, KY-008)
 - docs/architecture.md §3-4 (EMA, t-Student)
 - docs/risk-register.md R-03, R-12
-- stats/ema_filter.py:15, rover-uno.ino:259, stats/water_turbidity_analysis.py:1, notebooks/EMA_Estadistica.ipynb
+- stats/ema_filter.py:15, rover-uno.ino:259, stats/water_turbidity_analysis.py:1, docs/Estadistica/notebook/EMA_Estadistica.ipynb
 - Kaggle turbidez: https://www.kaggle.com/datasets/caetanoranieri/water-level-identification-with-lidar — CC BY-SA 4.0 — DOI 10.1016/j.engappai.2023.107235
 - Kaggle gestos: https://www.kaggle.com/datasets/marisolgil/hand-gesture-dataset — CC0 — DOI 10.34740/kaggle/dsv/16239431

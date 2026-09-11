@@ -4,7 +4,7 @@
 > **Fuente canónica de pines:** `firmware/gateway-esp32/gateway-esp32.ino:60`, `firmware/rover-uno/rover-uno.ino:34`, `firmware/mega-access/src/config.h:17`, `firmware/test-ema-uno/test-ema-uno.ino:11`, `docs/hardware-inventory.md:6`
 > **Requisitos trazados:** `docs/requirements.md:20` RF-2.x, RF-3.x, RNF-2.1 + `docs/prd.md:51` KPI EMA 85% + HU-01..04
 > **Sprint activo:** Sprint 2 (`docs/sprints.md:52`) — planos P1-P3 son previos/imprimibles hoy; P4-P7 reservados Sprint 3-4 (pre-diseñados para anticipar compras/cableado).
-> **Diarios campo:** `notebooks/Diario_Hardware.ipynb` + `notebooks/Firmware_Notebook.ipynb` — fritzing aquí es referencia, fotos reales en `docs/Firmware/fotos/` y `docs/Hardware/fotos/`; ver `docs/Firmware/README.md`, `docs/Hardware/README.md`.
+> **Diarios campo:** `docs/Hardware/notebook/Diario_Hardware.ipynb` + `docs/Firmware/notebook/Firmware_Notebook.ipynb` — fritzing aquí es referencia, fotos reales en `docs/Firmware/fotos/` y `docs/Hardware/fotos/`; ver `docs/Firmware/README.md`, `docs/Hardware/README.md`.
 
 ---
 
@@ -503,12 +503,12 @@ GND ●─Negro┼─● GND KY-037
 | KY-037 / LED | → | ESP8266 | Color | Nota |
 |---|---|---|---|---|
 | KY-037 VCC/GND | → | 5V/GND | Rojo/Negro | — |
-| KY-037 AO | → | A0 | Azul | Analógico 0-1023, EMA α0.2 `docs/materias/roadmap-estadistica.md:51` (requiere `abs(desv-baseline)` previo, decidir en EST-11) |
+| KY-037 AO | → | A0 | Azul | Analógico 0-1023, EMA α0.2 `docs/Estadistica/roadmap-estadistica.md:51` (requiere `abs(desv-baseline)` previo, decidir en EST-11) |
 | KY-037 DO | → | D5 (opcional) | Verde | Umbral pot |
 | Tira LED 5V | → | D6 via MOSFET | — | `docs/hardware-inventory.md:11` reactiva |
 | Power | → | USB 5V | — | — |
 
-**Instrucciones Fritzing P6:** `File → Save As → AetherNet-P6-Ambiental-v1.fzz` — NodeMCU centro, KY-037 izq AO→A0, tira LED der D6 + MOSFET + fuente 5V externa, breadboard. Export `AetherNet-P6-Ambiental-v1-breadboard.png` + `AetherNet-P6-Ambiental-v1-schematic.png/PDF`. Nota: `P6 es Sprint 4 EST-11 EST-02`; no probar EMA sin captura 60s silencio+palmada `docs/materias/backlog-estadistica.md:54`.
+**Instrucciones Fritzing P6:** `File → Save As → AetherNet-P6-Ambiental-v1.fzz` — NodeMCU centro, KY-037 izq AO→A0, tira LED der D6 + MOSFET + fuente 5V externa, breadboard. Export `AetherNet-P6-Ambiental-v1-breadboard.png` + `AetherNet-P6-Ambiental-v1-schematic.png/PDF`. Nota: `P6 es Sprint 4 EST-11 EST-02`; no probar EMA sin captura 60s silencio+palmada `docs/Estadistica/backlog-estadistica.md:54`.
 
 **Checklist P6:**
 - [ ] PNGs `AetherNet-P6-Ambiental-v1-*` impresos

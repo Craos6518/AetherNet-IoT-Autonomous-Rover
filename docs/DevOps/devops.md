@@ -80,11 +80,11 @@ Despliegue continuo: el PDF menciona Heroku/Vercel/Render — **no aplica**: el 
 
 | Lo que se ve en el contenido | Estado en el proyecto | Dónde |
 |---|---|---|
-| Logs centralizados | **Parcial → evidenciado Sprint 3:** volúmenes Mosquitto montados; logs contenedores vía Docker; `docker-compose ps` en CI + **logs T1 reales** `docs/logs/firmware_sprint3/live_2026-09-11/T1_docker_live.log` (160 líneas `Uvicorn`+`GET /health 200`+`mosquitto 2.0.22 1883/9001`) y `T1_mqtt_live.log` (303 líneas `mosquitto_sub aethernet/#` — `access/event` `seguridad/intrusion` `rover/command|telemetry`) — ver `notebooks/Diario_DevOps.ipynb` §4 celdas 5-6 | `docker-compose.yml` (mosquitto), `ci.yml` job `docker-build`, `notebooks/Diario_DevOps.ipynb` §4, `docs/logs/firmware_sprint3/` |
+| Logs centralizados | **Parcial → evidenciado Sprint 3:** volúmenes Mosquitto montados; logs contenedores vía Docker; `docker-compose ps` en CI + **logs T1 reales** `docs/logs/firmware_sprint3/live_2026-09-11/T1_docker_live.log` (160 líneas `Uvicorn`+`GET /health 200`+`mosquitto 2.0.22 1883/9001`) y `T1_mqtt_live.log` (303 líneas `mosquitto_sub aethernet/#` — `access/event` `seguridad/intrusion` `rover/command|telemetry`) — ver `docs/DevOps/notebook/Diario_DevOps.ipynb` §4 celdas 5-6 | `docker-compose.yml` (mosquitto), `ci.yml` job `docker-build`, `docs/DevOps/notebook/Diario_DevOps.ipynb` §4, `docs/logs/firmware_sprint3/` |
 | Prometheus + Grafana | **No implementado.** Métricas conceptuales (KPIs PRD, telemetría Rover `aethernet/system/status` heartbeat) sin stack observabilidad — gap post-Sprint 4 | Gap registrado — candidato post-proyecto |
 | Alertas por umbrales | **Implementado a nivel negocio, no infra:** intrusión Telegram + LED RGB rojo reglas sobre eventos, no salud sistema | `automation/flows/intrusion_alert.json`, RF-4.1/HU-02 |
 
-> **Diario DevOps:** trazabilidad T6 completa en `notebooks/Diario_DevOps.ipynb` (10 celdas) — §1 docker-compose `aethernet-net`/`postgres_data`, §2 ACL `aethernet/#`, §3 CI/CD 6 jobs `arduino-cli 1.5.1`/`Trivy SARIF`, §4 logs T1 reales, 📸 capturas pendientes `docs/DevOps/capturas/` (`docker-ps.png` `ci-green.png` `health-200.png`) checklist `docs/DevOps/README.md` celda 7/8.
+> **Diario DevOps:** trazabilidad T6 completa en `docs/DevOps/notebook/Diario_DevOps.ipynb` (10 celdas) — §1 docker-compose `aethernet-net`/`postgres_data`, §2 ACL `aethernet/#`, §3 CI/CD 6 jobs `arduino-cli 1.5.1`/`Trivy SARIF`, §4 logs T1 reales, 📸 capturas pendientes `docs/DevOps/capturas/` (`docker-ps.png` `ci-green.png` `health-200.png`) checklist `docs/DevOps/README.md` celda 7/8.
 
 ---
 

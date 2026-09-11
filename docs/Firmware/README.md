@@ -2,7 +2,7 @@
 
 > **Proyecto:** AetherNet IoT & Autonomous Rover — 100% FOSS (`docs/prd.md:53`)
 > **Stack:** `arduino-cli 1.5.1` + `ESP32-WROOM-32U` + `MEGA 2560` + `UNO R3` + `nRF24L01` + `Mosquitto` + `FastAPI`
-> **Notebook canónico:** `notebooks/Firmware_Notebook.ipynb` (lee) · **Logs:** `docs/logs/firmware_sprint3/` (T1-T4)
+> **Notebook canónico:** `docs/Firmware/notebook/Firmware_Notebook.ipynb` (lee) · **Logs:** `docs/logs/firmware_sprint3/` (T1-T4)
 
 ## Checklist fotos pendientes (dejar `![FOTO PENDIENTE]` en notebook si no existe)
 

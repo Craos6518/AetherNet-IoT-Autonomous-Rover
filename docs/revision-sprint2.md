@@ -31,7 +31,7 @@ Sprint 2 está **funcionalmente Done** (cerrojo + laser + app pantallas/MQTT/PIN
 | `backend/tests/test_events.py:14` + `test_health.py:7` | 21 verdes | ✅ OK |
 | `app/src` `MqttManager` + `LedState` + `PinViewModel` | Paho 1.2.5 `aethernet/#` `assembleDebug` verde | ✅ OK |
 | `automation/flows/intrusion_alert.json` | `mqtt-intrusion` → `telegram-alert` → `http-telegram` | ⚠️ Referencia (no deploy — deuda) |
-| `stats/water_turbidity_analysis.py:1` + `Dataset/` + `data/*.png` + `notebooks/EMA_Estadistica.ipynb` §7c | 36.5k filas (31.5k CC BY-SA 4.0 + 5k CC0) Welch/ANOVA | ✅ OK |
+| `stats/water_turbidity_analysis.py:1` + `Dataset/` + `data/*.png` + `docs/Estadistica/notebook/EMA_Estadistica.ipynb` §7c | 36.5k filas (31.5k CC BY-SA 4.0 + 5k CC0) Welch/ANOVA | ✅ OK |
 | `docs/Administracion-Proyectos/Proyecto_AetherNet_*.docx` | 99KB 14 secciones | ✅ OK |
 
 ### 2.2 Desalineaciones detectadas (antes de esta rama)
@@ -68,10 +68,10 @@ Sprint 2 está **funcionalmente Done** (cerrojo + laser + app pantallas/MQTT/PIN
 | `docs/branching-strategy.md` | Modelo → `docs/revision-sprint2-completa` + Sprint2 → RF-2.3 + LOW-02 deuda + LOW-03/04/05 actualizados + count 35→36 |
 | `docs/roadmap.md` | §3 LowCode → Telegram directo + Node-RED deuda + Home Assistant nota + §5 Estadística → datasets 36.5k + validación externa |
 | `docs/test-plan.md` | HU-02 LOW-05 → Telegram directo (deuda) + §6 → datasets Welch/ANOVA |
-| `docs/materias/backlog-lowcode.md` | Estado → 2026-09-10 deuda Node-RED + flujo vigente laser |
-| `docs/materias/backlog-movil.md` | Estado → 2026-09-10 MOV-01..04 Done |
-| `docs/materias/backlog-devops.md` | Estado → 2026-09-10 DEVOPS-01..08 Done + laser validado |
-| `docs/materias/backlog-estadistica.md` | Estado → 2026-09-10 36.5k validación externa |
+| `docs/Automatizacion-LowCode/backlog-lowcode.md` | Estado → 2026-09-10 deuda Node-RED + flujo vigente laser |
+| `docs/Programacion-Movil/backlog-movil.md` | Estado → 2026-09-10 MOV-01..04 Done |
+| `docs/DevOps/backlog-devops.md` | Estado → 2026-09-10 DEVOPS-01..08 Done + laser validado |
+| `docs/Estadistica/backlog-estadistica.md` | Estado → 2026-09-10 36.5k validación externa |
 | `docs/materias/roadmap-*.md` (4) | `Estado al Aug 2026` → `2026-09-10` + contenido actualizado por materia |
 | `docs/revision-sprint2.md` | **Nuevo** — este archivo (bitácora + trazabilidad) |
 
@@ -98,8 +98,8 @@ Sprint 2 está **funcionalmente Done** (cerrojo + laser + app pantallas/MQTT/PIN
 | **DEVOPS-08** .env.example | `backend/.env.example` + `firmware/gateway-esp32/secrets.h.example` + `.gitignore:219` | ✅ Done |
 | **RF-4.1 HU-02** Telegram | `automation/flows/intrusion_alert.json` (referencia, no deploy) → Gateway `POST /api/security-events` + `aethernet/seguridad/intrusion:72` → `api.telegram.org` | 🔄 Parcial (deuda LOW-02 — directo sin Node-RED Sprint 4) |
 | **RF-4.2** Tuya | `docs/adr/adr-001-cancelacion-tuya.md` + `hardware-inventory.md` | ❌ Cancelado ADR-001 |
-| **RNF-2.1 HU-03** EMA | `stats/ema_filter.py:15` α=0.2 + `firmware/test-ema-uno` + `notebooks/EMA_Estadistica.ipynb:2` + `stats/water_turbidity_analysis.py:1` 36.5k | 🔄 Adelantado parcial (port C++ `rover-uno.ino:259` queda Sprint 4) |
-| **RNF-2.2** descriptivo/t-Student | `stats/Dataset/` 36.5k + `stats/water_turbidity_analysis.py` Welch/ANOVA + `notebooks/EMA_Estadistica.ipynb` §7c + `stats/data/water_turbidity_report.json` | 🔄 Validación externa Done, histórico real PG queda Sprint 4 |
+| **RNF-2.1 HU-03** EMA | `stats/ema_filter.py:15` α=0.2 + `firmware/test-ema-uno` + `docs/Estadistica/notebook/EMA_Estadistica.ipynb:2` + `stats/water_turbidity_analysis.py:1` 36.5k | 🔄 Adelantado parcial (port C++ `rover-uno.ino:259` queda Sprint 4) |
+| **RNF-2.2** descriptivo/t-Student | `stats/Dataset/` 36.5k + `stats/water_turbidity_analysis.py` Welch/ANOVA + `docs/Estadistica/notebook/EMA_Estadistica.ipynb` §7c + `stats/data/water_turbidity_report.json` | 🔄 Validación externa Done, histórico real PG queda Sprint 4 |
 | **PM-01..04** gestión | `docs/backlog.md` + `docs/sprints.md` + `docs/risk-register.md:32` + `docs/gantt.md:7` + `projects/14` | ✅ Done |
 | **RF-3.2/3.3** Rover | `firmware/rover-uno/` `rover-uno.ino:220` fail-safe 500ms + `architecture.md` §6 | ⏳ Sprint 3 |
 
@@ -149,6 +149,6 @@ Ver `git log --oneline docs/revision-sprint2-completa --not origin/sprint/2-domo
 
 - `docs/prd.md:32` (LowCode deuda) ↔ `docs/requirements.md:31` (RF-4.1 directo) ↔ `docs/architecture.md:13` (capa 3 Telegram) ↔ `docs/sprints.md:42` (Sprint 4 LowCode) ↔ `docs/backlog.md:56` (LOW-02 Won't) ↔ `docs/roadmap.md:48` (LowCode roadmap)
 - `docs/hardware-inventory.md:9` (LED 44/45/46 + laser 7/8) ↔ `firmware/mega-access/src/config.h:17` ↔ `docs/fritzing/compendio-planos.md` P3/P5
-- `docs/Estadistica/Datasets/README.md` ↔ `stats/Dataset/README.md` ↔ `stats/water_turbidity_analysis.py:1` ↔ `notebooks/EMA_Estadistica.ipynb` §7c ↔ `docs/roadmap.md:86` §5
+- `docs/Estadistica/Datasets/README.md` ↔ `stats/Dataset/README.md` ↔ `stats/water_turbidity_analysis.py:1` ↔ `docs/Estadistica/notebook/EMA_Estadistica.ipynb` §7c ↔ `docs/roadmap.md:86` §5
 
 *Si una contradicción futura aparece, actualizarla aquí y en `docs/sprints.md:52` PM-05.*

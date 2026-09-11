@@ -9,7 +9,7 @@ Generado Task 1 — 2026-09-11. Fuente: `find docs -type f | sort` (118 archivos
 - `docs/Estadistica/` (keep): `Anteproyecto_AetherNet-3.docx` 82K + `Contraste_Admin...docx` 14K + `CONTRASTE...md` 15K + `Datasets/` espejo 4 CSV 3.7MB + `README.md` 1.1K + `fotos/` vacía — ya canónico
 - `docs/presentaciones/` (4 .html 37-73K + 1 guion .md 7.7K) — opcional mover a Administración
 - Transversales keep: `docs/fritzing/` (21 archivos), `docs/logs/firmware_sprint3/` (15 logs), `docs/UTP/` (4 PDFs), `docs/adr/`, `docs/archivo/`, `docs/emails-docentes/`
-- Espejos verificados: `stats/Dataset/` 3.7MB canónico ↔ `docs/Estadistica/Datasets/` espejo (diff sin diff esperado); `notebooks/` 7 ipynb canónico ↔ `stats/notebooks/EMA_Estadistica.ipynb` espejo solo EMA
+- Espejos verificados: `stats/Dataset/` 3.7MB canónico ↔ `docs/Estadistica/Datasets/` espejo (diff sin diff esperado); `notebooks/` 7 ipynb canónico ↔ `stats/docs/Estadistica/notebook/EMA_Estadistica.ipynb` espejo solo EMA
 
 ## Mapa Origen→Destino
 
@@ -24,7 +24,7 @@ Generado Task 1 — 2026-09-11. Fuente: `find docs -type f | sort` (118 archivos
 | `calendar/AetherNet_Clases_UTP_2026-2.ics` | `.../calendario/` | `git mv` | — | — |
 | `calendar/AetherNet_Completo_8semanas.ics` | `.../calendario/` | `git mv` | — | — |
 | `calendar/AetherNet_Google_Calendar.csv` | `.../calendario/` | `git mv` | — | — |
-| `calendar/README.md` | `.../calendario/README.md` | `git mv` | `docs/gantt.md`, `docs/tablero-scrum.md`, `notebooks/Diario_Administracion.ipynb` | 3 |
+| `calendar/README.md` | `.../calendario/README.md` | `git mv` | `docs/gantt.md`, `docs/tablero-scrum.md`, `docs/Administracion-Proyectos/notebook/Diario_Administracion.ipynb` | 3 |
 | `calendar/` (raíz tras vaciar) | **REDIRECCIÓN** `calendar/README.md` | create | — | — |
 | `docs/Estadistica/Anteproyecto_AetherNet-3.docx` | KEEP (ya canónico) | — | — | — |
 | `docs/Estadistica/Contraste_Admin_vs_Estadistica.docx` | KEEP | — | — | — |
@@ -33,7 +33,7 @@ Generado Task 1 — 2026-09-11. Fuente: `find docs -type f | sort` (118 archivos
 | `stats/Dataset/` | KEEP canónico | — | — | — |
 | `docs/presentaciones/*.html` (4) + `guion-estadistica-*.md` | OPCIÓN A: KEEP / OPCIÓN B: `docs/Administracion-Proyectos/presentaciones/` | `git mv` si B | `docs/README.md:19` | ~3 |
 | `docs/fritzing/*` | KEEP | — | `notebooks/*.ipynb`, `docs/hardware-inventory.md` | ~20 |
-| `docs/logs/firmware_sprint3/` | KEEP | — | `notebooks/Firmware_Notebook.ipynb`, `Diario_DevOps.ipynb` | ~5 |
+| `docs/logs/firmware_sprint3/` | KEEP | — | `docs/Firmware/notebook/Firmware_Notebook.ipynb`, `Diario_DevOps.ipynb` | ~5 |
 | `docs/UTP/*.pdf` | KEEP | — | `docs/materias/*.md` | ~6 |
 | `docs/adr/` `docs/archivo/` `docs/emails-docentes/` | KEEP | — | `docs/backlog.md`, `docs/roadmap.md` | — |
 

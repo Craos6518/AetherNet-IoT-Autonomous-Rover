@@ -77,7 +77,7 @@ La app está en fase **fundacional**: la arquitectura (MVVM + estados sellados +
 | Tests unitarios de ViewModels | ❌ Pendiente | Backlog MOV-10 (Sprint 4, JUnit) |
 | Build CI de Android | ⚠️ Plantilla desactivada hasta que exista Gradle | `ci.yml` job `android-build` (`if: false`) |
 
-> 📸 **Capturas APP:** diario visual en `docs/Programacion-Movil/capturas/` — ver `docs/Programacion-Movil/capturas/README.md` y `notebooks/AetherControl_Notebook.ipynb` § 📸 Capturas APP (diario visual). Checklist: `dashboard-led.png`, `pin-screen.png`, `joystick-drag.png`, `mqtt-status.png`, `rover-card.png` (SM-X620 1080×2400).
+> 📸 **Capturas APP:** diario visual en `docs/Programacion-Movil/capturas/` — ver `docs/Programacion-Movil/capturas/README.md` y `docs/Programacion-Movil/notebook/AetherControl_Notebook.ipynb` § 📸 Capturas APP (diario visual). Checklist: `dashboard-led.png`, `pin-screen.png`, `joystick-drag.png`, `mqtt-status.png`, `rover-card.png` (SM-X620 1080×2400).
 
 ---
 

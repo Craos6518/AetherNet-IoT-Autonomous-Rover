@@ -1,6 +1,6 @@
 # Administración de Proyectos — AetherNet
 
-Carpeta canónica para la asignatura **TS683 Administración y Planeación de Proyectos de Software** (UTP) — ver `docs/materias/administracion-proyectos.md`, `docs/materias/roadmap-administracion.md`.
+Carpeta canónica para la asignatura **TS683 Administración y Planeación de Proyectos de Software** (UTP) — ver `docs/Administracion-Proyectos/administracion-proyectos.md`, `docs/Administracion-Proyectos/roadmap-administracion.md`.
 
 ## Archivos (canónicos)
 
@@ -39,7 +39,7 @@ pip install python-docx --break-system-packages
 python3 /tmp/generate_docx.py  # lee Plantilla Proyecto.docx y genera el implementado
 ```
 
-Fuente de verdad cruzada: `docs/prd.md`, `requirements.md`, `hardware-inventory.md`, `sprints.md`, `backlog.md`, `architecture.md`, `gantt.md`, `risk-register.md`, `roadmap.md`, `notebooks/EMA_Estadistica.ipynb`.
+Fuente de verdad cruzada: `docs/prd.md`, `requirements.md`, `hardware-inventory.md`, `sprints.md`, `backlog.md`, `architecture.md`, `gantt.md`, `risk-register.md`, `roadmap.md`, `docs/Estadistica/notebook/EMA_Estadistica.ipynb`.
 
 ## Trabajo individual
 
@@ -47,7 +47,7 @@ Modalidad **solo** — responsable único de todo el WBS y cronograma: **Andres 
 
 ## Diario de campo — Capturas checklist
 
-> Ver `notebooks/Diario_Administracion.ipynb` para bitácora.
+> Ver `docs/Administracion-Proyectos/notebook/Diario_Administracion.ipynb` para bitácora.
 
 - [ ] **Tablero Kanban** — `capturas/tablero-kanban.png` — screenshot `https://github.com/users/Craos6518/projects/14` 6 columnas
 - [ ] **Gantt Mermaid** — `capturas/gantt.png` — render `docs/gantt.md` Mermaid 4 sprints + deuda

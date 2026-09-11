@@ -1,6 +1,6 @@
 # Diario de Campo — Hardware
 
-> **Inventario canónico:** `docs/hardware-inventory.md` · **Fritzing:** `docs/fritzing/` · **Notebook:** `notebooks/Diario_Hardware.ipynb`
+> **Inventario canónico:** `docs/hardware-inventory.md` · **Fritzing:** `docs/fritzing/` · **Notebook:** `docs/Hardware/notebook/Diario_Hardware.ipynb`
 
 ## Checklist fotos hardware real (12MP, luz natural, fondo blanco, regla)
 

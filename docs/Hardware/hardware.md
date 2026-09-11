@@ -15,7 +15,7 @@ Proyecto: AetherNet IoT & Autonomous Rover
 
 ## Brechas / fotos pendientes (trazable)
 - Todas las fotos reales están en checklist `docs/Hardware/README.md` y `docs/Firmware/README.md` — marcar [x] al tomar con 12MP luz natural + regla.
-- Si falta foto: en `notebooks/Diario_Hardware.ipynb` deja `![FOTO PENDIENTE](fotos/mega-panel.jpg)` con instrucción.
+- Si falta foto: en `docs/Hardware/notebook/Diario_Hardware.ipynb` deja `![FOTO PENDIENTE](fotos/mega-panel.jpg)` con instrucción.
 
 ## Trazabilidad
 - RF-2.2 HU-01 (cerrojo), RF-2.3 HU-02 (láser), RF-3.1/3.2 HU-03/04 (Rover), RF-2.1 DEVOPS-05 (RF link)

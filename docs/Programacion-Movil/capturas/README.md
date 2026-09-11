@@ -1,6 +1,6 @@
 # Capturas APP — AetherControl
 
-> **Ubicación:** `docs/Programacion-Movil/capturas/` · **Tomar en:** SM-X620 1080×2400 o emulador 1080×2400 · **Notebook:** `notebooks/AetherControl_Notebook.ipynb` § 📸 Capturas APP
+> **Ubicación:** `docs/Programacion-Movil/capturas/` · **Tomar en:** SM-X620 1080×2400 o emulador 1080×2400 · **Notebook:** `docs/Programacion-Movil/notebook/AetherControl_Notebook.ipynb` § 📸 Capturas APP
 
 ## Checklist — 5 capturas obligatorias
 

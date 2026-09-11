@@ -1,5 +1,5 @@
 # Roadmap por Materia — Firmware (C++/arduino-cli)
-Alcance: todos los temas necesarios para completar firmware MEGA/Gateway/Rover con arduino-cli 1.5.1. Ver `firmware.md` y `notebooks/Firmware_Notebook.ipynb`.
+Alcance: todos los temas necesarios para completar firmware MEGA/Gateway/Rover con arduino-cli 1.5.1. Ver `firmware.md` y `docs/Firmware/notebook/Firmware_Notebook.ipynb`.
 
 | Tema | Profundidad | Para qué RF | Búsqueda Google sugerida |
 |---|---|---|---|

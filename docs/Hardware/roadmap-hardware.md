@@ -1,8 +1,8 @@
 # Roadmap por Materia — Hardware (Electrónica)
 
-**Alcance:** electrónica aplicada del inventario `docs/hardware-inventory.md` — pines MEGA, fritzing `docs/fritzing/AetherNet-P*.png`, calce TT 6V 1:48 y datasheets. Ver `docs/materias/hardware.md` y `notebooks/Diario_Hardware.ipynb`.
+**Alcance:** electrónica aplicada del inventario `docs/hardware-inventory.md` — pines MEGA, fritzing `docs/fritzing/AetherNet-P*.png`, calce TT 6V 1:48 y datasheets. Ver `docs/Hardware/hardware.md` y `docs/Hardware/notebook/Diario_Hardware.ipynb`.
 
-Backlog operativo: ver `docs/hardware-inventory.md` + `docs/materias/hardware.md` · Diario: [`../../notebooks/Diario_Hardware.ipynb`](../../notebooks/Diario_Hardware.ipynb) · Fotos: `docs/Hardware/fotos/` + `docs/Firmware/fotos/`
+Backlog operativo: ver `docs/hardware-inventory.md` + `docs/Hardware/hardware.md` · Diario: [`../../docs/Hardware/notebook/Diario_Hardware.ipynb`](../../docs/Hardware/notebook/Diario_Hardware.ipynb) · Fotos: `docs/Hardware/fotos/` + `docs/Firmware/fotos/`
 
 ---
 

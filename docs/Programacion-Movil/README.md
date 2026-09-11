@@ -1,6 +1,6 @@
 # Diario de Campo — Programación Móvil (App AetherControl)
 
-> **Notebook:** `notebooks/AetherControl_Notebook.ipynb` · **Código:** `app/src/main/java/com/aethernet/aethercontrol/` · **HU:** HU-01, RF-1.1/1.2/1.3
+> **Notebook:** `docs/Programacion-Movil/notebook/AetherControl_Notebook.ipynb` · **Código:** `app/src/main/java/com/aethernet/aethercontrol/` · **HU:** HU-01, RF-1.1/1.2/1.3
 
 ## Capturas APP — checklist (tomar en SM-X620 o emulador, 1080×2400)
 

@@ -44,7 +44,7 @@ Fuente: `firmware/mega-access/src/config.h` (branch `feature/firmware-mega-laser
 | Torque | 3.5 KG·cm | 0.8 KG·cm @6V (stall 1:48) | **-77%** — no sube rampa >15°, evitar alfombra gruesa, reduce carga útil <300g |
 | Tracción | 2 motores (oruga) | 4 motores (2 por lado en paralelo L298N) — ENA Izq (2 motores) ENB Der (2 motores) | L298N 2A máx por canal → 2×TT en paralelo 1.6A stall OK pero al límite térmico → disipador + `MIN_PWM_FOR_MOVEMENT 60→70` recalibrar |
 
-**Acciones firmware:** `rover-uno.ino:88 MIN_PWM_FOR_MOVEMENT 60→70` (calibrar con chasis cargado), `BASE_SPEED 120→150` si `T4 RF RX` muestra avance lento. **Docs:** actualizar `prd.md` KPI maniobrabilidad y `notebooks/Firmware_Notebook.ipynb` §4.
+**Acciones firmware:** `rover-uno.ino:88 MIN_PWM_FOR_MOVEMENT 60→70` (calibrar con chasis cargado), `BASE_SPEED 120→150` si `T4 RF RX` muestra avance lento. **Docs:** actualizar `prd.md` KPI maniobrabilidad y `docs/Firmware/notebook/Firmware_Notebook.ipynb` §4.
 
 ## Fotos por subsistema (diario de campo)
 
