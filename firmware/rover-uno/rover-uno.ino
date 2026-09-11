@@ -58,9 +58,12 @@
 // TCRT5000 IR Sensors (analógico) — detecta borde/línea por reflectancia
 // Emite IR y mide cuánto rebota. Blanco refleja mucho (valor alto), negro/caída poco (valor bajo)
 // Umbral 500 hay que calibrar con cartulina blanca/negra y medir con Serial
-#define IR_LEFT_PIN A0             // Analógico izq — A0 en UNO es ADC 10-bit (0-1023)
-#define IR_CENTER_PIN A1           // Centro
-#define IR_RIGHT_PIN A2            // Der
+// MAPEO REAL 2026-09-11 (verificado HW, antes doc decía A0 izq/A1 centro/A2 der):
+//   A0 → TRASERO, A1 → LADO IZQUIERDO, A2 → LADO DERECHO (no hay sensor frontal centro)
+#define IR_REAR_PIN A0             // Trasero — A0 ADC 10-bit (0-1023) — alias legacy IR_LEFT_PIN
+#define IR_LEFT_PIN A1             // Izquierdo — A1
+#define IR_RIGHT_PIN A2            // Derecho — A2
+#define IR_CENTER_PIN A0           // Alias compatibilidad: centro = trasero hasta añadir TCRT frontal
 #define IR_THRESHOLD 500           // Umbral — <500 = borde/caída detectado (ajustar con calibración)
 
 // nRF24L01 — RF 2.4GHz (como Bluetooth pero más simple y sin pairing)
@@ -273,11 +276,12 @@ RoverTelemetry buildTelemetry() {
     telem.left_pwm = lastCommand.left_pwm; // Eco para que App sepa qué se ejecutó
     telem.right_pwm = lastCommand.right_pwm;
     telem.ultrasonic_cm = (uint16_t)ultrasonicEma; // Ya filtrado con EMA — valor estable (HU-03)
-    // TCRT5000: analogRead <500 = borde/caída (poca reflectancia = oscuro/agujero)
-    // Es como un sensor de línea en robótica — blanco refleja, negro no
-    telem.ir_left = digitalRead(IR_LEFT_PIN) < IR_THRESHOLD; // OJO: aquí digitalRead en pin analógico — funciona pero ideal analogRead
-    telem.ir_center = digitalRead(IR_CENTER_PIN) < IR_THRESHOLD;
-    telem.ir_right = digitalRead(IR_RIGHT_PIN) < IR_THRESHOLD;
+    // TCRT5000: analogRead >500 = borde/caída — INVERSO 2026-09-11 pista blanca pot mitad + sensores acercados a 3mm
+    // MAPEO 2026-09-11: ir_left = A1 izquierdo, ir_right = A2 derecho, ir_center = A0 trasero
+    // FIX 2026-09-11: digitalRead → analogRead + lógica invertida (blanca baja 290→OK, negra alta 850→BORDE vacío)
+    telem.ir_left = analogRead(IR_LEFT_PIN) > IR_THRESHOLD;
+    telem.ir_center = analogRead(IR_CENTER_PIN) > IR_THRESHOLD; // trasero
+    telem.ir_right = analogRead(IR_RIGHT_PIN) > IR_THRESHOLD;
     telem.rf_rssi = -70; // Placeholder: RF24.getRSSI() no existe en esta versión lib — fijo -70 dBm
     telem.checksum = calculateChecksum(telem); // Calcula sobre bytes previos
     return telem;
@@ -376,11 +380,12 @@ void executeAutoMode() {
     // Simple obstacle avoidance and cliff detection — lee sensores ya filtrados
     bool obstacleFront = ultrasonicInitialized && ultrasonicEma < OBSTACLE_DISTANCE_CM; // <30cm
     bool criticalClose = ultrasonicInitialized && ultrasonicEma < CRITICAL_DISTANCE_CM; // <15cm emergencia
-    // TCRT: true si detecta borde (valor <500 = poca reflectancia = agujero/línea negra)
-    // OJO: aquí debería ser analogRead() <500, pero se usa digitalRead() que compara con ~2.5V — funciona aproximado
-    bool cliffLeft = digitalRead(IR_LEFT_PIN) < IR_THRESHOLD;
-    bool cliffCenter = digitalRead(IR_CENTER_PIN) < IR_THRESHOLD;
-    bool cliffRight = digitalRead(IR_RIGHT_PIN) < IR_THRESHOLD;
+    // TCRT: true si detecta borde — INVERSO pista blanca 2026-09-11: >500 = borde (negra/vacío alto), <500 = OK (blanca baja)
+    // MAPEO 2026-09-11: A1 izquierdo, A2 derecho, A0 trasero + sensores acercados a 3mm pot mitad
+    bool cliffLeft = analogRead(IR_LEFT_PIN) > IR_THRESHOLD;   // A1 izq
+    bool cliffRear = analogRead(IR_CENTER_PIN) > IR_THRESHOLD;  // A0 trasero (alias centro)
+    bool cliffRight = analogRead(IR_RIGHT_PIN) > IR_THRESHOLD;  // A2 der
+    bool cliffCenter = cliffRear; // compatibilidad: centro = trasero hasta añadir TCRT frontal
 
     int leftSpeed = 0;
     int rightSpeed = 0;

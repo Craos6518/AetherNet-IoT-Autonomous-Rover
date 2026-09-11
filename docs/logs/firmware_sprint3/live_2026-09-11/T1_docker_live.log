@@ -3,6 +3,63 @@ aethernet-fastapi  | INFO:     Waiting for application startup.
 aethernet-fastapi  | INFO:     Application startup complete.
 aethernet-fastapi  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 aethernet-fastapi  | INFO:     192.168.1.14:60948 - "GET /health HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:36788 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:36774 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:36788 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:36774 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:36788 - "GET /health HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:36788 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:38022 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:38022 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:38032 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:38032 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:35520 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:35530 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:35542 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:35542 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:35530 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:44596 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:44594 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:44594 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:44596 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:44594 - "GET /health HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:44594 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:44596 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:37996 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:38010 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.23:59687 - "POST /api/access-events HTTP/1.1" 201 Created
+aethernet-fastapi  | INFO:     192.168.1.7:37996 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:38010 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:51150 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:51166 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:51150 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:51166 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:51150 - "GET /health HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:51150 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:51166 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:51166 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:51150 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:51150 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:51166 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:40544 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:40540 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:44696 - "GET /health HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:44722 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:44708 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.23:59688 - "POST /api/access-events HTTP/1.1" 201 Created
+aethernet-fastapi  | INFO:     192.168.1.23:59689 - "POST /api/access-events HTTP/1.1" 201 Created
+aethernet-fastapi  | INFO:     192.168.1.7:47158 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:47160 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.14:52764 - "GET /health HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.23:53045 - "POST /api/access-events HTTP/1.1" 201 Created
+aethernet-fastapi  | INFO:     192.168.1.23:53046 - "POST /api/access-events HTTP/1.1" 201 Created
+aethernet-fastapi  | INFO:     192.168.1.7:52430 - "GET /health HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:52432 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.7:52448 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi  | INFO:     192.168.1.23:53047 - "POST /api/access-events HTTP/1.1" 201 Created
+aethernet-fastapi  | INFO:     192.168.1.23:53048 - "POST /api/access-events HTTP/1.1" 201 Created
+aethernet-fastapi  | INFO:     192.168.1.23:53049 - "POST /api/access-events HTTP/1.1" 201 Created
+aethernet-fastapi  | INFO:     192.168.1.14:48256 - "GET /health HTTP/1.1" 200 OK
 aethernet-mosquitto  | chown: /mosquitto/config/mosquitto.conf: Read-only file system
 aethernet-mosquitto  | chown: /mosquitto/config/acl.conf: Read-only file system
 aethernet-mosquitto  | 1789137409: Note: It is recommended to replace `message_size_limit` with `max_packet_size`.
@@ -26,54 +83,78 @@ aethernet-mosquitto  | 2026-09-11T14:39:00: New client connected from 192.168.1.
 aethernet-mosquitto  | 2026-09-11T14:39:45: New connection from 192.168.1.23:59686 on port 1883.
 aethernet-mosquitto  | 2026-09-11T14:39:45: Client gateway-esp32 already connected, closing old connection.
 aethernet-mosquitto  | 2026-09-11T14:39:45: New client connected from 192.168.1.23:59686 as gateway-esp32 (p2, c1, k15).
-aethernet-fastapi    | INFO:     192.168.1.7:36788 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:36774 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:36788 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:36774 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:36788 - "GET /health HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:36788 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:38022 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:38022 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:38032 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:38032 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:35520 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:35530 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:35542 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:35542 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:35530 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:44596 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:44594 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:44594 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:44596 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:44594 - "GET /health HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:44594 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:44596 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:37996 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:38010 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.23:59687 - "POST /api/access-events HTTP/1.1" 201 Created
-aethernet-fastapi    | INFO:     192.168.1.7:37996 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:38010 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:51150 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:51166 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:51150 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:51166 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:51150 - "GET /health HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:51150 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:51166 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:51166 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:51150 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:51150 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:51166 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:40544 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:40540 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:44696 - "GET /health HTTP/1.1" 200 OK
-aethernet-fastapi    | INFO:     192.168.1.7:44722 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
 aethernet-mosquitto  | 2026-09-11T14:41:23: New connection from 192.168.1.7:55962 on port 1883.
-aethernet-fastapi    | INFO:     192.168.1.7:44708 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
 aethernet-mosquitto  | 2026-09-11T14:41:23: New client connected from 192.168.1.7:55962 as aethernet-app-90d9dc4e (p2, c1, k15).
-aethernet-fastapi    | INFO:     192.168.1.23:59688 - "POST /api/access-events HTTP/1.1" 201 Created
-aethernet-fastapi    | INFO:     192.168.1.23:59689 - "POST /api/access-events HTTP/1.1" 201 Created
 aethernet-mosquitto  | 2026-09-11T14:42:11: Client aethernet-app-90d9dc4e closed its connection.
 aethernet-mosquitto  | 2026-09-11T14:42:19: New connection from 192.168.1.7:50614 on port 1883.
 aethernet-mosquitto  | 2026-09-11T14:42:19: New client connected from 192.168.1.7:50614 as aethernet-app-90d9dc4e (p2, c1, k15).
 aethernet-mosquitto  | 2026-09-11T14:43:13: Client aethernet-app-90d9dc4e closed its connection.
+aethernet-mosquitto  | 2026-09-11T14:46:12: New connection from 192.168.1.7:51138 on port 1883.
+aethernet-mosquitto  | 2026-09-11T14:46:12: New client connected from 192.168.1.7:51138 as aethernet-app-90d9dc4e (p2, c1, k15).
+aethernet-mosquitto  | 2026-09-11T14:46:14: Client aethernet-app-90d9dc4e closed its connection.
+aethernet-mosquitto  | 2026-09-11T14:49:46: Client gateway-esp32 has exceeded timeout, disconnecting.
+aethernet-mosquitto  | 2026-09-11T14:53:43: Client auto-D55F5DAD-03CA-987C-C173-C925C9C0E322 closed its connection.
+aethernet-mosquitto  | 2026-09-11T15:06:50: Saving in-memory database to /mosquitto/data//mosquitto.db.
+aethernet-mosquitto  | 2026-09-11T15:36:51: Saving in-memory database to /mosquitto/data//mosquitto.db.
+aethernet-mosquitto  | 2026-09-11T16:06:52: Saving in-memory database to /mosquitto/data//mosquitto.db.
+aethernet-mosquitto  | 2026-09-11T16:36:53: Saving in-memory database to /mosquitto/data//mosquitto.db.
+aethernet-mosquitto  | 2026-09-11T17:06:54: Saving in-memory database to /mosquitto/data//mosquitto.db.
+aethernet-mosquitto  | 2026-09-11T17:36:55: Saving in-memory database to /mosquitto/data//mosquitto.db.
+aethernet-mosquitto  | 2026-09-11T18:06:56: Saving in-memory database to /mosquitto/data//mosquitto.db.
+aethernet-mosquitto  | 2026-09-11T18:36:57: Saving in-memory database to /mosquitto/data//mosquitto.db.
+aethernet-mosquitto  | 2026-09-11T18:44:15: New connection from 192.168.1.23:61881 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:44:15: New client connected from 192.168.1.23:61881 as gateway-esp32 (p2, c1, k15).
+aethernet-mosquitto  | 2026-09-11T18:46:06: New connection from 192.168.1.14:46706 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:46:06: New client connected from 192.168.1.14:46706 as auto-B071A7D2-2B3E-029A-70E9-CE44460C3DB4 (p2, c1, k60).
+aethernet-mosquitto  | 2026-09-11T18:49:13: New connection from 192.168.1.23:59690 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:49:13: Client gateway-esp32 already connected, closing old connection.
+aethernet-mosquitto  | 2026-09-11T18:49:13: New client connected from 192.168.1.23:59690 as gateway-esp32 (p2, c1, k15).
+aethernet-mosquitto  | 2026-09-11T18:49:20: New connection from 192.168.1.23:53018 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:49:20: Client gateway-esp32 already connected, closing old connection.
+aethernet-mosquitto  | 2026-09-11T18:49:20: New client connected from 192.168.1.23:53018 as gateway-esp32 (p2, c1, k15).
+aethernet-mosquitto  | 2026-09-11T18:49:29: New connection from 192.168.1.23:53044 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:49:29: Client gateway-esp32 already connected, closing old connection.
+aethernet-mosquitto  | 2026-09-11T18:49:29: New client connected from 192.168.1.23:53044 as gateway-esp32 (p2, c1, k15).
+aethernet-mosquitto  | 2026-09-11T18:50:16: New connection from 192.168.1.7:47562 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:50:16: New client connected from 192.168.1.7:47562 as aethernet-app-6a94d7f9 (p2, c1, k15).
+aethernet-mosquitto  | 2026-09-11T18:50:56: Client aethernet-app-6a94d7f9 closed its connection.
+aethernet-mosquitto  | 2026-09-11T18:50:58: New connection from 192.168.1.7:52480 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:50:58: New client connected from 192.168.1.7:52480 as aethernet-app-6a94d7f9 (p2, c1, k15).
+aethernet-mosquitto  | 2026-09-11T18:52:05: Client auto-B071A7D2-2B3E-029A-70E9-CE44460C3DB4 disconnected.
+aethernet-mosquitto  | 2026-09-11T18:52:31: Client gateway-esp32 has exceeded timeout, disconnecting.
+aethernet-mosquitto  | 2026-09-11T18:53:45: Client aethernet-app-6a94d7f9 closed its connection.
+aethernet-mosquitto  | 2026-09-11T18:55:51: New connection from 192.168.1.14:36588 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:55:51: New client connected from 192.168.1.14:36588 as auto-D5C7354B-F8C7-3EEC-D893-D82B98984A6A (p2, c1, k60).
+aethernet-mosquitto  | 2026-09-11T18:56:18: New connection from 192.168.1.23:59632 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:56:18: New client connected from 192.168.1.23:59632 as gateway-esp32 (p2, c1, k15).
+aethernet-mosquitto  | 2026-09-11T18:57:02: New connection from 192.168.1.23:56253 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:57:02: Client gateway-esp32 already connected, closing old connection.
+aethernet-mosquitto  | 2026-09-11T18:57:02: New client connected from 192.168.1.23:56253 as gateway-esp32 (p2, c1, k15).
+aethernet-mosquitto  | 2026-09-11T18:57:17: New connection from 192.168.1.23:52240 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:57:17: Client gateway-esp32 already connected, closing old connection.
+aethernet-mosquitto  | 2026-09-11T18:57:17: New client connected from 192.168.1.23:52240 as gateway-esp32 (p2, c1, k15).
+aethernet-mosquitto  | 2026-09-11T18:57:29: New connection from 192.168.1.23:56421 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:57:29: Client gateway-esp32 already connected, closing old connection.
+aethernet-mosquitto  | 2026-09-11T18:57:29: New client connected from 192.168.1.23:56421 as gateway-esp32 (p2, c1, k15).
+aethernet-fastapi    | INFO:     192.168.1.7:41552 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi    | INFO:     192.168.1.7:41538 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi    | INFO:     192.168.1.7:41552 - "GET /health HTTP/1.1" 200 OK
+aethernet-fastapi    | INFO:     192.168.1.7:41552 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi    | INFO:     192.168.1.7:41558 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi    | INFO:     192.168.1.7:41552 - "GET /health HTTP/1.1" 200 OK
+aethernet-fastapi    | INFO:     192.168.1.7:38748 - "GET /health HTTP/1.1" 200 OK
+aethernet-fastapi    | INFO:     192.168.1.7:38762 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi    | INFO:     192.168.1.7:38758 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-mosquitto  | 2026-09-11T18:57:57: New connection from 192.168.1.7:54296 on port 1883.
+aethernet-mosquitto  | 2026-09-11T18:57:57: New client connected from 192.168.1.7:54296 as aethernet-app-7da8fad7 (p2, c1, k15).
+aethernet-fastapi    | INFO:     192.168.1.23:56422 - "POST /api/access-events HTTP/1.1" 201 Created
+aethernet-fastapi    | INFO:     192.168.1.23:56423 - "POST /api/access-events HTTP/1.1" 201 Created
+aethernet-mosquitto  | 2026-09-11T18:59:21: Client aethernet-app-7da8fad7 closed its connection.
+aethernet-fastapi    | INFO:     192.168.1.7:40950 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi    | INFO:     192.168.1.7:40956 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-mosquitto  | 2026-09-11T18:59:31: New connection from 192.168.1.7:39848 on port 1883.
+aethernet-fastapi    | INFO:     192.168.1.7:40936 - "GET /api/access-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-fastapi    | INFO:     192.168.1.7:40932 - "GET /api/security-events?limit=1&offset=0 HTTP/1.1" 200 OK
+aethernet-mosquitto  | 2026-09-11T18:59:32: New client connected from 192.168.1.7:39848 as aethernet-app-7da8fad7 (p1, c1, k15).
+aethernet-fastapi    | INFO:     192.168.1.23:56424 - "POST /api/access-events HTTP/1.1" 201 Created
+aethernet-mosquitto  | 2026-09-11T19:02:29: Client auto-D5C7354B-F8C7-3EEC-D893-D82B98984A6A disconnected.
