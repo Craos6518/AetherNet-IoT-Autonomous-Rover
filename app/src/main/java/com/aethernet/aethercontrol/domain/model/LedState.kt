@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.domain.model
 
 // =============================================================================
 // LedState.kt — Modelos LED Local | 6º Semestre UTP | MOV-02 RF-1.1, HU-01/HU-02
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años electrónica/Arduino (LED RGB 44/45/46 ánodo común, config.h:30),
 //              2 años JS/React (enum como union type), 1 año C (LedMode enum class),
 //              1 año PostgreSQL (led derivado de access/security_events)

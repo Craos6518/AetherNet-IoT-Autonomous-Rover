@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.domain.model
 
 // =============================================================================
 // PinUiState.kt — Estado UI PIN Cerrojo | 6º Semestre UTP | MOV-04 HU-01, RF-2.2
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años JS/React (useState form), 2 años electrónica (keypad 4x4),
 //              1 año C (PIN buffer), 1 año PostgreSQL (pin_hash), 2 años Python
 // Analogía React: este data class es como `type PinFormState = { pinInput: string, isLoading: boolean, error?: string, ... }`

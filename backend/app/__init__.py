@@ -1,6 +1,6 @@
 # =============================================================================
 # backend/app/__init__.py — Paquete FastAPI AetherNet | 6º Semestre UTP
-# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Autor: Andres Felipe Martinez Henao
 # Experiencia: 2 años Python (FastAPI), 2 años JS/React (npm packages),
 #              1 año PostgreSQL (SQLAlchemy = Prisma de Python)
 # Analogía React: este __init__.py es el index.ts de la carpeta app — marca

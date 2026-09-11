@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.data.remote.dto
 
 // =============================================================================
 // HealthDto.kt — DTOs Health y Root | 6º Semestre UTP | RF-1.1
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años Python (Pydantic), 2 años JS/React (Zod/fetch), 2 años electrónica (health check),
 //              1 año PostgreSQL (backend health)
 // Analogía React: estos DTOs son como `type HealthResponse = {status: string, database: string, version: string}`

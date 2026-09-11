@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.domain.model
 
 // =============================================================================
 // UiModels.kt — UiState Dashboard | 6º Semestre UTP | MOV-01 5.1, MOV-02, MOV-03
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años JS/React (useState, Redux), 2 años Python (dataclass),
 //              2 años electrónica (MqttManager), 1 año C (StateFlow)
 // Analogía React: este data class es como `type DashboardUiState = { isLoading: boolean, isConnected: boolean, health: HealthResponse | null, ... }`

@@ -2,7 +2,7 @@
 /*
  * =============================================================================
  * uart_protocol.h — UART Gateway ESP32 <-> MEGA | 6º Semestre UTP | HU-01
- * Autor: Est. Tec. Desarrollo Software + Ing. Sistemas (2 años electrónica,
+  * Autor: Andres Felipe Martinez Henao
  *        1 año C, 1 año PostgreSQL) — Protocolo texto TYPE:JSON\n 38400 bd
  * TX: ACCESS: / STATUS:  |  RX: CMD:ACCESS / CMD:STATUS (throttled 5s)
  * =============================================================================

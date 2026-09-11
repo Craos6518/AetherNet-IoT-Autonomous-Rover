@@ -2,7 +2,7 @@
 /*
  * =============================================================================
  * AetherNet MEGA — config.h | Única Fuente de Verdad | 6º Semestre UTP
- * Autor: Est. Tec. Desarrollo Software + Ing. Sistemas (2 años electrónica/C)
+  * Autor: Andres Felipe Martinez Henao
  * Sprint: RF-2.2 + HU-01 (feature/firmware-mega-cerrojo) — MVP sin relés/láser
  * Origen: docs/requirements.md:22 RF-2.2, HU-01 BDD
  *         docs/hardware-inventory.md:9 LED local (Tuya cancelado ADR-001)

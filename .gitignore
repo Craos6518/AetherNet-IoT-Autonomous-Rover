@@ -1,6 +1,6 @@
 # =============================================================================
 # .gitignore — AetherNet IoT & Autonomous Rover | 6º Semestre UTP
-# Autor: Est. Tecnología en Desarrollo de Software + Ing. Sistemas (UTP)
+# Autor: Andres Felipe Martinez Henao
 # Experiencia: 2 años electrónica/Arduino (arduino-cli .pio), 1 año Programación C
 #              (*.o/*.elf), 2 años Python (venv/__pycache__), 2 años HTML/CSS/JS/React
 #              (node_modules/build), 1 año PostgreSQL (postgres_data, *.db), 2 años Docker
@@ -17,6 +17,43 @@
 
 # AetherNet IoT & Autonomous Rover - .gitignore
 # Generated for multi-component project: Python/FastAPI, Android/Kotlin, C++/Arduino, Node-RED, Docker
+
+# =============================================================================
+# Top-level caches/build — fix 2026-09-11: asegura que ./build .gradle .venv .idea no aparezcan como 900 untracked
+# Antes .gradle/ build/ solo ignoraban subdirs; ahora se cubren tanto raíz como anidados
+# =============================================================================
+.gradle/
+**/.gradle/
+.gradle/**
+build/
+**/build/
+out/
+**/out/
+.venv/
+**/.venv/
+venv/
+**/venv/
+.idea/
+**/.idea/
+.coverage
+**/.coverage
+coverage/
+**/coverage/
+.pytest_cache/
+**/.pytest_cache/
+.mypy_cache/
+**/.mypy_cache/
+.ruff_cache/
+**/.ruff_cache/
+local.properties
+**/local.properties
+backend/.env
+backend/mosquitto/log/
+mosquitto/log/
+# whitelists: docs/logs es evidencia trazable Sprint3 — no ignorar (ver Firmare_Notebook)
+!docs/logs/
+!docs/logs/**
+!docs/logs/**/*.log
 
 # =============================================================================
 # Python / Backend / Stats — 2 años Python (venv, pip, ruff, mypy, pytest)

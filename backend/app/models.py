@@ -1,6 +1,6 @@
 # =============================================================================
 # backend/app/models.py — Modelos SQLAlchemy | 6º Semestre UTP | RNF-2.2, HU-01..HU-04
-# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Autor: Andres Felipe Martinez Henao
 # Experiencia: 1 año PostgreSQL (tablas, índices, UUID), 2 años Python (SQLAlchemy),
 #              1 año C (structs), 2 años JS/React (tipos), 2 años electrónica (sensores)
 # Analogía React: estos models son como los types/interfaces de Prisma/Drizzle —

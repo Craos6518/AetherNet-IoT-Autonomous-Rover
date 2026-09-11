@@ -1,7 +1,7 @@
 /*
  * =============================================================================
  * Banco B — Test EMA Aislado Solo UNO | 6º Semestre UTP | HU-03 / RNF-2.1
- * Autor: Est. Tec. Desarrollo Software + Ing. Sistemas (2 años Arduino/C,
+  * Autor: Andres Felipe Martinez Henao
  *        2 años Python/JS/React) — Prototipo filtro stats/ema_filter.py:15
  * Filtro: S_t = α·Y_t + (1-α)·S_{t-1} con α=0.2 (mismo que rover-uno.ino:66)
  * Wiring: HC-SR04 VCC→5V GND→GND TRIG→D2 ECHO→D3 (rover-uno.ino:42)

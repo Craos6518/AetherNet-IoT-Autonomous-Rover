@@ -7,7 +7,7 @@ Carpeta canónica para la asignatura **TS683 Administración y Planeación de Pr
 | Archivo | Descripción |
 |---|---|
 | `Plantilla Proyecto.docx` | Plantilla institucional original (14 secciones) — no editar, es la fuente base. |
-| `Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` | **Documento implementado** — plantilla diligenciada con datos reales de AetherNet. Trabajo individual: **Andrés Felipe Martínez Henao** (09/09/2026). |
+| `Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` | **Documento implementado** — plantilla diligenciada con datos reales de AetherNet. Trabajo individual: **Andres Felipe Martinez Henao** (09/09/2026). |
 | `README.md` | Este índice. |
 
 ## Documento implementado
@@ -42,4 +42,4 @@ Fuente de verdad cruzada: `docs/prd.md`, `requirements.md`, `hardware-inventory.
 
 ## Trabajo individual
 
-Modalidad **solo** — responsable único de todo el WBS y cronograma: **Andrés Felipe Martínez Henao**. Todas las filas de cronograma y matriz RACI apuntan a un solo integrante; la carga se secuencia, no se paraleliza.
+Modalidad **solo** — responsable único de todo el WBS y cronograma: **Andres Felipe Martinez Henao**. Todas las filas de cronograma y matriz RACI apuntan a un solo integrante; la carga se secuencia, no se paraleliza.

@@ -1,7 +1,7 @@
 # Contraste — Administración vs Estadística (AetherNet)
 
 > **Archivos comparados:**
-> - `docs/Administracion de proyectos/Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` (99 KB, 12 tablas, 671 párrafos, 14 secciones — **TS683 Administración**, trabajo individual **Andrés Felipe Martínez Henao**, 09/09/2026)
+> - `docs/Administracion de proyectos/Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` (99 KB, 12 tablas, 671 párrafos, 14 secciones — **TS683 Administración**, trabajo individual **Andres Felipe Martinez Henao**, 09/09/2026)
 > - `docs/Estadistica/Anteproyecto_AetherNet-3.docx` (14 KB, 2 tablas, ~47 párrafos, 8 secciones — **TS4D3 Estadística**, mismo autor, 5º semestre)
 >
 > **Fecha de contraste:** 10/09/2026 — ambos docs vivos, sin contradicciones bloqueantes; el segundo **especializa** lo que el primero deja como `EST-01..07` y `OE-05`.
@@ -21,7 +21,7 @@ El doc de **Administración** es el **plan integral del sistema completo** (app 
 | **Materia UTP** | TS683 Administración y Planeación de Proyectos de Software | TS4D3 Estadística | Complementarias, mismo proyecto integrador |
 | **Alcance** | **Sistema completo** (3 capas: Edge→Gateway→Backend→App/Telegram) | **Solo validación EMA** del HC-SR04 (seguridad anti-choque/caída) | Estadística es subconjunto de Admin §3 OE-05 / §6 WBS 6.x |
 | **Título** | *AetherNet IoT & Autonomous Rover — Plataforma distribuida ... 100% FOSS* | *AetherNet — Validación estadística del filtro EMA con datos externos validados* + `IoT & Autonomous Rover` | Mismo nombre corto, distinto subtítulo (sistema vs validación) |
-| **Autor** | Andrés Felipe Martínez Henao (solo) | Andrés Felipe Martínez Henao (trabajo individual) | ✅ Coherente |
+| **Autor** | Andres Felipe Martinez Henao (solo) | Andres Felipe Martinez Henao (trabajo individual) | ✅ Coherente |
 | **Estructura plantilla** | 14 secciones (Título → Anexos + índice, portada UTP, header/footer) | 8 secciones (Nombre → Datasets) + footnotes, sin WBS/cronograma/costos | Administración sigue plantilla institucional §1-14; Estadística sigue guion TS4D3 |
 | **Justificación** | Nubes propietarias, falta integración app↔firmware↔backend, vacío FOSS + KPIs LAN | Ruido HC-SR04 → riesgo choque/caída Rover; EMA ya es requisito; 531 muestras internas insuficientes → necesita validación externa | Estadística **profundiza** la justificación técnica de HU-03 que Admin menciona en §2 |
 | **Objetivo general** | Desarrollar plataforma integral 100% FOSS con KPIs <50ms, <10ms, >85% en 4 sprints | Confirmar con datos reales externos que EMA α=0.2 reduce ruido de forma consistente con pruebas internas | El OG de Estadística es **criterio de aceptación de OE-05** de Admin |
@@ -44,7 +44,7 @@ El doc de **Administración** es el **plan integral del sistema completo** (app 
 
 1. **Mismo α=0.2, mismo KPI >85%, misma fórmula** `S_t = α·Y_t + (1-α)·S_{t-1}` en ambos (`stats/ema_filter.py:15` ↔ `rover-uno.ino:259` ↔ Anteproyecto §5-6).
 2. **Mismo sensor:** HC-SR04 ultrasónico time-of-flight (Admin: hardware-inventory.md, Rover UNO; Estadística: us_value / distancia_cm).
-3. **Mismo autor y trabajo solo:** ambos declaran Andrés Felipe Martínez Henao, individual — sin conflicto de “Equipo completo” de plantilla genérica.
+3. **Mismo autor y trabajo solo:** ambos declaran Andres Felipe Martinez Henao, individual — sin conflicto de “Equipo completo” de plantilla genérica.
 4. **Mismo marco FOSS 100%:** Admin lo exige (RNF-3.1), Estadística lo respeta (CC BY-SA 4.0 requiere atribución + CC0 sin restricciones).
 5. **Turbidez / condiciones adversas:** Admin menciona `ir_strength` como proxy ambiental; Estadística lo usa como factor para comparar low vs high.
 6. **Los 531 muestras internas** aparecen en ambos (Admin §3 OE-05, §7, §11 y Estadística §3) — reconocimiento de limitación y necesidad de externos.

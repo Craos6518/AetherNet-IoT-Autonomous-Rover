@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.ui.theme
 
 // =============================================================================
 // Theme.kt — Tema Material3 | 6º Semestre UTP
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años HTML/CSS/JS/React (ThemeProvider, CSS variables), 1 año C
 // Analogía React: este archivo es como `ThemeProvider` en React/MUI o `createTheme({palette: {primary: Purple40}})` en MUI —
 // define DarkColorScheme/LightColorScheme y AetherControlTheme que envuelve la app (ver MainActivity.kt:19).

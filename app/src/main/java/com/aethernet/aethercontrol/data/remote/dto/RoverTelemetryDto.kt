@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.data.remote.dto
 
 // =============================================================================
 // RoverTelemetryDto.kt — DTOs Rover Telemetry | 6º Semestre UTP | RF-3.1, RF-3.3, HU-04
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años electrónica/Arduino (L298N, HC-SR04, TCRT5000, nRF24L01),
 //              1 año C (struct RoverTelemetry), 1 año PostgreSQL (rover_telemetry),
 //              2 años Python (Pydantic), 2 años JS/React (DTO)

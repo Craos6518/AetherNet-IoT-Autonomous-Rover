@@ -2,7 +2,7 @@
 /*
  * =============================================================================
  * keypad_control.h — Teclado Matricial 4x4 No Bloqueante | 6º Semestre UTP
- * Autor: Est. Tec. Desarrollo Software + Ing. Sistemas (2 años Arduino/C,
+  * Autor: Andres Felipe Martinez Henao
  *        2 años Python/JS/React) — RF-2.2 / HU-01
  * Hardware: Keypad 4x4 (8 pines MEGA) — librería Keypad 3.1.1 (FOSS)
  * BDD: '#' envía PIN, '*' borra, A-D ignoradas, buffer máx 6, hash djb2

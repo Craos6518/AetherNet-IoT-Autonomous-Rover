@@ -1,7 +1,7 @@
 """
 ==============================================================================
 AetherNet — EMA Filter (Python) | 6º Semestre UTP | RNF-2.1 / HU-03 / KPI >85%
-Autor: Est. Tecnología en Desarrollo de Software + Ing. Sistemas (UTP)
+Autor: Andres Felipe Martinez Henao
 Experiencia: 2 años electrónica/Arduino, 1 año C, 2 años Python/JS/React, 1 año PostgreSQL
 Materia: TS4D3 Estadística — Series temporales, suavizado exponencial (U3)
 FOSS: Python stdlib + SciPy/Pandas (no R propietario) — RNF-3.1

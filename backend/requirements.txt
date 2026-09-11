@@ -1,6 +1,6 @@
 # =============================================================================
 # requirements.txt — Deps Backend Pinneadas | 6º Semestre UTP | FOSS RNF-3.1
-# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Autor: Andres Felipe Martinez Henao
 # Experiencia: 2 años Python (pip freeze), 2 años JS/React (package-lock.json),
 #              1 año C (pin ArduinoJson 6.21.3), 1 año PostgreSQL (asyncpg), 2 años electrónica
 # Analogía JS: este archivo es `package-lock.json` — versiones exactas para CI reproducible.

@@ -1,6 +1,6 @@
 # =============================================================================
 # pyproject.toml — Config Backend | 6º Semestre UTP | FOSS RNF-3.1
-# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Autor: Andres Felipe Martinez Henao
 # Experiencia: 2 años Python (ruff, mypy, pytest), 2 años JS/React (eslint, tsc, jest.config),
 #              1 año PostgreSQL, 1 año C
 # Analogía JS: este archivo es `eslint.config.js` + `tsconfig.json` + `jest.config.js` en uno —

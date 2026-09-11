@@ -2,7 +2,7 @@
 
 > **Rama:** `docs/revision-sprint2-completa` (desde `sprint/2-domotica-acceso@ec5d70b`)
 > **Fecha:** 2026-09-10
-> **Autor:** Andrés Felipe Martínez Henao — revisión integral doc↔código
+> **Autor:** Andres Felipe Martinez Henao — revisión integral doc↔código
 > **Base:** `sprint/2-domotica-acceso` tip `ec5d70b` (merge `c7ce065` laser v2 + `144fda2/9e25a0c/ec5d70b` datasets/admin) vs `origin/develop` (merge-base `c7ce065^`)
 > **Objetivo:** sincronizar TODA la documentación con los cambios reales desde Sprint 2, sin adelantar Sprint 3-4.
 

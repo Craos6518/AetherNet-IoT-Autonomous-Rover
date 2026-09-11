@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.data.remote.dto
 
 // =============================================================================
 // SensorEventDto.kt — DTOs Sensor Events | 6º Semestre UTP | RNF-2.1, HU-03
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 1 año PostgreSQL (init.sql sensor_events), 2 años Python (Pandas EMA),
 //              2 años JS/React (DTOs), 2 años electrónica (HC-SR04, KY-037, TCRT5000)
 // Analogía React: como `interface SensorEvent { sensor_id: string, value: number, filtered_value?: number }`

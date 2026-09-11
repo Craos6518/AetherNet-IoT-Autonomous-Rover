@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.ui.screens
 
 // =============================================================================
 // PinScreen.kt — Pantalla PIN Cerrojo | 6º Semestre UTP | MOV-04 HU-01, RF-2.2
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años HTML/CSS/JS/React (form Grid), 2 años electrónica (keypad 4x4),
 //              2 años Python (validator), 1 año C (PIN buffer)
 // Analogía React: este @Composable es como `function PinScreen({ vm, onBack }) { const {pinInput, isValid, error} = useSelector(vm.pinState); return <div><Dots count={6} filled={pinInput.length} /><Grid rows={rows} /></div> }`

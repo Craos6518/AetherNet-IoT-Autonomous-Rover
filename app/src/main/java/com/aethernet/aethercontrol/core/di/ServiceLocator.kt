@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.core.di
 
 // =============================================================================
 // ServiceLocator.kt — DI Manual Singleton | 6º Semestre UTP | MOV-01 1.2, MOV-03, RNF-3.1
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años JS/React (context, singleton), 2 años Python (DI), 1 año C (singleton),
 //              1 año PostgreSQL (backend URL)
 // Analogía React: este object es como `const ServiceLocator = { repository: createRepository(), updateBaseUrl(url) { ... } }`

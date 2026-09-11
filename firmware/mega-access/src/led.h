@@ -2,7 +2,7 @@
 /*
  * =============================================================================
  * led.h — Control LED RGB Local No Bloqueante | 6º Semestre UTP | HU-01 / HU-02
- * Autor: Est. Tec. Desarrollo Software + Ing. Sistemas (2 años electrónica/Arduino)
+  * Autor: Andres Felipe Martinez Henao
  * Hardware: LED RGB ánodo común en 44(R)/45(G)/46(B) PWM — 220Ω a GND
  * BDD: Verde 5s si PIN OK, rojo 1s si falla, azul 50ms por dígito
  * =============================================================================

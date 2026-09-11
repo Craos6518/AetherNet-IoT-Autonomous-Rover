@@ -1,7 +1,7 @@
 """
 ==============================================================================
 Routers mínimos Sprint 1 — DEVOPS-06 | 6º Semestre UTP | HU-01..HU-04, RNF-2.2
-Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+Autor: Andres Felipe Martinez Henao
 Experiencia: 2 años Python (FastAPI), 2 años JS/React (Express routers),
              1 año PostgreSQL (SELECT, INSERT, ORDER BY, LIMIT/OFFSET),
              2 años electrónica/Arduino (eventos HU-01..HU-04)

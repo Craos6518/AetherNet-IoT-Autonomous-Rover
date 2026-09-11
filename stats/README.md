@@ -1,6 +1,6 @@
 # Stats — Análisis Estadístico AetherNet
 
-> **Autor:** Estudiante 6º semestre Tecnología en Desarrollo de Software + 6º semestre Ingeniería de Sistemas y Computación (UTP)
+> **Autor:** Andres Felipe Martinez Henao
 > **Experiencia:** 2 años electrónica y Arduino | 1 año Programación C | 2 años Python | 2 años HTML/CSS/JS/React | 1 año PostgreSQL
 > **Materia:** TS4D3 Estadística — `docs/UTP/2344_TS4D3 Estadística.pdf` | RNF-2.1, RNF-2.2, HU-03, KPI PRD >85%
 > **Stack:** Python 3.11+ (Pandas, NumPy, SciPy, Matplotlib) + PostgreSQL + Arduino C (EMA portado) — 100% FOSS (RNF-3.1)

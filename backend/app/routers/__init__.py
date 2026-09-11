@@ -1,6 +1,6 @@
 # =============================================================================
 # backend/app/routers/__init__.py — Paquete routers FastAPI | 6º Semestre UTP
-# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Autor: Andres Felipe Martinez Henao
 # Experiencia: 2 años Python (FastAPI APIRouter), 2 años JS/React (Express routers),
 #              1 año PostgreSQL
 # Analogía React/Express: este archivo es el `routers/index.ts` que agrupa

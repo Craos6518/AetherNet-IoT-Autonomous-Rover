@@ -1,7 +1,7 @@
 """
 ==============================================================================
 Pydantic Schemas AetherNet IoT | 6º Semestre UTP | Sprint 1 / DEVOPS-03, DEVOPS-06
-Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+Autor: Andres Felipe Martinez Henao
 Experiencia: 2 años Python (Pydantic), 2 años JS/React (Zod, TypeScript),
              1 año PostgreSQL (tipos VARCHAR, NUMERIC, JSONB), 2 años electrónica
 Materia: TS4D3 Estadística — validación para sensor_events (EMA) y t-Student

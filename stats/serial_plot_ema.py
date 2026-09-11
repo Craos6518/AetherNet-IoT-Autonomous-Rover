@@ -1,7 +1,7 @@
 """
 ==============================================================================
 Serial Plot EMA — Puente UNO → Python | 6º Semestre UTP | HU-03 / EST bench
-Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+Autor: Andres Felipe Martinez Henao
 Experiencia: 2 años Python (pyserial/matplotlib), 2 años electrónica/Arduino
              (HC-SR04, Serial 115200), 2 años JS/React (Chart vivo), 1 año C
 Materia: TS4D3 Estadística — Validación banco físico UNO (firmware/test-ema-uno)

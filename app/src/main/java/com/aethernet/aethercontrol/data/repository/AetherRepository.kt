@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.data.repository
 
 // =============================================================================
 // AetherRepository.kt — Contrato Repositorio | 6º Semestre UTP | MOV-01 4.1 RF-1.1
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años Python (repository pattern), 2 años JS/React (service layer),
 //              1 año PostgreSQL (backend routers/events.py), 1 año C
 // Analogía React: este interface es como `interface ApiService { getHealth(): Promise<HealthResponse> }`
@@ -68,4 +68,8 @@ interface AetherRepository {
 
     /** MOV-04: envía comando de cerrojo/PIN desde la app (HU-01, RF-2.2 S). Usa MQTT si está conectado, fallback HTTP POST source=app. */
     suspend fun sendAccessCommand(pin: String): Result<Unit> // publish aethernet/access/command {"pin":"1234"} -> Gateway -> MEGA (ver MqttManager:162)
+
+    /** MOV-05 RF-1.2: envía vectores joystick normalizados -1..1 o PWM directo -255..255 al Rover vía MQTT aethernet/rover/command. */
+    suspend fun sendRoverCommand(leftPwm: Int, rightPwm: Int, mode: Int = 1): Result<Unit> // publish aethernet/rover/command {"left_pwm":..} -> Gateway handleRoverCommand:303 -> radio.write -> rover-uno.ino:219
+    suspend fun sendRoverVector(x: Float, y: Float): Result<Unit> // helper x,y -1..1 → PWM tank-steering (JoystickMapper)
 }

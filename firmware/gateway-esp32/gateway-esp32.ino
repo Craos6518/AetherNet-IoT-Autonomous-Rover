@@ -1,7 +1,7 @@
 /*
  * =============================================================================
  * AetherNet - Gateway ESP32  |  Proyecto Integrador 6º Semestre
- * Autor: Estudiante Tecnología en Desarrollo de Software + Ing. Sistemas (UTP)
+  * Autor: Andres Felipe Martinez Henao
  * Experiencia: 2 años electrónica/Arduino, 1 año C, 2 años Python/JS/React,
  *              1 año PostgreSQL | Enfoque 100% FOSS (RNF-3.1)
  * =============================================================================

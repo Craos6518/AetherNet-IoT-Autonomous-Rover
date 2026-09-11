@@ -1,6 +1,6 @@
 # `.gitignore` — Mapa de Ignorados AetherNet
 
-> **Autor:** Estudiante 6º semestre Tecnología en Desarrollo de Software + 6º semestre Ingeniería de Sistemas y Computación (UTP)  
+> **Autor:** Andres Felipe Martinez Henao
 > **Experiencia:** 2 años electrónica y Arduino | 1 año Programación C | 2 años Python | 2 años HTML/CSS/JavaScript/React | 1 año PostgreSQL  
 > **Stack:** Git (glob `fnmatch` como `.gitignore`), Python 3.12, Android Gradle, C++ Arduino, Node-RED, Docker — 100% FOSS (RNF-3.1)  
 > **Archivo:** `.gitignore:1` (333 líneas, 13 bloques, 26 `!` whitelists) — ver `git check-ignore -v` para debug
@@ -181,4 +181,3 @@ wc -l .gitignore  # 333 (26 !)
 ---
 
 *Documentado como estudiante 6º semestre que compara `.gitignore` Python (`__pycache__` como `.next`), React (`build/` como `dist/`, `!gradlew` como whitelist), C (`*.o` `*.elf` `gcc`), PostgreSQL (`postgres_data/` volumen), FOSS `RNF-3.1` nunca commitear `secrets.h`/`*.jks`, con `26 !` para trazabilidad sin `git add -f`.*
-

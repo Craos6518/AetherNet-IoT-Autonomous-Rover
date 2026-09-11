@@ -1,6 +1,6 @@
 # Backend — AetherNet FastAPI + PostgreSQL + Mosquitto
 
-> **Autor:** Estudiante 6º semestre Tecnología en Desarrollo de Software + 6º semestre Ingeniería de Sistemas y Computación (UTP)  
+> **Autor:** Andres Felipe Martinez Henao
 > **Experiencia:** 2 años electrónica y Arduino | 1 año Programación C | 2 años Python | 2 años HTML/CSS/JS/React | 1 año PostgreSQL  
 > **Stack:** Python 3.12, FastAPI 0.111, SQLAlchemy 2.0 async, PostgreSQL 16, Mosquitto 2.0, Docker Compose — 100% FOSS (RNF-3.1)  
 > **Sprint:** 1 ✅ (DEVOPS-01/03/06) — CRUD mínimo `HU-01..HU-04`, `RNF-2.2`, `health` CI | Sprint 2+ ⏳ (auth, WS, t-Student)

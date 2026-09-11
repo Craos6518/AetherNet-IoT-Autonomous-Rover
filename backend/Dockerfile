@@ -1,6 +1,6 @@
 # =============================================================================
 # Dockerfile — Backend FastAPI + PostgreSQL | 6º Semestre UTP | RNF-1.1, DEVOPS-01
-# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Autor: Andres Felipe Martinez Henao
 # Experiencia: 2 años Python (Docker), 2 años JS/React (Dockerfile Node),
 #              1 año PostgreSQL (libpq-dev), 2 años electrónica (CI como flasheo)
 # Analogía React: este archivo es el `Dockerfile` de un `create-react-app` pero

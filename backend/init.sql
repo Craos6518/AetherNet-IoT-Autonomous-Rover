@@ -1,6 +1,6 @@
 -- =============================================================================
 -- init.sql — Esquema PostgreSQL Inicial | 6º Semestre UTP | RNF-2.2, DEVOPS-03
--- Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+-- Autor: Andres Felipe Martinez Henao
 -- Experiencia: 1 año PostgreSQL (DDL, índices, UUID, JSONB), 2 años Python (SQLAlchemy),
 --              2 años JS/React (migrations como Prisma), 1 año C (tipos)
 -- Analogía React/Prisma: este archivo es `prisma/migrations/001_init.sql` — crea

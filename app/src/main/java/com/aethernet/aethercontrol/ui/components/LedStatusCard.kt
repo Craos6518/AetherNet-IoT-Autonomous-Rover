@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.ui.components
 
 // =============================================================================
 // LedStatusCard.kt — Card LED Local | 6º Semestre UTP | MOV-02 RF-1.1, HU-01/HU-02
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años HTML/CSS/JS/React (Card como <div class="card">), 2 años electrónica (LED RGB 44/45/46),
 //              2 años Python (LedStateMapper)
 // Analogía React: este @Composable es como `function LedStatusCard({ state, onRetry }) { return <Card><Circle color={state.color} /><Text>{state.label}</Text></Card> }`

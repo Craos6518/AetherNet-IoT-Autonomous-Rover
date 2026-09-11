@@ -64,6 +64,8 @@ class PinViewModelTest {
         override suspend fun postRoverTelemetry(payload: RoverTelemetryCreate) = Result.Error("not impl")
         override suspend fun getLedState(): Result<LedUiState> = Result.Success(LedUiState())
         override suspend fun sendAccessCommand(pin:String): Result<Unit> = sendResult
+        override suspend fun sendRoverCommand(leftPwm: Int, rightPwm: Int, mode: Int): Result<Unit> = Result.Success(Unit)
+        override suspend fun sendRoverVector(x: Float, y: Float): Result<Unit> = Result.Success(Unit)
         fun setMqtt(s: MqttConnectionState){ mqttState=s; _mqtt.value=s}
     }
 

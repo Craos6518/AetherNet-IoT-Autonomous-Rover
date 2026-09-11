@@ -1,7 +1,7 @@
 """
 ==============================================================================
 Visualización EMA — Sprint 1-2 | 6º Semestre UTP | HU-03 / RNF-2.1 / KPI >85%
-Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+Autor: Andres Felipe Martinez Henao
 Experiencia: 2 años Python (matplotlib), 2 años HTML/CSS/JS/React (Chart.js),
              2 años electrónica/Arduino (HC-SR04), 1 año C (port EMA a rover.ino)
 FOSS: matplotlib (como Chart.js en web, pero Python) — RNF-3.1

@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.data.mqtt
 
 // =============================================================================
 // MqttModels.kt — Modelos MQTT y Estado Conexión | 6º Semestre UTP | MOV-03 RF-1.1, RNF-3.1
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años electrónica/Arduino (nRF24L01, UART), 2 años Python (Mosquitto paho-mqtt),
 //              2 años JS/React (MQTT.js, WebSocket), 1 año C (struct RoverTelemetry)
 // Analogía React: estos data class son como `interface MqttMessage { left_pwm: number, ... }` en TS

@@ -1,6 +1,6 @@
 // =============================================================================
 // build.gradle.kts — Build App Android | 6º Semestre UTP | MOV-01, MOV-03, RF-1.1, RNF-3.1
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años JS/React (package.json, Vite), 2 años Python (pyproject.toml),
 //              2 años electrónica (platformio.ini)
 // Analogía React: este archivo es como `package.json` + `vite.config.ts` en React — declara plugins, SDK y dependencias.

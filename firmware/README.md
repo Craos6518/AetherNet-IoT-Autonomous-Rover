@@ -1,6 +1,6 @@
 # Firmware AetherNet — Documentación Técnica
 
-> **Autor:** Estudiante 6º semestre Tecnología en Desarrollo de Software + 6º semestre Ingeniería de Sistemas y Computación (UTP)  
+> **Autor:** Andres Felipe Martinez Henao
 > **Experiencia:** 2 años electrónica y Arduino | 1 año C | 2 años Python | 2 años HTML/CSS/JS/React | 1 año PostgreSQL  
 > **Proyecto Integrador:** AetherNet IoT & Autonomous Rover — 100% FOSS (RNF-3.1)  
 > **Stack firmware:** C++ (Arduino Framework) + PlatformIO + arduino-cli (CI)  
