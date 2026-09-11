@@ -72,3 +72,14 @@ Backlog operativo detallado: [`backlog-administracion.md`](backlog-administracio
 1. **PM-02 (tablero)** primero: sin visualización, velocity/burndown no existen.
 2. Auditoría de secretos YA (riesgo reputacional/seguridad barato de cerrar).
 3. Gantt y presupuesto: una sola sesión de trabajo bien invertida.
+
+## Búsquedas Google por tema
+
+| Tema | Búsqueda sugerida (copiar a Google) |
+|---|---|
+| Scrum backlog MoSCoW | Scrum backlog MoSCoW prioritization tutorial |
+| WBS 40 paquetes | WBS work breakdown structure software project example 40 packages |
+| Matriz riesgos R-01..R-13 | risk register matrix software project probability impact 2024 |
+| Gantt Mermaid | Mermaid Gantt diagram GitHub markdown tutorial |
+| Planning Poker | Planning Poker estimation story points tutorial |
+| Costos 176k | project cost estimation hardware inventory spreadsheet |
