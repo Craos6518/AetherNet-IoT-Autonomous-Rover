@@ -4,6 +4,7 @@
 > **Fuente canónica de pines:** `firmware/gateway-esp32/gateway-esp32.ino:60`, `firmware/rover-uno/rover-uno.ino:34`, `firmware/mega-access/src/config.h:17`, `firmware/test-ema-uno/test-ema-uno.ino:11`, `docs/hardware-inventory.md:6`
 > **Requisitos trazados:** `docs/requirements.md:20` RF-2.x, RF-3.x, RNF-2.1 + `docs/prd.md:51` KPI EMA 85% + HU-01..04
 > **Sprint activo:** Sprint 2 (`docs/sprints.md:52`) — planos P1-P3 son previos/imprimibles hoy; P4-P7 reservados Sprint 3-4 (pre-diseñados para anticipar compras/cableado).
+> **Diarios campo:** `notebooks/Diario_Hardware.ipynb` + `notebooks/Firmware_Notebook.ipynb` — fritzing aquí es referencia, fotos reales en `docs/Firmware/fotos/` y `docs/Hardware/fotos/`; ver `docs/Firmware/README.md`, `docs/Hardware/README.md`.
 
 ---
 
