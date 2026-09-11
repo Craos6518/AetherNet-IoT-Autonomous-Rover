@@ -78,7 +78,7 @@ Sensor (HC-SR04 / KY-037)
    → evento/lectura publicado por MQTT
    → persistido en PostgreSQL (tabla de eventos/sensores, backend/app/models.py, init.sql)
    → extraído posteriormente por stats/ (psycopg2/SQLAlchemy, stats/serial_plot_ema.py, visualize_ema.py)
-   → análisis descriptivo + prueba t-Student/Welch + ANOVA (validado externo 36.5k `water_turbidity_analysis.py` + `water_turbidity_report.json`) → docs/Estadistica/notebook/EMA_Estadistica.ipynb §7c (canónico, docs/notebooks/README.md) + `docs/Estadistica/Datasets/` → docs/reporte final (EST-07)
+   → análisis descriptivo + prueba t-Student/Welch + ANOVA (validado externo 36.5k `water_turbidity_analysis.py` + `water_turbidity_report.json`) → docs/Estadistica/notebook/EMA_Estadistica.ipynb §7c (canónico, docs/docs/README.md) + `docs/Estadistica/Datasets/` → docs/reporte final (EST-07)
 ```
 
 El EMA corre **en el firmware** (decisión en tiempo real); el análisis estadístico más pesado (t-Student, descriptivos) corre **offline en `stats/`** sobre el histórico ya persistido y se documenta en `docs/Estadistica/notebook/EMA_Estadistica.ipynb` (canónico centralizado). No son el mismo paso — confundirlos es un error común al implementar EST-02 vs. EST-04/05.

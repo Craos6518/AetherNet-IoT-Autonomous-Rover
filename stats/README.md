@@ -33,7 +33,7 @@ stats/
 │   └── alpha_sweep.py         # 184 líneas — EST-08 Monte Carlo 100× para justificar α=0.2
 ├── visualize_ema.py           # 140 líneas — CLI matplotlib (single vs compare, CSV/PNG)
 ├── serial_plot_ema.py         # 150 líneas — puente Serial 115200 UNO → gráfica viva + CSV
-├── notebooks/                 # ⚠️ espejo de notebooks/ (canónico) — ver notebooks/README.md
+├── notebooks/                 # ⚠️ espejo de notebooks/ (canónico) — ver docs/README.md
 │   ├── EMA_Estadistica.ipynb  # espejo de docs/Estadistica/notebook/EMA_Estadistica.ipynb — no editar, editar canónico
 │   └── README.md              # explica espejo → notebooks/
 └── data/
@@ -312,7 +312,7 @@ python stats/experiments/alpha_sweep.py
 
 ## 9. `docs/Estadistica/notebook/EMA_Estadistica.ipynb:1` — Bitácora viva TS4D3 (10 celdas, **canónica en `notebooks/`**)
 
-> **Materia Estadística UTP → Proyecto. Todos los números reproducibles (`notebooks §9`). Centralizada en `notebooks/` (ver `notebooks/README.md` y `docs/notebooks/README.md`). `stats/notebooks/` es espejo.**
+> **Materia Estadística UTP → Proyecto. Todos los números reproducibles (`notebooks §9`). Centralizada en `notebooks/` (ver `docs/README.md` y `docs/docs/README.md`). `stats/notebooks/` es espejo.**
 
 **Índice (`notebooks §1`):** 1 UTP→Proyecto, 2 Teoría EMA, 3 Impl Python, 4 Tests, 5 Viz, 6 Barrido α, 7 Banco UNO, 7b Datos reales 531, 8 Roadmap Sprint 3-4, 9 Reproducibilidad.
 
@@ -404,7 +404,7 @@ python serial_plot_ema.py -p /dev/ttyACM0                              # vivo
 python serial_plot_ema.py -p /dev/ttyACM0 --seconds 30 --save data/ema-real-531.csv --png docs/fritzing/ema-real-531.png
 
 # Notebook (canónico centralizado)
-jupyter lab docs/Estadistica/notebook/EMA_Estadistica.ipynb  # canónico — celdas 1-10 reproducibles (ver docs/notebooks/README.md)
+jupyter lab docs/Estadistica/notebook/EMA_Estadistica.ipynb  # canónico — celdas 1-10 reproducibles (ver docs/docs/README.md)
 # espejo: jupyter lab stats/docs/Estadistica/notebook/EMA_Estadistica.ipynb  # solo compatibilidad
 ```
 

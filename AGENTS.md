@@ -13,7 +13,7 @@ Plataforma distribuida de domótica modular, telemetría estadística y robótic
 4. `docs/sprints.md` — planeación Scrum y estado actual del proyecto; consúltalo antes de proponer trabajo, para no adelantar tareas de un sprint cuya base aún no existe.
 5. `docs/roadmap.md` — conocimientos necesarios por materia para desplegar cada componente; útil si el agente necesita explicar o justificar una elección técnica a un colaborador nuevo.
 6. `docs/backlog.md` — backlog operativo por materia (MoSCoW + sprint asignado). Es la fuente de verdad de "qué falta hacer" — un agente debe consultarlo antes de proponer nuevo trabajo, y actualizar el estado de un ítem cuando lo complete.
-7. `notebooks/README.md` + `docs/notebooks/README.md` — índice notebooks centralizados en `notebooks/` (canónico, `stats/notebooks/` solo espejo).
+7. `docs/README.md` + `docs/docs/README.md` — índice notebooks centralizados en `notebooks/` (canónico, `stats/notebooks/` solo espejo).
 
 Si una tarea contradice algo en estos seis archivos, el agente debe señalarlo antes de implementar, no asumir cuál documento tiene prioridad.
 

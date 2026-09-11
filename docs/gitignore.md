@@ -161,7 +161,7 @@ wc -l .gitignore  # 333 (26 !)
 - `docs/prd.md:51` KPI `>85%` (`stats/data/ema_demo.json`), `docs/requirements.md:22 RF-2.2` cerrojo, `docs/sprints.md:13` DEVOPS-05 nRF24 plano `docs/fritzing/mega-cerrojo-v1.fzz`
 - `docs/architecture.md:31` `FastAPI+Mosquitto+PG` + `docs/roadmap.md:86` PG
 - `firmware/gateway-esp32/secrets.h:1` + `secrets.h.example:1` ↔ `.gitignore:225` `firmware/**/secrets.h`
-- `stats/README.md §10` `data/` evidencia + `notebooks/README.md` central `notebooks/` (no `stats/notebooks` duplicado 1.3M)
+- `stats/README.md §10` `data/` evidencia + `docs/README.md` central `notebooks/` (no `stats/notebooks` duplicado 1.3M)
 - `.github/workflows/ci.yml:38` `ruff/mypy` + `:101` `cp secrets.h.example` fallback + `:317` `gradlew` (gracias a `!gradlew`)
 
 ---

@@ -18,4 +18,4 @@ jupyter notebook docs/Estadistica/notebook/EMA_Estadistica.ipynb
 jupyter lab notebooks/
 ```
 
-Ver `notebooks/README.md` y `docs/notebooks/README.md`.
+Ver `docs/README.md` y `docs/docs/README.md`.
