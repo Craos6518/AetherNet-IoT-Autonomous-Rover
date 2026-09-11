@@ -8,7 +8,9 @@ Mapeo entre el contenido oficial de cada asignatura UTP (PDFs en `docs/UTP/`) y 
 | DevOps | Electiva | Área 2 — Infraestructura, CI/CD y Firmware base (`.github/`, `docker-compose.yml`, `firmware/`, `backend/`) | [devops.md](devops.md) | [roadmap-devops.md](roadmap-devops.md) | [backlog-devops.md](backlog-devops.md) |
 | Administración y Planeación de Proyectos | TS683 | Área 4 — Gestión (`docs/sprints.md`, `backlog.md`, `risk-register.md`) | [administracion-proyectos.md](administracion-proyectos.md) | [roadmap-administracion.md](roadmap-administracion.md) | [backlog-administracion.md](backlog-administracion.md) |
 | Programación Móvil | TS6C3 | Área 1 — App AetherControl (`app/`) | [programacion-movil.md](programacion-movil.md) | [roadmap-movil.md](roadmap-movil.md) | [backlog-movil.md](backlog-movil.md) |
-| Automatizaciones LowCode *(sin asignatura)* | — | Área 3 — Node-RED, Telegram (`automation/`) — Tuya cancelado ADR-001 | — | incluido en el documento único | [backlog-lowcode.md](backlog-lowcode.md) |
+| Automatizaciones LowCode *(sin asignatura)* | — | Área 3 — Node-RED, Telegram (`automation/`) — Tuya cancelado ADR-001 | — | [roadmap-lowcode.md](roadmap-lowcode.md) | [backlog-lowcode.md](backlog-lowcode.md) |
+| Firmware (C++/arduino-cli) | — | `firmware/*` + `docs/Firmware/` | [firmware.md](firmware.md) | [roadmap-firmware.md](roadmap-firmware.md) | — |
+| Hardware (Electrónica) | — | `docs/Hardware/` + `docs/hardware-inventory.md` + `docs/fritzing/` | [hardware.md](hardware.md) | [roadmap-hardware.md](roadmap-hardware.md) | — |
 
 **Cómo usar estos documentos:**
 - **Documento académico:** mapeo "qué se ve en el programa del PDF → qué se aplica → dónde está aplicado" (para sustentación/informe).

@@ -46,6 +46,17 @@ Fuente: `firmware/mega-access/src/config.h` (branch `feature/firmware-mega-laser
 
 **Acciones firmware:** `rover-uno.ino:88 MIN_PWM_FOR_MOVEMENT 60→70` (calibrar con chasis cargado), `BASE_SPEED 120→150` si `T4 RF RX` muestra avance lento. **Docs:** actualizar `prd.md` KPI maniobrabilidad y `notebooks/Firmware_Notebook.ipynb` §4.
 
+## Fotos por subsistema (diario de campo)
+
+| Subsistema | Fritzing | Foto real | Estado |
+|---|---|---|---|
+| MEGA Cerrojo | `docs/fritzing/AetherNet-P3-MEGA-Cerrojo-v1-breadboard.png` | `docs/Firmware/fotos/mega-panel.jpg` | ![FOTO PENDIENTE] si no existe — ver `docs/Firmware/README.md` |
+| Rover | `docs/fritzing/AetherNet-P4-Rover-v1-breadboard.png` | `docs/Hardware/fotos/rover-uno.jpg` / `chasis-tt.jpg` | ![FOTO PENDIENTE] — ver `docs/Hardware/README.md` |
+| Gateway | `docs/fritzing/AetherNet-P2-RF-Link-v1-breadboard.png` | `docs/Firmware/fotos/gateway-esp32.jpg` | ![FOTO PENDIENTE] |
+| Láser | `docs/fritzing/AetherNet-P5-Laser-v1-breadboard.png` | `docs/Firmware/fotos/laser-ldr.jpg` | ![FOTO PENDIENTE] |
+
+> Instrucción: 12MP, luz natural, fondo blanco, incluir regla. Checklist en cada `docs/<Materia>/README.md`.
+
 ## Pendiente de definición
 
 - Pines exactos del LED RGB en el MEGA (documentar en el firmware, no aquí).
