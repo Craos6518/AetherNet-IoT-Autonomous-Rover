@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol
 
 // =============================================================================
 // MainActivity.kt — Activity Principal | 6º Semestre UTP | RF-1.1
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años JS/React (App.jsx, Router), 2 años HTML/CSS (edge-to-edge),
 //              2 años electrónica (Dashboard)
 // Analogía React: este class es como `function MainActivity() { return <AetherControlTheme><NavGraph /></AetherControlTheme> }`
@@ -21,6 +21,7 @@ import com.aethernet.aethercontrol.core.di.ServiceLocator // ServiceLocator — 
 import com.aethernet.aethercontrol.ui.navigation.NavGraph // NavGraph — como `<Router><Routes>...</Routes></Router>` en React Router
 import com.aethernet.aethercontrol.ui.theme.AetherControlTheme // Theme — como `<ThemeProvider theme={theme}>` en MUI React
 import com.aethernet.aethercontrol.ui.viewmodel.DashboardViewModelFactory // Factory — como `createViewModelFactory(repo)` en React
+import com.aethernet.aethercontrol.ui.viewmodel.JoystickViewModel
 import com.aethernet.aethercontrol.ui.viewmodel.PinViewModel
 
 class MainActivity : ComponentActivity() { // ComponentActivity — Activity base para Compose (como `class App extends Component` en React)
@@ -34,7 +35,8 @@ class MainActivity : ComponentActivity() { // ComponentActivity — Activity bas
                 val vm: com.aethernet.aethercontrol.ui.viewmodel.DashboardViewModel =
                     viewModel(factory = vmFactory) // DashboardVM — como `const vm = useViewModel(factory, 'dashboard')` en React (crea/reusa ViewModel)
                 val pinVm: PinViewModel = viewModel(factory = vmFactory) // PinVM — MOV-04 Plan B, mismo factory reusa repo (como `useViewModel(factory, 'pin')`)
-                NavGraph(viewModel = vm, pinViewModel = pinVm) // NavGraph — como `<NavGraph viewModel={vm} pinViewModel={pinVm} />` en React Router
+                val joyVm: JoystickViewModel = viewModel(factory = vmFactory) // JoystickVM — MOV-05 RF-1.2 joystick virtual Rover (tank-steering)
+                NavGraph(viewModel = vm, pinViewModel = pinVm, joystickViewModel = joyVm) // NavGraph — como `<NavGraph ... />` en React Router
             }
         }
     }

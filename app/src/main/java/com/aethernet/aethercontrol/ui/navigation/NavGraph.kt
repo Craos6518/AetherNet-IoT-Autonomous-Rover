@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.ui.navigation
 
 // =============================================================================
 // NavGraph.kt — Navegación Compose | 6º Semestre UTP | MOV-01 5.3, MOV-04 Plan B
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años JS/React (React Router), 1 año C
 // Analogía React: este archivo es como `App.jsx` con `BrowserRouter` + `Routes` + `Route path="dashboard"` en React Router —
 // aquí con NavHost + composable(Dest.Dashboard.route) en Jetpack Navigation Compose.
@@ -18,8 +18,10 @@ import androidx.navigation.compose.NavHost // NavHost — como `<Routes>` en Rea
 import androidx.navigation.compose.composable // composable — como `<Route path="dashboard" element={<DashboardScreen />} />` en React Router
 import androidx.navigation.compose.rememberNavController // rememberNavController — como `useNavigate()` hook en React Router
 import com.aethernet.aethercontrol.ui.screens.DashboardScreen
+import com.aethernet.aethercontrol.ui.screens.JoystickScreen
 import com.aethernet.aethercontrol.ui.screens.PinScreen
 import com.aethernet.aethercontrol.ui.viewmodel.DashboardViewModel
+import com.aethernet.aethercontrol.ui.viewmodel.JoystickViewModel
 import com.aethernet.aethercontrol.ui.viewmodel.PinViewModel
 
 /**
@@ -29,12 +31,14 @@ import com.aethernet.aethercontrol.ui.viewmodel.PinViewModel
 sealed class Dest(val route: String) { // sealed — como `enum Route` en TS pero con type safety
     object Dashboard : Dest("dashboard") // ruta "dashboard" — como `path: "/dashboard"` en React Router
     object Pin : Dest("pin") // ruta "pin" — MOV-04 Plan B — como `path: "/pin"` para PinScreen dedicada (no card embebida)
+    object Joystick : Dest("joystick") // ruta "joystick" — MOV-05 RF-1.2 — como `path: "/joystick"` para JoystickScreen (mando virtual Rover)
 }
 
 @Composable
 fun NavGraph(
     viewModel: DashboardViewModel, // Dashboard VM — como prop `dashboardViewModel` en React <NavGraph />
     pinViewModel: PinViewModel, // Pin VM — MOV-04 Plan B (PinScreen dedicada, no comparte Dashboard VM)
+    joystickViewModel: JoystickViewModel, // Joystick VM — MOV-05 RF-1.2 (mando virtual Rover)
     navController: NavHostController = rememberNavController() // controller — como `const navigate = useNavigate()` en React Router
 ) {
     NavHost( // NavHost — como `<Routes>` en React Router, contenedor de rutas
@@ -42,10 +46,17 @@ fun NavGraph(
         startDestination = Dest.Dashboard.route // inicio "dashboard" — como `initialRouteName="dashboard"` en React Navigation
     ) {
         composable(Dest.Dashboard.route) { // ruta dashboard — como `<Route path="dashboard" element={<DashboardScreen />}>` en React Router
-            DashboardScreen(vm = viewModel, onOpenPin = { navController.navigate(Dest.Pin.route) }) // callback navega a pin — como `onClick={() => navigate('/pin')}` en React
+            DashboardScreen(
+                vm = viewModel,
+                onOpenPin = { navController.navigate(Dest.Pin.route) },
+                onOpenJoystick = { navController.navigate(Dest.Joystick.route) }
+            ) // callback navega a pin/joystick — como `onClick={() => navigate('/pin')}` en React
         }
         composable(Dest.Pin.route) { // ruta pin — MOV-04 Plan B
             PinScreen(vm = pinViewModel, onBack = { navController.popBackStack() }) // popBackStack — como `navigate(-1)` en React Router (volver Dashboard)
+        }
+        composable(Dest.Joystick.route) { // ruta joystick — MOV-05 RF-1.2
+            JoystickScreen(vm = joystickViewModel, onBack = { navController.popBackStack() }) // joystick virtual — Canvas + X,Y -1..1 → PWM tank
         }
     }
 }

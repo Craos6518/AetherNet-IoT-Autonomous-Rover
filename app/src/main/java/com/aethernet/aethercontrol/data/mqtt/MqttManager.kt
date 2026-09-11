@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.data.mqtt
 
 // =============================================================================
 // MqttManager.kt — Gestor MQTT Paho | 6º Semestre UTP | MOV-03 RF-1.1, RNF-3.1
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años Python (paho-mqtt), 2 años JS/React (MQTT.js, WebSocket),
 //              2 años electrónica/Arduino (nRF24L01, UART), 1 año C (callbacks),
 //              1 año PostgreSQL (backend Mosquitto)
@@ -202,6 +202,35 @@ class MqttManager(private val appContext: Context) {
                 com.aethernet.aethercontrol.util.Result.Success(Unit) // éxito — como {ok:true} en TS
             } catch (e: Exception) {
                 com.aethernet.aethercontrol.util.Result.Error(e.message ?: "publish fail", e) // error — como {ok:false, error:e.message}
+            }
+        }
+
+    /**
+     * MOV-05 RF-1.2 — Publica comando de tracción Rover vía MQTT.
+     * Payload espejo gateway-esp32.ino:303 handleRoverCommand StaticJsonDocument<256>:
+     *   {"left_pwm":120,"right_pwm":120,"mode":1} -> Gateway subscribe aethernet/rover/command:69 -> radio.write nRF24L01 -> rover-uno.ino:219
+     * QoS 0 LAN <50ms prd.md:50 / RF <10ms prd.md:51 — no retenido (retain false evita comando viejo al reconectar).
+     * Valida clamp -255..255 y mode 0..2 espejo rover-uno.ino:109.
+     */
+    suspend fun publishRoverCommand(leftPwm: Int, rightPwm: Int, mode: Int = 1): com.aethernet.aethercontrol.util.Result<Unit> =
+        withContext(Dispatchers.IO) {
+            try {
+                val c = client
+                if (c == null || !c.isConnected) {
+                    return@withContext com.aethernet.aethercontrol.util.Result.Error("MQTT no conectado — verifica 1883/9001 y broker ${getBrokerHostFromHttpUrl("http://temp")}")
+                }
+                if (leftPwm !in -255..255 || rightPwm !in -255..255) {
+                    return@withContext com.aethernet.aethercontrol.util.Result.Error("PWM fuera de rango -255..255")
+                }
+                if (mode !in 0..2) {
+                    return@withContext com.aethernet.aethercontrol.util.Result.Error("mode inválido 0..2")
+                }
+                val payload = """{"left_pwm":$leftPwm,"right_pwm":$rightPwm,"mode":$mode}"""
+                val msg = MqttMessage(payload.toByteArray()).apply { qos = 0; isRetained = false }
+                c.publish("aethernet/rover/command", msg)
+                com.aethernet.aethercontrol.util.Result.Success(Unit)
+            } catch (e: Exception) {
+                com.aethernet.aethercontrol.util.Result.Error(e.message ?: "publish fail", e)
             }
         }
 

@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.data.repository
 
 // =============================================================================
 // AetherRepositoryImpl.kt — Implementación Repositorio | 6º Semestre UTP | MOV-01 4.2 + MOV-03
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años Python (service impl), 2 años JS/React (api service), 2 años electrónica (Gateway),
 //              1 año C (safeCall)
 // Analogía React: este class es como `class AetherRepositoryImpl implements AetherRepository { async getHealth() { return safeCall(() => fetch('/health')) } }`
@@ -108,5 +108,23 @@ class AetherRepositoryImpl(
             return Result.Error("MQTT no conectado — verifica 1883/9001 y broker ${m.getBrokerHostFromHttpUrl("http://temp")}") // como `if (!socket.connected) return Error`
         }
         return m.publishAccessCommand(pin) // delega a MqttManager.publishAccessCommand — valida 4..6 dígitos y publish (MqttManager:162)
+    }
+
+    // MOV-05 RF-1.2 — envía comando Rover vía MQTT aethernet/rover/command {"left_pwm":..,"right_pwm":..,"mode":1}
+    // Gateway handleRoverCommand:303 parse JSON → RoverCommand struct → radio.write nRF24L01 → rover-uno.ino:219 handleRfCommands
+    // QoS 0 <50ms MQTT / <10ms RF (prd.md:49-50), retain false para no reenviar viejo al reconectar.
+    override suspend fun sendRoverCommand(leftPwm: Int, rightPwm: Int, mode: Int): Result<Unit> {
+        val m = mqtt ?: return Result.Error("MQTT no inicializado")
+        val st = m.connectionState.value
+        if (st !is MqttConnectionState.Connected) {
+            return Result.Error("MQTT no conectado — verifica 1883/9001 y broker ${m.getBrokerHostFromHttpUrl("http://temp")}")
+        }
+        return m.publishRoverCommand(leftPwm, rightPwm, mode)
+    }
+
+    override suspend fun sendRoverVector(x: Float, y: Float): Result<Unit> {
+        val (l, r) = com.aethernet.aethercontrol.domain.model.JoystickMapper.vectorToPwm(x, y, applyDeadband = true)
+        val mode = if (l == 0 && r == 0) 0 else 1
+        return sendRoverCommand(l, r, mode)
     }
 }

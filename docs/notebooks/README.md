@@ -1,12 +1,13 @@
 # Notebooks — Centralizado en `notebooks/` (Raíz)
 
-> **Autor 6º semestre:** Tecnología en Desarrollo de Software + Ingeniería de Sistemas (UTP) — 2y electrónica/Arduino, 1y C, 2y Python, 2y React, 1y PostgreSQL
+> **Autor:** Andres Felipe Martinez Henao
 
 Todos los notebooks viven en **`notebooks/`** (raíz). `docs/notebooks/` solo redirige, `stats/notebooks/` es espejo de compatibilidad.
 
 | Notebook canónico | Descripción | Materia / Sprint | `sys.path` |
 |---|---|---|---|
 | `notebooks/AetherControl_Notebook.ipynb` | App Android **AetherControl** — Kotlin desde cero (`val`/`var`, null-safety, `sealed interface`, Compose `StateFlow`/`ViewModel`/`Repository`) + 7 ejercicios integradores | Móvil Sprint 1-2 — RF-1.1, RNF-3.1 | detecta `app/src/` |
+| `notebooks/Firmware_Notebook.ipynb` | Firmware — `MEGA`+`Gateway`+`Rover`+Joystick RF-2.1/3.1 HU-01/02/03/04 MOV-05/06 validado HW 2026-09-11 `docs/logs/firmware_sprint3/` | Firmware Sprint 1-3 | detecta `firmware/` |
 | `notebooks/EMA_Estadistica.ipynb` | Estadística TS4D3 — EMA `S_t=α·Y_t+(1-α)·S_{t-1}` α=0.2 HU-03, ruido HC-SR04 σ8, KPI >85%, Monte Carlo 100× `alpha_sweep.py`, banco UNO `test-ema-uno.ino` D2/D3, `t-Student` plan | Estadística Sprint 1-4 — RNF-2.1, RNF-2.2, HU-03 | detecta `stats/ema_filter.py` |
 
 ```

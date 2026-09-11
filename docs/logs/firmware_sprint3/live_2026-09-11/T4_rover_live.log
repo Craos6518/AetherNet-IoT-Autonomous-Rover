@@ -1,0 +1,258 @@
+
+=== AetherNet Rover UNO Starting ===
+nRF24L01 initialized
+Rover ready - awaiting commands
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=0 R=0 mode=0
+RF RX: L=0 R=0 mode=0
+RF RX: L=0 R=63 mode=1
+RF RX: L=-78 R=77 mode=1
+RF RX: L=-121 R=65 mode=1
+RF RX: L=-145 R=0 mode=1
+RF RX: L=-159 R=0 mode=1
+RF RX: L=-157 R=0 mode=1
+RF RX: L=-143 R=0 mode=1
+RF RX: L=-107 R=-96 mode=1
+RF RX: L=0 R=-129 mode=1
+RF RX: L=0 R=-132 mode=1
+RF RX: L=63 R=-118 mode=1
+RF RX: L=115 R=-79 mode=1
+RF RX: L=150 R=0 mode=1
+RF RX: L=155 R=0 mode=1
+RF RX: L=131 R=89 mode=1
+RF RX: L=93 R=129 mode=1
+RF RX: L=0 R=143 mode=1
+RF RX: L=0 R=121 mode=1
+RF RX: L=-62 R=74 mode=1
+RF RX: L=-88 R=0 mode=1
+RF RX: L=-94 R=0 mode=1
+RF RX: L=-84 R=-82 mode=1
+RF RX: L=0 R=-156 mode=1
+RF RX: L=0 R=-226 mode=1
+RF RX: L=73 R=-255 mode=1
+RF RX: L=140 R=-255 mode=1
+RF RX: L=217 R=-241 mode=1
+RF RX: L=255 R=-170 mode=1
+RF RX: L=255 R=-69 mode=1
+RF RX: L=255 R=0 mode=1
+RF RX: L=226 R=96 mode=1
+RF RX: L=148 R=143 mode=1
+RF RX: L=0 R=153 mode=1
+RF RX: L=0 R=139 mode=1
+RF RX: L=-88 R=102 mode=1
+RF RX: L=-131 R=0 mode=1
+RF RX: L=-146 R=-91 mode=1
+RF RX: L=-124 R=-184 mode=1
+RF RX: L=-63 R=-255 mode=1
+RF RX: L=0 R=-255 mode=1
+RF RX: L=74 R=-255 mode=1
+RF RX: L=137 R=-255 mode=1
+RF RX: L=193 R=-255 mode=1
+RF RX: L=241 R=-255 mode=1
+RF RX: L=255 R=-224 mode=1
+RF RX: L=255 R=-154 mode=1
+RF RX: L=255 R=-74 mode=1
+RF RX: L=220 R=0 mode=1
+RF RX: L=107 R=0 mode=1
+RF RX: L=0 R=0 mode=0
+RF RX: L=-82 R=0 mode=1
+RF RX: L=-131 R=0 mode=1
+RF RX: L=-160 R=0 mode=1
+RF RX: L=-168 R=-141 mode=1
+RF RX: L=-136 R=-255 mode=1
+RF RX: L=0 R=-255 mode=1
+RF RX: L=0 R=-255 mode=1
+RF RX: L=82 R=-255 mode=1
+RF RX: L=102 R=-255 mode=1
+RF RX: L=108 R=-255 mode=1
+RF RX: L=102 R=-255 mode=1
+RF RX: L=86 R=-255 mode=1
+RF RX: L=0 R=-255 mode=1
+RF RX: L=0 R=0 mode=0
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=0 R=0 mode=0
+RF RX: L=127 R=0 mode=1
+RF RX: L=192 R=124 mode=1
+RF RX: L=255 R=200 mode=1
+RF RX: L=255 R=231 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=255 R=252 mode=1
+RF RX: L=255 R=249 mode=1
+RF RX: L=255 R=247 mode=1
+RF RX: L=255 R=245 mode=1
+RF RX: L=255 R=243 mode=1
+RF RX: L=255 R=243 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=255 R=242 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=255 R=242 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=255 R=241 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=255 R=240 mode=1
+RF RX: L=255 R=240 mode=1
+RF RX: L=255 R=238 mode=1
+RF RX: L=255 R=236 mode=1
+RF RX: L=255 R=234 mode=1
+RF RX: L=255 R=229 mode=1
+RF RX: L=255 R=223 mode=1
+RF RX: L=255 R=218 mode=1
+RF RX: L=255 R=211 mode=1
+RF RX: L=255 R=191 mode=1
+RF RX: L=255 R=153 mode=1
+RF RX: L=255 R=90 mode=1
+RF RX: L=255 R=0 mode=1
+RF RX: L=255 R=0 mode=1
+RF RX: L=255 R=-81 mode=1
+RF RX: L=255 R=-121 mode=1
+RF RX: L=255 R=-157 mode=1
+RF RX: L=255 R=-183 mode=1
+RF RX: L=255 R=-202 mode=1
+RF RX: L=255 R=-216 mode=1
+RF RX: L=255 R=-247 mode=1
+RF RX: L=255 R=-254 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=247 R=-255 mode=1
+RF RX: L=243 R=-255 mode=1
+RF RX: L=240 R=-255 mode=1
+RF RX: L=236 R=-255 mode=1
+RF RX: L=233 R=-255 mode=1
+RF RX: L=233 R=-255 mode=1
+RF RX: L=231 R=-255 mode=1
+RF RX: L=231 R=-255 mode=1
+RF RX: L=229 R=-255 mode=1
+RF RX: L=229 R=-255 mode=1
+RF RX: L=229 R=-255 mode=1
+RF RX: L=229 R=-255 mode=1
+RF RX: L=228 R=-255 mode=1
+RF RX: L=228 R=-255 mode=1
+RF RX: L=227 R=-255 mode=1
+RF RX: L=227 R=-255 mode=1
+RF RX: L=227 R=-255 mode=1
+RF RX: L=227 R=-255 mode=1
+RF RX: L=227 R=-255 mode=1
+RF RX: L=227 R=-255 mode=1
+RF RX: L=225 R=-255 mode=1
+RF RX: L=223 R=-255 mode=1
+RF RX: L=222 R=-255 mode=1
+RF RX: L=222 R=-255 mode=1
+RF RX: L=222 R=-255 mode=1
+RF RX: L=221 R=-255 mode=1
+RF RX: L=221 R=-255 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=220 R=-255 mode=1
+RF RX: L=220 R=-255 mode=1
+RF RX: L=220 R=-255 mode=1
+RF RX: L=220 R=-255 mode=1
+RF RX: L=220 R=-255 mode=1
+RF RX: L=221 R=-255 mode=1
+RF RX: L=221 R=-255 mode=1
+RF RX: L=221 R=-255 mode=1
+RF RX: L=221 R=-255 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=221 R=-255 mode=1
+RF RX: L=221 R=-255 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=221 R=-255 mode=1
+RF RX: L=216 R=-255 mode=1
+RF RX: L=206 R=-255 mode=1
+RF RX: L=168 R=-255 mode=1
+RF RX: L=61 R=-255 mode=1
+RF RX: L=0 R=-255 mode=1
+RF RX: L=-159 R=-255 mode=1
+RF RX: L=-212 R=-255 mode=1
+RF RX: L=-234 R=-255 mode=1
+RF RX: L=-249 R=-255 mode=1
+RF RX: L=-255 R=-249 mode=1
+RF RX: L=-255 R=-243 mode=1
+RF RX: L=-255 R=-240 mode=1
+RF RX: L=-255 R=-240 mode=1
+RF RX: L=-255 R=-242 mode=1
+RF RX: L=-255 R=-243 mode=1
+RF RX: L=-255 R=-243 mode=1
+RF RX: L=-255 R=-243 mode=1
+RF RX: L=-255 R=-243 mode=1
+RF RX: L=-255 R=-244 mode=1
+RF RX: L=-255 R=-245 mode=1
+RF RX: L=-255 R=-245 mode=1
+RF RX: L=-255 R=-246 mode=1
+RF RX: L=-255 R=-248 mode=1
+RF RX: L=-255 R=-249 mode=1
+RF RX: L=-255 R=-250 mode=1
+RF RX: L=-255 R=-251 mode=1
+RF RX: L=-255 R=-252 mode=1
+RF RX: L=-255 R=-252 mode=1
+RF RX: L=-255 R=-253 mode=1
+RF RX: L=-255 R=-254 mode=1
+RF RX: L=-255 R=-254 mode=1
+RF RX: L=-254 R=-255 mode=1
+RF RX: L=-254 R=-255 mode=1
+RF RX: L=-254 R=-255 mode=1
+RF RX: L=-254 R=-255 mode=1
+RF RX: L=-254 R=-255 mode=1
+RF RX: L=-253 R=-255 mode=1
+RF RX: L=-251 R=-255 mode=1
+RF RX: L=-250 R=-255 mode=1
+RF RX: L=-250 R=-255 mode=1
+RF RX: L=-250 R=-255 mode=1
+RF RX: L=-249 R=-255 mode=1
+RF RX: L=-248 R=-255 mode=1
+RF RX: L=-247 R=-255 mode=1
+RF RX: L=-246 R=-255 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=-246 R=-255 mode=1
+RF RX: L=-246 R=-255 mode=1
+RF RX: L=-245 R=-255 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=-244 R=-255 mode=1
+RF RX: L=-243 R=-255 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=-242 R=-255 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=-242 R=-255 mode=1
+RF RX: L=-242 R=-255 mode=1
+RF RX: L=-241 R=-255 mode=1
+RF RX: L=-242 R=-255 mode=1
+RF RX: L=-246 R=-255 mode=1
+RF RX: L=-255 R=-252 mode=1
+RF RX: L=-255 R=-117 mode=1
+RF RX: L=-255 R=0 mode=1
+RF RX: L=-255 R=85 mode=1
+RF RX: L=-255 R=146 mode=1
+RF RX: L=-255 R=178 mode=1
+RF RX: L=-255 R=198 mode=1
+RF RX: L=-255 R=215 mode=1
+RF RX: L=-255 R=227 mode=1
+RF RX: L=-255 R=238 mode=1
+RF RX: L=-255 R=247 mode=1
+RF RX: L=-255 R=253 mode=1
+RF RX: L=-253 R=255 mode=1
+RF RX: L=-250 R=255 mode=1
+RF RX: L=-250 R=255 mode=1
+RF RX: L=-253 R=255 mode=1
+RF RX: L=-255 R=255 mode=1
+RF RX: L=-255 R=254 mode=1
+RF RX: L=-255 R=254 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=-255 R=253 mode=1
+RF RX: L=-255 R=252 mode=1
+RF RX: L=-255 R=251 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=-255 R=250 mode=1
+RF RX: L=-255 R=249 mode=1
+RF RX: L=-255 R=249 mode=1
+RF RX: L=-255 R=249 mode=1
+RF RX: L=-255 R=249 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=-255 R=248 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=-255 R=247 mode=1
+RF RX: L=-255 R=246 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=-255 R=245 mode=1
+RF RX: L=-255 R=245 mode=1
+RF RX: L=-255 R=244 mode=1
+RF RX: L=-255 R=243 mode=1
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!
+RF RX: L=0 R=0 mode=0
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!

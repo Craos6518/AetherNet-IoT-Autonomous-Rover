@@ -1,0 +1,4 @@
+=== AetherNet Rover UNO Starting ===
+nRF24L01 initialized
+Rover ready - awaiting commands
+!!! FAIL-SAFE ACTIVATED: No RF signal !!!

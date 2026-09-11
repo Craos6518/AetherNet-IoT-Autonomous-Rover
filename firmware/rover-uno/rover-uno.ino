@@ -1,9 +1,9 @@
 /*
  * =============================================================================
  * AetherNet - Rover UNO Autonomous Tank | 6º Semestre UTP | RF-3.1/3.2 + HU-03/04
- * Autor: Est. Tec. Desarrollo Software + Ing. Sistemas (2 años electrónica/Arduino,
+  * Autor: Andres Felipe Martinez Henao
  *        1 año C, 2 años Python/JS/React, 1 año PostgreSQL) — 100% FOSS
- * Hardware: Arduino UNO + L298N + HC-SR04 + 3x TCRT5000 + nRF24L01
+ * Hardware: Arduino UNO + Chasis TT 6V 1:48 ×4 (antes 9-12V 3.5 KG·cm) + L298N + HC-SR04 + 3x TCRT5000 + nRF24L01
  * Fail-safe: 500ms sin RF válido → stopMotors() (HU-04, como circuit breaker)
  * EMA: S_t = α·Y_t + (1-α)·S_{t-1} con α=0.2 (HU-03 / RNF-2.1)
  * =============================================================================
@@ -85,10 +85,10 @@ const byte gatewayAddress[6] = "GATEW"; // Dirección RF del Gateway (para ACK)
 // α pequeño = más suavizado, más lag; α=0.2 es compromiso (KPI reducción ruido >85%)
 #define EMA_ALPHA 0.2f
 
-// Límites motores
+// Límites motores — TT 6V 1:48 (actual 2026-09-11) vs 9-12V 3.5 KG·cm inicial
 #define MAX_PWM 255                // PWM máx 8-bit (0-255) — como opacity 0-1 en CSS pero 0-255
-#define MIN_PWM_FOR_MOVEMENT 60    // Mínimo para vencer fricción oruga — por debajo solo zumba/calienta
-// Lo medí: con 40 el motor no se mueve, con 60 arranca. Deadband evita jitter cerca de 0.
+#define MIN_PWM_FOR_MOVEMENT 60    // Mínimo para vencer fricción oruga TT 1:48 — por debajo solo zumba/calienta (medido 60 con TT 6V; original 9-12V era 40). Recalibrar con `hardware-inventory.md` calce si pesa >1kg → subir a 70.
+// Lo medí: TT 1:48 con 40 no se mueve, con 60 arranca en mesa lisa. Deadband evita jitter cerca de 0.
 
 // Umbrales evasión obstáculos (cm) — calibrados con regla y pruebas reales
 #define OBSTACLE_DISTANCE_CM 30    // <30cm = obstáculo frontal, girar

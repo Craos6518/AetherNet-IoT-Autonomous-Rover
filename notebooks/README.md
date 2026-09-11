@@ -7,6 +7,7 @@ Carpeta centralizada de **todos** los notebooks del proyecto. Antes estaban disp
 | Notebook | Descripción | Materia / Sprint | Ejecutar |
 |---|---|---|---|
 | [`AetherControl_Notebook.ipynb`](AetherControl_Notebook.ipynb) | App Android **AetherControl** — Notas de dev/estudiante, decisiones arquitectura (ADR), palabras reservadas y sintaxis Kotlin desde cero (`val`/`var`, tipos, null-safety, listas, `if`/`when`, `for`/`while`, `fun`, `data class`, `sealed interface`, lambdas, Compose) + 7 ejercicios integradores con `StateFlow`/`ViewModel`/`Repository` | Movil (Sprint 1) — RF-1.1, RNF-3.1 | `jupyter notebook notebooks/AetherControl_Notebook.ipynb` |
+| [`Firmware_Notebook.ipynb`](Firmware_Notebook.ipynb) | Firmware integrado — `MEGA` cerrojo/láser RF-2.2/2.3 + `Gateway ESP32` RF-2.1 + `Rover UNO` RF-3.1/3.2 + Joystick nRF24 MOV-05/06 validado HW 2026-09-11 (4 logs `docs/logs/firmware_sprint3/`) | Firmware Sprint 1-3 — HU-01/02/03/04 | `jupyter notebook notebooks/Firmware_Notebook.ipynb` |
 | [`EMA_Estadistica.ipynb`](EMA_Estadistica.ipynb) | Estadística aplicada — Filtro EMA `S_t = α·Y_t + (1-α)·S_{t-1}` (α=0.2 HU-03), simulación ruido HC-SR04, KPI >85%, barrido α Monte Carlo 100×, banco físico UNO, t-Student plan | TS4D3 Estadística (Sprint 1-4) — RNF-2.1, RNF-2.2, HU-03 | `jupyter notebook notebooks/EMA_Estadistica.ipynb` |
 
 ## 🗂️ Estructura del proyecto
