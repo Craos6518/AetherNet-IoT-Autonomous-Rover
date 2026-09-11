@@ -72,10 +72,12 @@ La app está en fase **fundacional**: la arquitectura (MVVM + estados sellados +
 | Base de datos local Room | ✅ Definida | `data/local/*` |
 | Cliente MQTT | ❌ TODO contractual (`connect()`, publicación a topics) | `DashboardViewModel.kt:50-75` |
 | Pantallas Compose de luces/dashboard | ❌ Pendiente | Backlog MOV-02/MOV-08 (Sprint 2/4) |
-| Joystick virtual | ❌ Pendiente | Backlog MOV-05/06 (Sprint 3) |
+| Joystick virtual | ✅ Done `feature/app-joystick-virtual` 2026-09-11 `JoystickScreen` Canvas 120dp + `MqttManager` QoS0 + `JoystickMapperTest` 10 + `ViewModelTest` 6 | `app/src/main/java/com/aethernet/aethercontrol/ui/screens/JoystickScreen.kt` · `MqttManager.kt` · `JoystickMapperTest.kt` (10 tests) · `JoystickViewModelTest.kt` (6 tests) |
 | Fallback Bluetooth SPP | ❌ Pendiente | Backlog MOV-07 (Sprint 3) |
 | Tests unitarios de ViewModels | ❌ Pendiente | Backlog MOV-10 (Sprint 4, JUnit) |
 | Build CI de Android | ⚠️ Plantilla desactivada hasta que exista Gradle | `ci.yml` job `android-build` (`if: false`) |
+
+> 📸 **Capturas APP:** diario visual en `docs/Programacion-Movil/capturas/` — ver `docs/Programacion-Movil/capturas/README.md` y `notebooks/AetherControl_Notebook.ipynb` § 📸 Capturas APP (diario visual). Checklist: `dashboard-led.png`, `pin-screen.png`, `joystick-drag.png`, `mqtt-status.png`, `rover-card.png` (SM-X620 1080×2400).
 
 ---
 

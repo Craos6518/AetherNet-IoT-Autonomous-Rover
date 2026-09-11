@@ -64,6 +64,20 @@ Backlog operativo detallado: [`backlog-movil.md`](backlog-movil.md)
 
 ---
 
+## Búsquedas Google por bloque
+
+| Bloque | Búsqueda sugerida (copiar a Google) |
+|---|---|
+| Compose Canvas joystick | Jetpack Compose Canvas pointerInput detectDragGestures joystick |
+| Paho MQTT Android | Eclipse Paho Android MQTT client tutorial 2024 StateFlow |
+| Coroutines StateFlow | Kotlin StateFlow ViewModel collectAsState lifecycle |
+| Room offline cache | Android Room database DAO MVVM tutorial |
+| Bluetooth SPP | Android Bluetooth Classic SPP HC-06 BluetoothSocket tutorial |
+| Retrofit + kotlinx.serialization | Retrofit kotlinx serialization Android tutorial |
+| Material3 Theming | Material3 theming Jetpack Compose tutorial |
+
+---
+
 ## Orden crítico
 
 1. MOV-03 (MQTT client) desbloquea TODO lo visible: sin broker consumible no hay pantalla que probar.
