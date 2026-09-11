@@ -28,9 +28,9 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 
 ## Sprint 3 (Semanas 5-6): Rover Tanque Autónomo & Telemetría
 
-- Montaje mecánico del chasis oruga con motorreductores 9-12V y L298N.
-- Algoritmo anti-caída (3x TCRT5000) y evasión de obstáculos (HC-SR04). → RF-3.2
-- Joystick virtual en Jetpack Compose enviando comandos de baja latencia. → RF-1.2
+- Montaje mecánico del chasis oruga con motorreductores **TT 6V 1:48 ×4** (antes 9-12V, **calce 2026-09-11 por espacio** ver `hardware-inventory.md:36` — torque 3.5→0.8 KG·cm -77%, vel 350→120 RPM) y L298N.
+- Algoritmo anti-caída (3x TCRT5000) y evasión de obstáculos (HC-SR04). → RF-3.2 — HW existe, bug `digitalRead(A0)` vs `analogRead` pendiente calibrar `IR_THRESHOLD 500`.
+- Joystick virtual en Jetpack Compose enviando comandos de baja latencia. → RF-1.2 — ✅ Done `feature/app-joystick-virtual` 2026-09-11 (ver Estado actual)
 
 **Depende de:** Sprint 1 (enlace RF ESP32 ↔ UNO probado).
 
@@ -49,9 +49,11 @@ Fuente base: sección 4 del documento académico (PDF Proyecto Integrador UTP). 
 
 ## Estado actual
 
-- Sprint activo: **Sprint 2 (Semanas 3-4) — En curso, fase cierre documental (Sprint 1 ✅ CERRADO 2026-09-01)**
-- Rama de revisión: **`docs/revision-sprint2-completa`** — branch desde `sprint/2-domotica-acceso@ec5d70b` para auditar y sincronizar TODA la documentación vs código real (ver `docs/revision-sprint2.md`)
-- Última actualización: **2026-09-10 — Revisión Sprint 2 completa**
+- Sprint activo: **Sprint 3 (Semanas 5-6) — En curso (Sprint 2 ✅ CERRADO documental 2026-09-10, Sprint 1 ✅ 2026-09-01) — MOV-05/06 ✅ Done**
+- Rama activa: **`feature/app-joystick-virtual@3ca12c9`** — Joystick nRF24 validado HW 2026-09-11 + calce TT 6V 1:48 + `notebooks/Firmware_Notebook.ipynb` + `docs/logs/firmware_sprint3/live_2026-09-11/`; base `docs/revision-sprint2-completa@ec5d70b`
+- Última actualización: **2026-09-11 — Sprint 3 MOV-05/06 ✅ + calce Rover + auditoría sensores**
+  - **2026-09-11 09:43 — MOV-05/06 RF-1.2 ✅ Done `feature/app-joystick-virtual@3ca12c9` (11h 23:00 + 07:00-09:29):** `JoystickScreen Canvas 120dp` `JoystickMapper deadband 60` `ViewModel throttle 50ms` `MqttManager QoS0 aethernet/rover/command:69` → `gateway-esp32 CE5 CSN15 Ch76 2MBPS` `RF TX 250→249 99.6%` → `rover-uno CE4 CSN10 ENA5/ENB11 6900b` `RF RX 232` + `FAIL-SAFE 500ms HU-04` + `aethernet/rover/telemetry rf_rssi -70` — validado `mosquitto_sub 563 líneas` `T3 33K` `T4 7.3K` `T2_mega 1.5K` `docker health ok` — `assembleDebug` + `JoystickMapperTest 10` + `ViewModelTest 6` verdes. **Calce Rover 2026-09-11:** chasis TT 6V 1:48 ×4 por espacio (antes 9-12V 3.5 KG·cm) -77% torque `hardware-inventory.md:36` + `rover-uno.ino:6,89` `MIN_PWM 60` TT. **Notebook:** `notebooks/Firmware_Notebook.ipynb` 16 celdas + `docs/logs/firmware_sprint3/` 20 logs. **Pin 16↔16 17↔17** invertido documentado (mal diseño MEGA/ESP32 pero operativo). **Sensores:** `KY-008` Sprint 2 Done, `nRF24` Sprint 1 Done, `LED RGB` Sprint 2 Done, `TCRT5000` **sin banco dedicado** (bug `digitalRead` vs `analogRead`, `IR_THRESHOLD 500` sin calibrar) + `HC-SR04` `ultrasonic_cm:0` en logs → pendiente Sprint 4 `EST-02`, `KY-037` pendiente `EST-03` — ver auditoría 2026-09-11.
+  - **2026-09-10 — Revisión Sprint 2 completa**
   - **2026-09-10 (esta revisión):** rama `docs/revision-sprint2-completa` creada desde `sprint/2-domotica-acceso` tip `ec5d70b`; auditoría doc↔código identifica desalineación `architecture.md` (Node-RED deuda), `gantt.md`/`backlog.md` y `prd.md` (alcance LowCode); se sincronizan 9 docs + se crea `docs/revision-sprint2.md` (bitácora + trazabilidad RF→archivo)
   - **2026-09-09:** `ec5d70b` docs(admin,estadística): `Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` (99KB, 14 secciones, WBS 40 paquetes, costos COP 176k/1.176M) + `docs/Administracion de proyectos/README.md` + `docs/Estadistica/CONTRASTE_Admin_vs_Estadistica.md` + bench 36.5k filas (`water_turbidity 31.5k` + `gesture 5k`) + `stats/water_turbidity_analysis.py:1` 364 líneas + `stats/data/water_turbidity_report.json` + PNGs `water_us_vs_true.png`/`water_ir_by_angle.png`
   - **2026-09-07 23:41:** `c7ce065` merge `feature/firmware-mega-laser-v2` → `sprint/2-domotica-acceso` (RF-2.3 HU-02): `firmware/mega-access/src/laser.{h,cpp}` barrera KY-008 no bloqueante + `LDR discreta 10k INPUT` (`config.h:8/7` sin PULLUP) + `firmware/test-laser-uno/test-laser-uno.ino` banco aislado + `laserInit/handleLaser/triggerIntrusionAlert` + `LED rojo 3s` no bloqueante + `SECURITY:` UART 38400 → Gateway → `POST /api/security-events` + `aethernet/seguridad/intrusion:72`
