@@ -2,6 +2,7 @@
 
 > **Ubicación canónica:** `stats/Dataset/` (36.500 filas, 3.7 MB) — espejo en `docs/Estadistica/Datasets/` para entrega académica.
 > Ambos datasets ya versionados en el repo, sin descarga adicional. Ver también `docs/Estadistica/Datasets/README.md`.
+> **Licencias:** Código del repo → Apache 2.0 (`LICENSE`); estos CSV → **CC BY-SA 4.0** (turbidez) y **CC0** (gestos) — ver [`NOTICE`](../../NOTICE) y sección Licencia abajo. Compatibles FOSS (RNF-3.1) por agregación.
 
 ---
 

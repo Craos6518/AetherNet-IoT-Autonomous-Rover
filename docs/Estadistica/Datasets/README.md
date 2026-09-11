@@ -2,6 +2,7 @@
 
 > **Entrega académica:** `docs/Estadistica/Datasets/` es **espejo** de `stats/Dataset/` (canónico en el repo).
 > Ambos datasets ya versionados — no requieren descarga. Licencias 100% FOSS (RNF-3.1).
+> **Licencias:** Código del repo → Apache 2.0 (`LICENSE`); estos CSV → **CC BY-SA 4.0** (turbidez) y **CC0** (gestos) — ver [`NOTICE`](../../NOTICE) y [`stats/Dataset/README.md`](../../stats/Dataset/README.md). Compatibles por agregación.
 
 ## Resumen rápido
 

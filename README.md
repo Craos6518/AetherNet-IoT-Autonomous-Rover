@@ -63,4 +63,13 @@ Sprint activo: `<pendiente de definir>` — ver [`docs/sprints.md`](./docs/sprin
 
 ## 📄 Licencia
 
-<!-- TODO: el stack debe ser 100% FOSS (RNF-3.1), pero falta definir la licencia del repositorio en sí -->
+**Código del proyecto:** [Apache License 2.0](./LICENSE) — 100% FOSS (RNF-3.1).
+
+**Datasets incluidos (agregación, no re-licenciados):**
+
+| Dataset | Ubicación | Filas | Licencia | Fuente |
+|---|---|---|---|---|
+| Turbidez del agua — *Water level identification with distance sensors* | `stats/Dataset/water-level_turbidity-{low,medium,high}.csv` (espejo `docs/Estadistica/Datasets/`) | 31.500 | **CC BY-SA 4.0** — https://creativecommons.org/licenses/by-sa/4.0/ | https://www.kaggle.com/datasets/caetanoranieri/water-level-identification-with-lidar — Ranieri et al. (2024) https://doi.org/10.1016/j.engappai.2023.107235 |
+| Gestos de manos — *Hand Gesture Dataset* (HC-SR04) | `stats/Dataset/gesture_dataset.csv` (espejo `docs/Estadistica/Datasets/`) | 5.000 | **CC0 1.0** dominio público — https://creativecommons.org/publicdomain/zero/1.0/ | https://www.kaggle.com/datasets/marisolgil/hand-gesture-dataset — https://doi.org/10.34740/kaggle/dsv/16239431 |
+
+Ver atribución completa y obligaciones ShareAlike en [`NOTICE`](./NOTICE) + [`stats/Dataset/README.md`](./stats/Dataset/README.md) + [`docs/Estadistica/Datasets/README.md`](./docs/Estadistica/Datasets/README.md). Los CSV mantienen su licencia original; el código permanece Apache 2.0 (compatibilidad por agregación).

@@ -1,0 +1,62 @@
+AetherNet — IoT & Autonomous Rover
+Copyright 2026 Andres Felipe Martinez Henao y colaboradores UTP
+
+Este proyecto se distribuye bajo Apache License 2.0 (ver LICENSE).
+Los datasets incluidos en stats/Dataset/ y docs/Estadistica/Datasets/ se
+distribuyen bajo sus licencias originales y NO están cubiertos por Apache 2.0.
+
+========================================================================
+Terceros — Datasets (cumplimiento CC BY-SA 4.0 / CC0 + RNF-3.1 FOSS)
+========================================================================
+
+1) Water level identification with distance sensors — TURBIDEZ (31.500 filas)
+   Ubicación: stats/Dataset/water-level_turbidity-{low,medium,high}.csv
+              docs/Estadistica/Datasets/water-level_turbidity-{low,medium,high}.csv (espejo)
+   Fuente: https://www.kaggle.com/datasets/caetanoranieri/water-level-identification-with-lidar
+   Autores: Ranieri, C.M., Foletto, A.V., Garcia, R.D., Matos, S.N., Medina, M.M.,
+            Marcolino, L.S. and Ueyama, J., 2024. Water level identification with
+            laser sensors, inertial units, and machine learning. Engineering
+            Applications of Artificial Intelligence, 127, p.107235.
+            DOI: https://doi.org/10.1016/j.engappai.2023.107235
+   Creador Kaggle: Caetano Ranieri — https://www.kaggle.com/caetanoranieri
+   Licencia: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+             https://creativecommons.org/licenses/by-sa/4.0/
+   Fecha/versión: 2023-10-25, v1, ZIP 721.055 bytes
+   Uso en el proyecto: validación externa del filtro EMA (stats/water_turbidity_analysis.py,
+                       stats/data/water_turbidity_report.json, notebook §7c)
+   Obligaciones CC BY-SA 4.0:
+     - Atribución: citar a los autores y enlazar la licencia (cumplido en este NOTICE
+       + stats/Dataset/README.md + docs/Estadistica/Datasets/README.md
+       + stats/water_turbidity_analysis.py:18-25 + stats/data/water_turbidity_report.json:source).
+     - ShareAlike: cualquier adaptación/redistribución de estos CSV debe
+       distribuirse bajo CC BY-SA 4.0 o compatible.
+   Compatibilidad con Apache 2.0 (proyecto): el código del proyecto es Apache 2.0;
+     los CSV permanecen CC BY-SA 4.0 como obra separada (no se re-licencian).
+     El repo es agregación, permitida por ambas licencias. Derivados intermedios
+     (reportes JSON/PNG) generados por el proyecto se publican bajo Apache 2.0,
+     citando la fuente.
+
+2) Hand Gesture Dataset — GESTOS HC-SR04 (5.000 filas)
+   Ubicación: stats/Dataset/gesture_dataset.csv
+              docs/Estadistica/Datasets/gesture_dataset.csv (espejo)
+   Fuente: https://www.kaggle.com/datasets/marisolgil/hand-gesture-dataset
+   Autora: Marisol Gil Valenzuela (Ing. Industrial y de Sistemas, Univ. de Sonora)
+   Licencia: Creative Commons CC0 1.0 Universal — Dominio público
+             https://creativecommons.org/publicdomain/zero/1.0/
+             Sin obligación de atribución; se atribuye por cortesía.
+   DOI: https://doi.org/10.34740/kaggle/dsv/16239431
+   Fecha/versión: 2026, v1 — 5 gestos × 50 fotogramas × 20 Hz
+   Uso en el proyecto: validación temporal del EMA ante movimiento real (notebook §7d)
+   Compatibilidad con Apache 2.0: total (CC0 es dominio público, compatible RNF-3.1 FOSS).
+
+========================================================================
+Notas de cumplimiento (RNF-3.1 — 100% FOSS)
+========================================================================
+- Ambos datasets son FOSS y compatibles con Apache 2.0 del código.
+- CC BY-SA 4.0 requiere atribución + ShareAlike solo para los CSV y sus
+  adaptaciones; no contamina el código Apache 2.0 al tratarse de agregación.
+- CC0 no impone restricciones; se incluye atribución honorífica por buenas prácticas.
+- Para informe EST-07 incluir ambas citas en bibliografía (ver
+  stats/Dataset/README.md y docs/Estadistica/Datasets/README.md § Citas).
+- Ver también: LICENSE (Apache 2.0), stats/Dataset/README.md,
+  docs/Estadistica/Datasets/README.md, stats/water_turbidity_analysis.py.
