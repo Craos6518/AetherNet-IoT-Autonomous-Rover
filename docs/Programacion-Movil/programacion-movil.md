@@ -1,7 +1,7 @@
 # Documentación Académica — Programación Móvil (TS6C3)
 
 **Proyecto:** AetherNet IoT & Autonomous Rover
-**Asignatura UTP:** Programación Móvil — Código TS6C3, 3 créditos (`docs/UTP/2361_6. TS6C3 Programación Móvil (1).pdf`)
+**Asignatura UTP:** Programación Móvil — Código TS6C3, 3 créditos (`docs/Programacion-Movil/2361_6. TS6C3 Programación Móvil (1).pdf`)
 **Área del proyecto:** Área 1 — Programación Para Móviles (App "AetherControl") · ver `docs/backlog.md` §Área 1 · ítems MOV-01 a MOV-10
 
 > ⚠️ **Nota de adaptación tecnológica importante:** el PDF del programa está redactado sobre la pila **.NET / C# / Xamarin.Forms / XAML**. El proyecto implementa los **mismos conceptos y patrones** con la pila nativa moderna **Kotlin / Jetpack Compose**, según exige el PRD (Android nativo). Este documento mapea cada unidad del PDF a su equivalente real en el proyecto, dejando explícita la equivalencia conceptual.

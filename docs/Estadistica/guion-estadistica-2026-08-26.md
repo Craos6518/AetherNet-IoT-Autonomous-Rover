@@ -91,7 +91,7 @@
 
 ### Fuentes internas
 
-- `docs/emails-docentes/email-estadistica-maria-paula-rodas.md` — base del contenido estadístico y mapeo al syllabus
+- `docs/Estadistica/email-estadistica-maria-paula-rodas.md` — base del contenido estadístico y mapeo al syllabus
 - `docs/prd.md` §5 — KPIs (EMA >85 %, RF <10 ms, Wi-Fi <50 ms, fail-safe 300–500 ms)
 - `docs/requirements.md` — RNF-2.1, RNF-2.2, HU-03
 - `docs/backlog.md` Área 5 — EST-01 a EST-07

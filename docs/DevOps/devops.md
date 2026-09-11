@@ -1,7 +1,7 @@
 # Documentación Académica — DevOps
 
 **Proyecto:** AetherNet IoT & Autonomous Rover
-**Asignatura UTP:** DevOps (electiva, según `docs/UTP/DEVOPS - EST.pdf`)
+**Asignatura UTP:** DevOps (electiva, según `docs/DevOps/DEVOPS - EST.pdf`)
 **Área del proyecto:** Área 2 — DevOps (Infraestructura, CI/CD, Firmware base) · ver `docs/backlog.md` §Área 2
 
 > Mapeo del contenido académico del PDF contra lo implementado en el proyecto. Referencias cruzadas: RNF-1.1, RNF-1.2 · backlog DEVOPS-01 a DEVOPS-09.

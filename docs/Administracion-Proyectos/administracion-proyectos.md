@@ -1,7 +1,7 @@
 # Documentación Académica — Administración y Planeación de Proyectos de Software (TS683)
 
 **Proyecto:** AetherNet IoT & Autonomous Rover
-**Asignatura UTP:** TS683 — 3 créditos, 6º semestre, obligatoria (`docs/UTP/2350_TS683 Administración y Planeación de Proyectos de Software.docx (1).pdf`)
+**Asignatura UTP:** TS683 — 3 créditos, 6º semestre, obligatoria (`docs/Administracion-Proyectos/2350_TS683 Administración y Planeación de Proyectos de Software.docx (1).pdf`)
 **Área del proyecto:** Área 4 — Administración y Planeación (Gestión) · ver `docs/backlog.md` §Área 4 · ítems PM-01 a PM-07
 
 > Mapeo del contenido académico del PDF contra lo implementado. Esta área es transversal: no produce código, pero gobierna cómo se planifica, mide y controla todo lo demás.

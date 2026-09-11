@@ -11,7 +11,7 @@ Carpeta canónica para la asignatura **TS683 Administración y Planeación de Pr
 | `README.md` | Este índice. |
 | `calendario/` | 6 archivos `*.ics`/`*.vcs`/`*.csv`/`README.md` — ver `calendario/README.md` (antes `calendar/`). |
 | `capturas/` | `tablero-kanban.png`, `gantt.png`, `risk-register.png` — checklist fotos |
-| `presentaciones/` | Slides `*.html` (si se mueve desde `docs/presentaciones/`) |
+| `presentaciones/` | Slides `*.html` (si se mueve desde `docs/<Materia>/`) |
 
 ## Documento implementado — 14 secciones
 

@@ -4,7 +4,7 @@
 **Asignatura UTP:** Estadística — Código TS4D3, 3 créditos, 4 h/semana
 **Área del proyecto:** Área 5 — Estadística (Filtrado y Analítica) · ver `docs/backlog.md` §Área 5
 
-> Este documento mapea el contenido académico oficial de la asignatura (PDF `docs/UTP/2344_TS4D3 Estadística.pdf`) contra lo que realmente se aplica en el proyecto, indicando el área y archivo exacto donde vive cada aplicación. Referencias cruzadas: RNF-2.1, RNF-2.2, HU-03, KPIs de `docs/prd.md`.
+> Este documento mapea el contenido académico oficial de la asignatura (PDF `docs/Estadistica/2344_TS4D3 Estadística.pdf`) contra lo que realmente se aplica en el proyecto, indicando el área y archivo exacto donde vive cada aplicación. Referencias cruzadas: RNF-2.1, RNF-2.2, HU-03, KPIs de `docs/prd.md`.
 
 ---
 

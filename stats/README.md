@@ -2,7 +2,7 @@
 
 > **Autor:** Andres Felipe Martinez Henao
 > **Experiencia:** 2 años electrónica y Arduino | 1 año Programación C | 2 años Python | 2 años HTML/CSS/JS/React | 1 año PostgreSQL
-> **Materia:** TS4D3 Estadística — `docs/UTP/2344_TS4D3 Estadística.pdf` | RNF-2.1, RNF-2.2, HU-03, KPI PRD >85%
+> **Materia:** TS4D3 Estadística — `docs/Estadistica/2344_TS4D3 Estadística.pdf` | RNF-2.1, RNF-2.2, HU-03, KPI PRD >85%
 > **Stack:** Python 3.11+ (Pandas, NumPy, SciPy, Matplotlib) + PostgreSQL + Arduino C (EMA portado) — 100% FOSS (RNF-3.1)
 > **Estado:** Sprint 1-2 ✅ (EST-01 prototipo + EST-08 barrido α + 14 tests + banco físico UNO) | Sprint 3-4 ⏳ (t-Student, descriptivo, KY-037)
 
