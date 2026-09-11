@@ -87,7 +87,7 @@ Cada ítem referencia su RF/HU de origen y el sprint donde debe quedar cerrado s
 | ID | Tarea | Prioridad | Sprint | Depende de | Origen |
 |---|---|---|---|---|---|
 | EST-01 | Prototipo del filtro EMA en Python (offline, con datos simulados) — ✅ Done Sprint 1-2 (`stats/ema_filter.py:15` `S_t=α·Y_t+(1-α)·S_{t-1}` α=0.2, `EMAFilter` + `calculate_noise_reduction` KPI >85%, bench `a051dd4` 531 muestras) | M | 1-2 (prototipo temprano) | — | RNF-2.1 |
-| EST-02 | Implementación del EMA en firmware C++ (HC-SR04, α=0.2) | M | 4 | DEVOPS-05, EST-01 validado | RNF-2.1, HU-03 |
+| EST-02 | Implementación del EMA en firmware C++ (HC-SR04, α=0.2) — ✅ Done Sprint 3 `rover-uno.ino:86 α=0.2 S_t=α·Y+(1-α)S_{t-1}` `test-rover-sensors.ino 4712b` `US_raw 6-33cm EMA 6-32cm` validado `14:02` pista blanca + `rover-uno` telemetría `T_telemetry_invertida 89` `e821700` `hardware-inventory pot mitad 3mm` | M | 4 | DEVOPS-05, EST-01 validado | RNF-2.1, HU-03 |
 | EST-03 | Implementación del EMA para el sensor de sonido KY-037 | S | 4 | EST-02 | RNF-2.1 |
 | EST-04 | Script de extracción de histórico desde PostgreSQL (`psycopg2`/SQLAlchemy) | M | 4 | DEVOPS-03 con datos reales | RNF-2.2 |
 | EST-05 | Prueba de hipótesis t-Student (latencia RF vs. Wi-Fi) — 🔄 Adelantado parcial: `stats/water_turbidity_analysis.py:1` implementa Welch t-Student + ANOVA sobre 36.5k filas (EST-06/05 §7c) como validación externa previa a datos Rover reales; `EST-04` (extracción PG) queda Sprint 4 con histórico real | M | 4 | EST-04, datos de ambos protocolos disponibles | RNF-2.2 |
@@ -101,7 +101,7 @@ Cada ítem referencia su RF/HU de origen y el sprint donde debe quedar cerrado s
 ## Resumen de riesgos críticos para cumplir el tiempo estipulado
 
 1. ~~LOW-01 (tuya-local)~~ — **CANCELADO 2026-09-01** (ADR-001, políticas API) + ~~LOW-02~~ **DEUDA 2026-09-09** (no Node-RED).
-2. **EST-01** (prototipo EMA) — ✅ adelantado Sprint 1-2 (`ema_filter.py` + bench 531) — pendiente port C++ `EST-02/03` Sprint 4.
+2. **EST-01** (prototipo EMA) — ✅ adelantado Sprint 1-2 (`ema_filter.py` + bench 531) — **EST-02 ✅ adelantado Sprint 3** `rover-uno` + `test-rover-sensors` — pendiente `EST-03` KY-037 Sprint 4.
 3. **DEVOPS-01 a DEVOPS-05** — son la base de todo; cualquier atraso aquí es atraso de proyecto completo, no solo de un área.
 4. **PM-05** — sin esto, la coordinación entre áreas (y entre agentes de código, si se usan) se degrada silenciosamente.
 
