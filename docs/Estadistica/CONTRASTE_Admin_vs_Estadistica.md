@@ -1,7 +1,7 @@
 # Contraste — Administración vs Estadística (AetherNet)
 
 > **Archivos comparados:**
-> - `docs/Administracion de proyectos/Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` (99 KB, 12 tablas, 671 párrafos, 14 secciones — **TS683 Administración**, trabajo individual **Andres Felipe Martinez Henao**, 09/09/2026)
+> - `docs/Administracion-Proyectos/Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` (99 KB, 12 tablas, 671 párrafos, 14 secciones — **TS683 Administración**, trabajo individual **Andres Felipe Martinez Henao**, 09/09/2026)
 > - `docs/Estadistica/Anteproyecto_AetherNet-3.docx` (14 KB, 2 tablas, ~47 párrafos, 8 secciones — **TS4D3 Estadística**, mismo autor, 5º semestre)
 >
 > **Fecha de contraste:** 10/09/2026 — ambos docs vivos, sin contradicciones bloqueantes; el segundo **especializa** lo que el primero deja como `EST-01..07` y `OE-05`.
@@ -148,7 +148,7 @@ Sin estas 4 líneas, ambos docs quedan **consistentes pero desconectados**; con 
 
 **No hay contradicción.** Administración es el **mapa** y Estadística es la **brújula del filtro**. El contraste muestra que el Anteproyecto no corrige a Administración: **lo completa** en el punto más riesgoso (R-03 EMA mal calibrado). Con ambos datasets ya integrados (36.500 filas, 3.7 MB, HC-SR04 idéntico incluido), el proyecto puede sostener ante evaluador: “EMA α=0.2 no solo simula 89% en 531 muestras internas, sino que se valida en 31.5k medidas controladas y 5k movimientos reales del mismo sensor, con licencias FOSS y diseño balanceado”.
 
-> Próximo paso: commit que incluya `docs/Estadistica/Datasets/*.csv` + `stats/Dataset/gesture_dataset.csv` + READMEs + este contraste, y referencia cruzada en `docs/Administracion de proyectos/Proyecto_AetherNet...docx` Anexo G.
+> Próximo paso: commit que incluya `docs/Estadistica/Datasets/*.csv` + `stats/Dataset/gesture_dataset.csv` + READMEs + este contraste, y referencia cruzada en `docs/Administracion-Proyectos/Proyecto_AetherNet...docx` Anexo G.
 
 ---
 

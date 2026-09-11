@@ -18,6 +18,10 @@
 | `risk-register.md` / `auditoria-secretos-sprint1.md` | Riesgos + secretos rotados `FELIPE.` | R-01/R-07 cerrados, R-12 resuelto |
 | `fritzing/` | Esquemas + `docs/fritzing/*.png` (ema-demo, alpha_sweep, rover, water_*) | + `water_us_vs_true.png`/`water_ir_by_angle.png` P5 laser v1 |
 | `adr/adr-001-cancelacion-tuya.md` | ADR Tuya cancelado | R-01 + `docs/revision-sprint2.md` (esta revisión) |
+| `Administracion-Proyectos/` | TS683: `Proyecto_AetherNet*.docx` + `calendario/*.ics` + `capturas/` | WBS 40, Gantt, kanban 14 |
+| `Estadistica/` | TS4D3: `Anteproyecto*.docx`, `CONTRASTE*.md`, `Datasets/` espejo 36.5k | Welch/ANOVA |
+| `materias/` | Capa académica: `estadistica.md`, `programacion-movil.md`, `devops.md`, `administracion-proyectos.md`, `firmware.md`, `hardware.md` + 7 roadmaps | Mapeo PDF UTP |
+| `calendar/` | **Redirección** → `docs/Administracion-Proyectos/calendario/` | ICS/VCS/CSV |
 
 ## Notebooks + Datasets — Centralización 2026-09-07, actualizado 2026-09-10
 
@@ -27,7 +31,7 @@
 - **Espejo:** `stats/notebooks/EMA_Estadistica.ipynb` + `stats/notebooks/README.md` — no editar
 - **Redirección:** `docs/notebooks/README.md` — mapa + `cp notebooks/... stats/notebooks/...`
 - **Datasets externos (36.5k):** `stats/Dataset/` canónico (water 31.5k CC BY-SA 4.0 + gesture 5k CC0) + espejo `docs/Estadistica/Datasets/` — ver `stats/Dataset/README.md` y `docs/Estadistica/Datasets/README.md`; análisis `stats/water_turbidity_analysis.py` + `stats/data/water_turbidity_report.json` + `notebooks/EMA_Estadistica.ipynb` §7c
-- **Administración:** `docs/Administracion de proyectos/Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` (99KB, 14 secciones) + `README.md`
+- **Administración:** `docs/Administracion-Proyectos/Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` (99KB, 14 secciones) + `README.md` + `calendario/*.ics` (ver `docs/Administracion-Proyectos/calendario/README.md`)
 
 Abrir: `jupyter lab notebooks/` (ver `notebooks/README.md` §Cómo ejecutar).
 

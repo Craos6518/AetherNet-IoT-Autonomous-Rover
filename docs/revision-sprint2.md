@@ -32,7 +32,7 @@ Sprint 2 está **funcionalmente Done** (cerrojo + laser + app pantallas/MQTT/PIN
 | `app/src` `MqttManager` + `LedState` + `PinViewModel` | Paho 1.2.5 `aethernet/#` `assembleDebug` verde | ✅ OK |
 | `automation/flows/intrusion_alert.json` | `mqtt-intrusion` → `telegram-alert` → `http-telegram` | ⚠️ Referencia (no deploy — deuda) |
 | `stats/water_turbidity_analysis.py:1` + `Dataset/` + `data/*.png` + `notebooks/EMA_Estadistica.ipynb` §7c | 36.5k filas (31.5k CC BY-SA 4.0 + 5k CC0) Welch/ANOVA | ✅ OK |
-| `docs/Administracion de proyectos/Proyecto_AetherNet_*.docx` | 99KB 14 secciones | ✅ OK |
+| `docs/Administracion-Proyectos/Proyecto_AetherNet_*.docx` | 99KB 14 secciones | ✅ OK |
 
 ### 2.2 Desalineaciones detectadas (antes de esta rama)
 
