@@ -93,7 +93,7 @@ class JoystickViewModel(
         sendJob = viewModelScope.launch {
             _uiState.update { it.copy(isSending = true, error = null) }
             when (val r = repo.sendRoverCommand(left, right, mode)) {
-                is Result.Success -> {
+                is Result.Success<*> -> {
                     _uiState.update { it.copy(isSending = false, error = null) }
                 }
                 is Result.Error -> {
