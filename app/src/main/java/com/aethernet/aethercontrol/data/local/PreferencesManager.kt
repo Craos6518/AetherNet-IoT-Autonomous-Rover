@@ -1,12 +1,12 @@
 package com.aethernet.aethercontrol.data.local
 
 // =============================================================================
-// PreferencesManager.kt — DataStore Preferences | 6º Semestre UTP | MOV-01 3.1
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// PreferencesManager.kt — DataStore Preferences | 6º semestre UTP | MOV-01 3.1
+// Autor: Andres Felipe Martínez Henao
 // Experiencia: 2 años Python (dotenv), 2 años JS/React (localStorage), 1 año PostgreSQL,
 //              2 años electrónica (secrets.h)
 // Analogía React: este archivo es `localStorage` en web — guarda `apiBaseUrl` como
-// `localStorage.setItem('apiBaseUrl', 'http://192.168.1.50:8000/')` pero con Flow reactivo.
+// `localStorage.setItem('apiBaseUrl', 'http://192.168.1.50:8000/')`, pero con Flow reactivo.
 // Analogía Python: como `python-dotenv` + `DATABASE_URL` en backend/app/config.py — aquí con DataStore.
 // Analogía C/Arduino: como `EEPROM` del MEGA para guardar `VALID_PIN` — aquí guarda URL base.
 // Analogía PostgreSQL: no es tabla, es key-value local (como SharedPreferences, pero con DataStore async).
@@ -20,7 +20,7 @@ import androidx.datastore.core.DataStore // DataStore — como localForage en JS
 import androidx.datastore.preferences.core.Preferences // Preferences — key-value (como Map<string, string>)
 import androidx.datastore.preferences.core.edit // edit { prefs[key] = value } — como localStorage.setItem
 import androidx.datastore.preferences.core.stringPreferencesKey // key tipada — como z.string() key en TS
-import androidx.datastore.preferences.preferencesDataStore // delegate dataStore — como createStore en Zustand
+import androidx.datastore.preferences.preferencesDataStore // delégate dataStore — como createStore en Zustand
 import kotlinx.coroutines.flow.Flow // Flow — como Observable en RxJS / StateFlow en Compose
 import kotlinx.coroutines.flow.first // first() — suspend que toma primer valor (como await once en JS)
 import kotlinx.coroutines.flow.map // map — transforma Flow (como .map en JS array)
@@ -62,7 +62,7 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
      * Directo: `preferencesManager.saveBaseUrl("192.168.1.50:8000")` -> `http://192.168.1.50:8000/`
      */
     suspend fun saveBaseUrl(url: String) {
-        val normalized = normalizeUrl(url) // valida y normaliza (como Zod parse)
+        val normalized = normalizeUrl(url) // válida y normaliza (como Zod parse)
         dataStore.edit { prefs ->
             prefs[Keys.API_BASE_URL] = normalized // guarda — como localStorage.setItem con Flow update (reactivo)
         }

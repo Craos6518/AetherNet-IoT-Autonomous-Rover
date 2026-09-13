@@ -90,17 +90,58 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 - Python básico (o R) para manipulación de datos.
 
 **Conocimientos a adquirir**
-- Media Móvil Exponencial (EMA): entender el rol de `α = 2/(N+1)` en el trade-off entre suavizado y latencia de respuesta — se usa con `α = 0.2` según HU-03. Prototipado en `stats/ema_filter.py:15` y validado en banco `firmware/test-ema-uno` + `notebooks/EMA_Estadistica.ipynb:2` + validación externa 36.5k `stats/water_turbidity_analysis.py:1` (`water_level_turbidity` 31.5k CC BY-SA 4.0 + `gesture` 5k CC0, ver `stats/Dataset/README.md` / `docs/Estadistica/Datasets/README.md`).
+- Media Móvil Exponencial (EMA): entender el rol de `α = 2/(N+1)` en el trade-off entre suavizado y latencia de respuesta — se usa con `α = 0.2` según HU-03. Prototipado en `stats/ema_filter.py:15` y validado en banco `firmware/test-ema-uno` + `docs/Estadistica/notebook/EMA_Estadistica.ipynb:2` + validación externa 36.5k `stats/water_turbidity_analysis.py:1` (`water_level_turbidity` 31.5k CC BY-SA 4.0 + `gesture` 5k CC0, ver `stats/Dataset/README.md` / `docs/Estadistica/Datasets/README.md`).
 - Filtro de Kalman (mencionado como alternativa/complemento a EMA en la matriz del PDF) — al menos su intuición conceptual (predicción + corrección) aunque se implemente la versión EMA.
-- Pandas/SciPy para análisis descriptivo e inferencial sobre los datos históricos almacenados en PostgreSQL + validación externa (`stats/materias/estadistica.md`, `notebooks/EMA_Estadistica.ipynb:6` barrido α Monte Carlo 100×, `stats/water_turbidity_analysis.py` Welch `t-Student` + ANOVA sobre `us_value` vs `water_level` por turbidez/angle).
-- Prueba de hipótesis $t$-Student de dos muestras (RF vs. Wi-Fi) — plantear correctamente $H_0$/$H_1$, verificar supuestos (normalidad, varianzas) antes de aplicarla (`stats/notebooks/README.md` espejo de `notebooks/`).
+- Pandas/SciPy para análisis descriptivo e inferencial sobre los datos históricos almacenados en PostgreSQL + validación externa (`stats/materias/estadistica.md`, `docs/Estadistica/notebook/EMA_Estadistica.ipynb:6` barrido α Monte Carlo 100×, `stats/water_turbidity_analysis.py` Welch `t-Student` + ANOVA sobre `us_value` vs `water_level` por turbidez/angle).
+- Prueba de hipótesis $t$-Student de dos muestras (RF vs. Wi-Fi) — plantear correctamente $H_0$/$H_1$, verificar supuestos (normalidad, varianzas) antes de aplicarla (`stats/docs/README.md` espejo de `notebooks/`).
 - Conexión Python → PostgreSQL (`psycopg2`/`SQLAlchemy`) para extraer el histórico de eventos (`stats/visualize_ema.py`, `stats/serial_plot_ema.py`).
 
-**Notebooks centralizados:** `notebooks/EMA_Estadistica.ipynb` (canónico, ver `notebooks/README.md` y `docs/notebooks/README.md`; espejo `stats/notebooks/` no editar) + datasets externos 36.5k (`stats/Dataset/` canónico, espejo `docs/Estadistica/Datasets/`, reporte `stats/data/water_turbidity_report.json` + PNGs `water_us_vs_true.png`/`water_ir_by_angle.png`).
+**Notebooks centralizados:** `docs/Estadistica/notebook/EMA_Estadistica.ipynb` (canónico, ver `docs/README.md` y `docs/docs/README.md`; espejo `stats/notebooks/` no editar) + datasets externos 36.5k (`stats/Dataset/` canónico, espejo `docs/Estadistica/Datasets/`, reporte `stats/data/water_turbidity_report.json` + PNGs `water_us_vs_true.png`/`water_ir_by_angle.png`).
 
 **Se despliega en:** Sprint 4 (aunque el diseño del algoritmo puede prototiparse desde antes, en paralelo al Sprint 1-2 — **ya adelantado:** `stats/ema_filter.py` Sprint 1-2 + `water_turbidity_analysis.py` 36.5k validación externa §7c).
 
 **Habilita:** RNF-2.1, RNF-2.2, HU-03; condiciona directamente el KPI "Precisión del Filtro Estadístico > 85%" de `prd.md`.
+
+---
+
+## 6. Firmware — C++ Embebido (MEGA/Gateway/Rover)
+
+**Conocimientos previos:** C++ básico Arduino (setup/loop, pinMode, digitalRead).
+
+**Conocimientos a adquirir:**
+- millis() no bloqueante vs delay() — crítico para no congelar láser/TCRT (`firmware/mega-access/src/laser.cpp:15` 50ms CHECK).
+- Librería RF24 (nRF24L01 SPI CE/CSN, channel 76 2MBPS) — `firmware/gateway-esp32/gateway-esp32.ino:59`, `firmware/rover-uno/rover-uno.ino:372`.
+- HC-SR04 TRIG2 ECHO3 + EMA α=0.2 en firmware (`rover-uno.ino:259`), TCRT5000 analogRead threshold 500 (`test-rover-sensors.ino`).
+- L298N (drop 1.8V) vs TB6612FNG, Servo MG90S PWM 0°/90°, KY-008 + LDR divisor 10k, UART 38400 5V→3.3V.
+- **Se despliega:** Sprint 1-3. **Habilita:** RF-2.1/2.2/2.3/3.1/3.2, HU-01/02/03/04.
+
+**Datasheets (búsqueda Google sugerida):**
+- `nRF24L01+ datasheet Nordic Semiconductor pdf`
+- `HC-SR04 datasheet ultrasonic distance sensor timing diagram`
+- `TCRT5000 Vishay datasheet reflective optical sensor`
+- `L298N datasheet STMicroelectronics dual H-bridge`
+- `ESP32-WROOM-32U datasheet Espressif`
+- `MG90S datasheet Tower Pro servo`
+
+Ver roadmap detallado: `docs/Firmware/roadmap-firmware.md` · Diario: `docs/Firmware/notebook/Firmware_Notebook.ipynb` · Fotos: `docs/Firmware/fotos/`
+
+---
+
+## 7. Hardware — Electrónica
+
+**Conocimientos a adquirir:** inventario `docs/hardware-inventory.md`, fritzing `docs/fritzing/AetherNet-P*.png`, pines MEGA 44/45/46 LED, 22/24/26/28 ROW, 30/32/34/36 COL, 9 servo, 8 TX láser, 7 LDR, 16/17 UART, calce TT 6V 1:48 impacto -77% torque.
+
+**Datasheets:** same que Firmware + `KY-008 laser datasheet`, `LDR GL5528 datasheet`, `TP4056 charging module datasheet`, `MT3608 StepUp datasheet`
+
+Ver roadmap: `docs/Hardware/roadmap-hardware.md` · Diario: `docs/Hardware/notebook/Diario_Hardware.ipynb`
+
+---
+
+## 8. LowCode — Telegram Bot (Node-RED deuda)
+
+**Conocimientos:** BotFather `/newbot`, `POST https://api.telegram.org/bot<token>/sendMessage` + `parse_mode Markdown`, flujo JSON `automation/flows/intrusion_alert.json` como referencia (deuda 2026-09-09).
+
+**Búsquedas:** ver `docs/Automatizacion-LowCode/roadmap-lowcode.md` · Diario: `docs/Automatizacion-LowCode/notebook/Diario_LowCode.ipynb`
 
 ---
 
@@ -109,6 +150,18 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 - **C++ para microcontroladores** (Arduino UNO/MEGA, ESP32/ESP8266): interrupciones, lectura analógica/digital, comunicación serial. Es la base común de DevOps (CI/CD del firmware), Estadística (dónde corre el EMA) y Automatizaciones (eventos que disparan Telegram directo; Node-RED en deuda).
 - **Protocolo MQTT**: entender pub/sub, topics y QoS es necesario para entender cómo se comunican App, Backend, Gateway (ESP32↔MEGA UART) y Rover (nRF24L01) entre sí — topics canónicos `aethernet/#` (`acl.conf:1`, `architecture.md` §7).
 - **Redes LAN**: todo el sistema (App, ESP32/ESP8266, servidor Docker) vive en la misma subred LAN.
+
+## Búsquedas Google consolidadas (todas las materias)
+
+| Materia | Búsqueda ejemplo |
+|---|---|
+| Firmware | nRF24L01 RF24 library arduino datasheet 2.4GHz |
+| Hardware | KY008 laser datasheet LDR voltage divider Arduino |
+| Móvil | Eclipse Paho Android MQTT client tutorial 2024 StateFlow |
+| Estadística | exponential moving average alpha 0.2 Welch t-test SciPy |
+| DevOps | docker compose FastAPI PostgreSQL Mosquitto tutorial |
+| LowCode | Telegram Bot API sendMessage BotFather tutorial |
+| Administración | risk register matrix probability impact Scrum |
 
 ## Orden sugerido de aprendizaje (si el equipo parte de cero)
 

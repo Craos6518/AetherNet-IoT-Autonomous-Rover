@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.util
 
 // =============================================================================
 // Result.kt — Wrapper de resultado | 6º Semestre UTP | MOV-01 3.3
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años Python (Result pattern), 2 años JS/React (Promise ok/err),
 //              1 año C (códigos de error), 1 año PostgreSQL (transacciones)
 // Analogía React: este archivo es como `type Result<T> = {ok:true, data:T} | {ok:false, error:string}`

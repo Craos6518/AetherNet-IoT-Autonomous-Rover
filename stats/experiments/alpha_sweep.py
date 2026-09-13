@@ -1,7 +1,7 @@
 """
 ==============================================================================
 EST-08 — Barrido α con Justificación Cuantitativa | 6º Semestre UTP | Sprint 1-2
-Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+Autor: Andres Felipe Martinez Henao
 Experiencia: 2 años Python (statistics, matplotlib), 2 años electrónica/Arduino
              (HC-SR04, umbral 30cm Rover), 1 año C (EMA port rover.ino:73),
              1 año PostgreSQL (datos versionables como tabla)

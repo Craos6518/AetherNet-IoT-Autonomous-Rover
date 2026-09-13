@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.ui.viewmodel
 
 // =============================================================================
 // ViewModelFactory.kt — Factory Manual MVVM | 6º Semestre UTP | MOV-01 1.3
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años JS/React (context/provider), 2 años Python (DI), 1 año C
 // Analogía React: este class es como `const createViewModel = (repo) => { if (type === 'dashboard') return new DashboardViewModel(repo) }`
 // en JS — factory que crea ViewModels con repo inyectado (DI manual, sin Hilt/Koin).
@@ -37,6 +37,10 @@ class DashboardViewModelFactory(
         // Crea PinViewModel — usado en MainActivity:24 `val pinVm: PinViewModel = viewModel(factory = vmFactory)` (MOV-04 Plan B)
         if (modelClass.isAssignableFrom(PinViewModel::class.java)) {
             return PinViewModel(repo) as T
+        }
+        // Crea JoystickViewModel — usado en MainActivity:26 `val joyVm: JoystickViewModel = viewModel(factory = vmFactory)` (MOV-05 RF-1.2)
+        if (modelClass.isAssignableFrom(JoystickViewModel::class.java)) {
+            return JoystickViewModel(repo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}") // error si piden otro ViewModel no registrado (como `throw new Error('Unknown type')` en JS)
     }

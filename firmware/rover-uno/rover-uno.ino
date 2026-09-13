@@ -1,9 +1,9 @@
 /*
  * =============================================================================
  * AetherNet - Rover UNO Autonomous Tank | 6º Semestre UTP | RF-3.1/3.2 + HU-03/04
- * Autor: Est. Tec. Desarrollo Software + Ing. Sistemas (2 años electrónica/Arduino,
+  * Autor: Andres Felipe Martinez Henao
  *        1 año C, 2 años Python/JS/React, 1 año PostgreSQL) — 100% FOSS
- * Hardware: Arduino UNO + L298N + HC-SR04 + 3x TCRT5000 + nRF24L01
+ * Hardware: Arduino UNO + Chasis TT 6V 1:48 ×4 (antes 9-12V 3.5 KG·cm) + L298N + HC-SR04 + 3x TCRT5000 + nRF24L01
  * Fail-safe: 500ms sin RF válido → stopMotors() (HU-04, como circuit breaker)
  * EMA: S_t = α·Y_t + (1-α)·S_{t-1} con α=0.2 (HU-03 / RNF-2.1)
  * =============================================================================
@@ -58,9 +58,12 @@
 // TCRT5000 IR Sensors (analógico) — detecta borde/línea por reflectancia
 // Emite IR y mide cuánto rebota. Blanco refleja mucho (valor alto), negro/caída poco (valor bajo)
 // Umbral 500 hay que calibrar con cartulina blanca/negra y medir con Serial
-#define IR_LEFT_PIN A0             // Analógico izq — A0 en UNO es ADC 10-bit (0-1023)
-#define IR_CENTER_PIN A1           // Centro
-#define IR_RIGHT_PIN A2            // Der
+// MAPEO REAL 2026-09-11 (verificado HW, antes doc decía A0 izq/A1 centro/A2 der):
+//   A0 → TRASERO, A1 → LADO IZQUIERDO, A2 → LADO DERECHO (no hay sensor frontal centro)
+#define IR_REAR_PIN A0             // Trasero — A0 ADC 10-bit (0-1023) — alias legacy IR_LEFT_PIN
+#define IR_LEFT_PIN A1             // Izquierdo — A1
+#define IR_RIGHT_PIN A2            // Derecho — A2
+#define IR_CENTER_PIN A0           // Alias compatibilidad: centro = trasero hasta añadir TCRT frontal
 #define IR_THRESHOLD 500           // Umbral — <500 = borde/caída detectado (ajustar con calibración)
 
 // nRF24L01 — RF 2.4GHz (como Bluetooth pero más simple y sin pairing)
@@ -85,10 +88,10 @@ const byte gatewayAddress[6] = "GATEW"; // Dirección RF del Gateway (para ACK)
 // α pequeño = más suavizado, más lag; α=0.2 es compromiso (KPI reducción ruido >85%)
 #define EMA_ALPHA 0.2f
 
-// Límites motores
+// Límites motores — TT 6V 1:48 (actual 2026-09-11) vs 9-12V 3.5 KG·cm inicial
 #define MAX_PWM 255                // PWM máx 8-bit (0-255) — como opacity 0-1 en CSS pero 0-255
-#define MIN_PWM_FOR_MOVEMENT 60    // Mínimo para vencer fricción oruga — por debajo solo zumba/calienta
-// Lo medí: con 40 el motor no se mueve, con 60 arranca. Deadband evita jitter cerca de 0.
+#define MIN_PWM_FOR_MOVEMENT 60    // Mínimo para vencer fricción oruga TT 1:48 — por debajo solo zumba/calienta (medido 60 con TT 6V; original 9-12V era 40). Recalibrar con `hardware-inventory.md` calce si pesa >1kg → subir a 70.
+// Lo medí: TT 1:48 con 40 no se mueve, con 60 arranca en mesa lisa. Deadband evita jitter cerca de 0.
 
 // Umbrales evasión obstáculos (cm) — calibrados con regla y pruebas reales
 #define OBSTACLE_DISTANCE_CM 30    // <30cm = obstáculo frontal, girar
@@ -273,11 +276,12 @@ RoverTelemetry buildTelemetry() {
     telem.left_pwm = lastCommand.left_pwm; // Eco para que App sepa qué se ejecutó
     telem.right_pwm = lastCommand.right_pwm;
     telem.ultrasonic_cm = (uint16_t)ultrasonicEma; // Ya filtrado con EMA — valor estable (HU-03)
-    // TCRT5000: analogRead <500 = borde/caída (poca reflectancia = oscuro/agujero)
-    // Es como un sensor de línea en robótica — blanco refleja, negro no
-    telem.ir_left = digitalRead(IR_LEFT_PIN) < IR_THRESHOLD; // OJO: aquí digitalRead en pin analógico — funciona pero ideal analogRead
-    telem.ir_center = digitalRead(IR_CENTER_PIN) < IR_THRESHOLD;
-    telem.ir_right = digitalRead(IR_RIGHT_PIN) < IR_THRESHOLD;
+    // TCRT5000: analogRead >500 = borde/caída — INVERSO 2026-09-11 pista blanca pot mitad + sensores acercados a 3mm
+    // MAPEO 2026-09-11: ir_left = A1 izquierdo, ir_right = A2 derecho, ir_center = A0 trasero
+    // FIX 2026-09-11: digitalRead → analogRead + lógica invertida (blanca baja 290→OK, negra alta 850→BORDE vacío)
+    telem.ir_left = analogRead(IR_LEFT_PIN) > IR_THRESHOLD;
+    telem.ir_center = analogRead(IR_CENTER_PIN) > IR_THRESHOLD; // trasero
+    telem.ir_right = analogRead(IR_RIGHT_PIN) > IR_THRESHOLD;
     telem.rf_rssi = -70; // Placeholder: RF24.getRSSI() no existe en esta versión lib — fijo -70 dBm
     telem.checksum = calculateChecksum(telem); // Calcula sobre bytes previos
     return telem;
@@ -376,11 +380,12 @@ void executeAutoMode() {
     // Simple obstacle avoidance and cliff detection — lee sensores ya filtrados
     bool obstacleFront = ultrasonicInitialized && ultrasonicEma < OBSTACLE_DISTANCE_CM; // <30cm
     bool criticalClose = ultrasonicInitialized && ultrasonicEma < CRITICAL_DISTANCE_CM; // <15cm emergencia
-    // TCRT: true si detecta borde (valor <500 = poca reflectancia = agujero/línea negra)
-    // OJO: aquí debería ser analogRead() <500, pero se usa digitalRead() que compara con ~2.5V — funciona aproximado
-    bool cliffLeft = digitalRead(IR_LEFT_PIN) < IR_THRESHOLD;
-    bool cliffCenter = digitalRead(IR_CENTER_PIN) < IR_THRESHOLD;
-    bool cliffRight = digitalRead(IR_RIGHT_PIN) < IR_THRESHOLD;
+    // TCRT: true si detecta borde — INVERSO pista blanca 2026-09-11: >500 = borde (negra/vacío alto), <500 = OK (blanca baja)
+    // MAPEO 2026-09-11: A1 izquierdo, A2 derecho, A0 trasero + sensores acercados a 3mm pot mitad
+    bool cliffLeft = analogRead(IR_LEFT_PIN) > IR_THRESHOLD;   // A1 izq
+    bool cliffRear = analogRead(IR_CENTER_PIN) > IR_THRESHOLD;  // A0 trasero (alias centro)
+    bool cliffRight = analogRead(IR_RIGHT_PIN) > IR_THRESHOLD;  // A2 der
+    bool cliffCenter = cliffRear; // compatibilidad: centro = trasero hasta añadir TCRT frontal
 
     int leftSpeed = 0;
     int rightSpeed = 0;

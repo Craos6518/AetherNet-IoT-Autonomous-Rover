@@ -1,6 +1,6 @@
 # =============================================================================
 # backend/app/database.py — Conexión PostgreSQL Async | 6º Semestre UTP
-# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Autor: Andres Felipe Martinez Henao
 # Experiencia: 1 año PostgreSQL (psql, pools, asyncpg), 2 años Python (SQLAlchemy 2.0),
 #              2 años JS/React (async/await, connection pools en Node pg)
 # Analogía React/Node: este archivo es el `db.ts` con `new Pool({connectionString})`

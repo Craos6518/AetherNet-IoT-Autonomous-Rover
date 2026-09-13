@@ -90,6 +90,8 @@ class DashboardViewModelTest {
             else Result.Success(ledState ?: LedUiState(color = LedColor.OFF, state = LedState.OFF, label = "Apagado"))
 
         override suspend fun sendAccessCommand(pin: String): Result<Unit> = Result.Success(Unit)
+        override suspend fun sendRoverCommand(leftPwm: Int, rightPwm: Int, mode: Int): Result<Unit> = Result.Success(Unit)
+        override suspend fun sendRoverVector(x: Float, y: Float): Result<Unit> = Result.Success(Unit)
     }
 
     @Test

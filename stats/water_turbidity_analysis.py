@@ -2,7 +2,7 @@
 ==============================================================================
 water_turbidity_analysis.py — EST-06/EST-05 con Dataset water-level_turbidity
 6º Semestre UTP | TS4D3 Estadística | RNF-2.1 / RNF-2.2 / HU-03 / KPI >85%
-Autor: Est. Tecnología Desarrollo Software + Ing. Sistemas (UTP)
+Autor: Andres Felipe Martinez Henao
 FOSS: pandas/scipy/matplotlib — RNF-3.1 (sin R propietario)
 ==============================================================================
 QUÉ ES ESTO:

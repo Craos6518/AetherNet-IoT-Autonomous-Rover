@@ -1,6 +1,6 @@
 # =============================================================================
 # backend/app/config.py — Configuración con Pydantic Settings | 6º Semestre UTP
-# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Autor: Andres Felipe Martinez Henao
 # Experiencia: 2 años Python (Pydantic/FastAPI), 2 años JS/React (dotenv, process.env),
 #              1 año PostgreSQL (DATABASE_URL), 2 años electrónica (secrets.h)
 # Analogía React: este archivo es el `config.ts` que lee `.env` — como

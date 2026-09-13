@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.ui.viewmodel
 
 // =============================================================================
 // PinViewModel.kt — ViewModel PIN Cerrojo | 6º Semestre UTP | MOV-04 HU-01, RF-2.2
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años JS/React (form state), 2 años electrónica (keypad 4x4), 1 año C (throttle),
 //              1 año PostgreSQL (pin_hash), 2 años Python
 // Analogía React: este class es como `function usePinForm() { const [pinInput, setPinInput] = useState(""); const sendPin = async () => {...} }`

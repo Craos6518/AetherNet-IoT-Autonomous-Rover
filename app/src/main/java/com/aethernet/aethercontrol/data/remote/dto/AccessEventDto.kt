@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.data.remote.dto
 
 // =============================================================================
 // AccessEventDto.kt — DTOs Access Events | 6º Semestre UTP | HU-01, RF-2.2
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 1 año PostgreSQL (init.sql access_events), 2 años Python (schemas.py),
 //              2 años JS/React (DTO como interface TS), 2 años electrónica (keypad 4x4)
 // Analogía React: estos data class son como `interface AccessEvent { user_id: string, pin_hash: string, ... }`

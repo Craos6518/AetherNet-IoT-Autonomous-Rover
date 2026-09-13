@@ -1,7 +1,7 @@
 """
 ==============================================================================
 Tests Sprint 1 — DEVOPS-06 / RNF-1.1 | 6º Semestre UTP | Backend Minimal
-Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+Autor: Andres Felipe Martinez Henao
 Experiencia: 2 años Python (pytest, FastAPI TestClient), 2 años JS/React (Jest, supertest),
              1 año PostgreSQL (mock DB), 2 años electrónica/Arduino (HU-01..HU-04)
 Materia: DEVOPS-06 — CRUD mínimo eventos (HU-01..HU-04, RNF-2.2)

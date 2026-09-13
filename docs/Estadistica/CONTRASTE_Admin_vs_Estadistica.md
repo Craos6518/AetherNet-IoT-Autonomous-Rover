@@ -1,7 +1,7 @@
 # Contraste — Administración vs Estadística (AetherNet)
 
 > **Archivos comparados:**
-> - `docs/Administracion de proyectos/Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` (99 KB, 12 tablas, 671 párrafos, 14 secciones — **TS683 Administración**, trabajo individual **Andrés Felipe Martínez Henao**, 09/09/2026)
+> - `docs/Administracion-Proyectos/Proyecto_AetherNet_Andres_Felipe_Martinez_Henao.docx` (99 KB, 12 tablas, 671 párrafos, 14 secciones — **TS683 Administración**, trabajo individual **Andres Felipe Martinez Henao**, 09/09/2026)
 > - `docs/Estadistica/Anteproyecto_AetherNet-3.docx` (14 KB, 2 tablas, ~47 párrafos, 8 secciones — **TS4D3 Estadística**, mismo autor, 5º semestre)
 >
 > **Fecha de contraste:** 10/09/2026 — ambos docs vivos, sin contradicciones bloqueantes; el segundo **especializa** lo que el primero deja como `EST-01..07` y `OE-05`.
@@ -21,7 +21,7 @@ El doc de **Administración** es el **plan integral del sistema completo** (app 
 | **Materia UTP** | TS683 Administración y Planeación de Proyectos de Software | TS4D3 Estadística | Complementarias, mismo proyecto integrador |
 | **Alcance** | **Sistema completo** (3 capas: Edge→Gateway→Backend→App/Telegram) | **Solo validación EMA** del HC-SR04 (seguridad anti-choque/caída) | Estadística es subconjunto de Admin §3 OE-05 / §6 WBS 6.x |
 | **Título** | *AetherNet IoT & Autonomous Rover — Plataforma distribuida ... 100% FOSS* | *AetherNet — Validación estadística del filtro EMA con datos externos validados* + `IoT & Autonomous Rover` | Mismo nombre corto, distinto subtítulo (sistema vs validación) |
-| **Autor** | Andrés Felipe Martínez Henao (solo) | Andrés Felipe Martínez Henao (trabajo individual) | ✅ Coherente |
+| **Autor** | Andres Felipe Martinez Henao (solo) | Andres Felipe Martinez Henao (trabajo individual) | ✅ Coherente |
 | **Estructura plantilla** | 14 secciones (Título → Anexos + índice, portada UTP, header/footer) | 8 secciones (Nombre → Datasets) + footnotes, sin WBS/cronograma/costos | Administración sigue plantilla institucional §1-14; Estadística sigue guion TS4D3 |
 | **Justificación** | Nubes propietarias, falta integración app↔firmware↔backend, vacío FOSS + KPIs LAN | Ruido HC-SR04 → riesgo choque/caída Rover; EMA ya es requisito; 531 muestras internas insuficientes → necesita validación externa | Estadística **profundiza** la justificación técnica de HU-03 que Admin menciona en §2 |
 | **Objetivo general** | Desarrollar plataforma integral 100% FOSS con KPIs <50ms, <10ms, >85% en 4 sprints | Confirmar con datos reales externos que EMA α=0.2 reduce ruido de forma consistente con pruebas internas | El OG de Estadística es **criterio de aceptación de OE-05** de Admin |
@@ -44,7 +44,7 @@ El doc de **Administración** es el **plan integral del sistema completo** (app 
 
 1. **Mismo α=0.2, mismo KPI >85%, misma fórmula** `S_t = α·Y_t + (1-α)·S_{t-1}` en ambos (`stats/ema_filter.py:15` ↔ `rover-uno.ino:259` ↔ Anteproyecto §5-6).
 2. **Mismo sensor:** HC-SR04 ultrasónico time-of-flight (Admin: hardware-inventory.md, Rover UNO; Estadística: us_value / distancia_cm).
-3. **Mismo autor y trabajo solo:** ambos declaran Andrés Felipe Martínez Henao, individual — sin conflicto de “Equipo completo” de plantilla genérica.
+3. **Mismo autor y trabajo solo:** ambos declaran Andres Felipe Martinez Henao, individual — sin conflicto de “Equipo completo” de plantilla genérica.
 4. **Mismo marco FOSS 100%:** Admin lo exige (RNF-3.1), Estadística lo respeta (CC BY-SA 4.0 requiere atribución + CC0 sin restricciones).
 5. **Turbidez / condiciones adversas:** Admin menciona `ir_strength` como proxy ambiental; Estadística lo usa como factor para comparar low vs high.
 6. **Los 531 muestras internas** aparecen en ambos (Admin §3 OE-05, §7, §11 y Estadística §3) — reconocimiento de limitación y necesidad de externos.
@@ -137,7 +137,7 @@ Ambas compatibles con RNF-3.1 100% FOSS. Dataset1 exige citar Ranieri et al. en 
 
 1. **En Administración §6 WBS 6.3 y §9.1:** añadir nota “Validado con datasets externos 31.5k (turbidez) + 5k (gestos HC-SR04) — ver `docs/Estadistica/Datasets/README.md` y `stats/Dataset/README.md`”.
 2. **En Administración §14 Anexos:** añadir Anexo G “Datasets externos” con las dos fichas de §5 de este contraste (ya listo para copiar).
-3. **En Estadística Sprint4:** ejecutar `python3 stats/water_turbidity_analysis.py` y gestos → generar `water_turbidity_report.json` + PNGs y reportar reducción % y retardo en `notebooks/EMA_Estadistica.ipynb §7c/7d`.
+3. **En Estadística Sprint4:** ejecutar `python3 stats/water_turbidity_analysis.py` y gestos → generar `water_turbidity_report.json` + PNGs y reportar reducción % y retardo en `docs/Estadistica/notebook/EMA_Estadistica.ipynb §7c/7d`.
 4. **En informe final EST-07:** incluir citas CC BY-SA 4.0 y CC0 (ver §5) y referenciar `stats/Dataset/` y `docs/Estadistica/Datasets/` como fuentes.
 
 Sin estas 4 líneas, ambos docs quedan **consistentes pero desconectados**; con ellas, Administración absorbe la evidencia externa y Estadística deja de ser “ejercicio aislado”.
@@ -148,7 +148,7 @@ Sin estas 4 líneas, ambos docs quedan **consistentes pero desconectados**; con 
 
 **No hay contradicción.** Administración es el **mapa** y Estadística es la **brújula del filtro**. El contraste muestra que el Anteproyecto no corrige a Administración: **lo completa** en el punto más riesgoso (R-03 EMA mal calibrado). Con ambos datasets ya integrados (36.500 filas, 3.7 MB, HC-SR04 idéntico incluido), el proyecto puede sostener ante evaluador: “EMA α=0.2 no solo simula 89% en 531 muestras internas, sino que se valida en 31.5k medidas controladas y 5k movimientos reales del mismo sensor, con licencias FOSS y diseño balanceado”.
 
-> Próximo paso: commit que incluya `docs/Estadistica/Datasets/*.csv` + `stats/Dataset/gesture_dataset.csv` + READMEs + este contraste, y referencia cruzada en `docs/Administracion de proyectos/Proyecto_AetherNet...docx` Anexo G.
+> Próximo paso: commit que incluya `docs/Estadistica/Datasets/*.csv` + `stats/Dataset/gesture_dataset.csv` + READMEs + este contraste, y referencia cruzada en `docs/Administracion-Proyectos/Proyecto_AetherNet...docx` Anexo G.
 
 ---
 
@@ -160,6 +160,6 @@ Sin estas 4 líneas, ambos docs quedan **consistentes pero desconectados**; con 
 - docs/hardware-inventory.md (HC-SR04, TCRT5000, KY-008)
 - docs/architecture.md §3-4 (EMA, t-Student)
 - docs/risk-register.md R-03, R-12
-- stats/ema_filter.py:15, rover-uno.ino:259, stats/water_turbidity_analysis.py:1, notebooks/EMA_Estadistica.ipynb
+- stats/ema_filter.py:15, rover-uno.ino:259, stats/water_turbidity_analysis.py:1, docs/Estadistica/notebook/EMA_Estadistica.ipynb
 - Kaggle turbidez: https://www.kaggle.com/datasets/caetanoranieri/water-level-identification-with-lidar — CC BY-SA 4.0 — DOI 10.1016/j.engappai.2023.107235
 - Kaggle gestos: https://www.kaggle.com/datasets/marisolgil/hand-gesture-dataset — CC0 — DOI 10.34740/kaggle/dsv/16239431

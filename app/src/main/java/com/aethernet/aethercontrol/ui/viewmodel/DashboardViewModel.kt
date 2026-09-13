@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.ui.viewmodel
 
 // =============================================================================
 // DashboardViewModel.kt — ViewModel Dashboard + LED + MQTT | 6º Semestre UTP | MOV-01 5.2 + MOV-02 + MOV-03
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años JS/React (useState, useEffect, Redux), 2 años Python (asyncio),
 //              2 años electrónica (LED 44/45/46, MqttManager), 1 año PostgreSQL (health)
 // Analogía React: este class es como `function useDashboard() { const [state, setState] = useState(...); useEffect(()=>fetchHealth(), []) }`

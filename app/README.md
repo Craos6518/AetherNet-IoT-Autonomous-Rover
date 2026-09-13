@@ -1,6 +1,6 @@
 # AetherControl — App Android Kotlin (Jetpack Compose, MVVM)
 
-> **Autor:** Estudiante 6º semestre Tecnología en Desarrollo de Software + 6º semestre Ingeniería de Sistemas y Computación (UTP)  
+> **Autor:** Andres Felipe Martinez Henao
 > **Experiencia:** 2 años electrónica y Arduino | 1 año Programación C | 2 años Python | 2 años HTML/CSS/JavaScript/React | 1 año PostgreSQL  
 > **Stack:** Kotlin, Jetpack Compose (Material3), MVVM, Coroutines + StateFlow/SharedFlow, Retrofit + OkHttp + kotlinx.serialization, DataStore Preferences, Paho MQTTv3, Navigation Compose — 100% FOSS (RNF-3.1)  
 > **Sprint:** 1 ✅ (MOV-01 Dashboard), 2 ✅ (MOV-02 LED + MOV-03 MQTT), 4 ✅ (MOV-04 Pin cerrojo) — `docs/sprints.md:78`  

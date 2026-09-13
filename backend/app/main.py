@@ -1,7 +1,7 @@
 """
 ==============================================================================
 AetherNet FastAPI — Punto de entrada principal | 6º Semestre UTP
-Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+Autor: Andres Felipe Martinez Henao
 Experiencia: 2 años Python (FastAPI), 2 años HTML/CSS/JS/React (fetch/CORS),
              1 año PostgreSQL (asyncpg), 2 años electrónica/Arduino (UART→HTTP)
 Sprint: 1 / DEVOPS-01 + DEVOPS-06 — RNF-1.1, RF-2.1, RNF-2.2, RNF-3.1 FOSS

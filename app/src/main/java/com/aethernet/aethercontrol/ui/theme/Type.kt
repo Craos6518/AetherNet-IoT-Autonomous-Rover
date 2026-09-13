@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.ui.theme
 
 // =============================================================================
 // Type.kt — Tipografía Material3 | 6º Semestre UTP
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años HTML/CSS/JS/React (CSS font, MUI typography), 1 año C
 // Analogía React: este archivo es como `createTheme({typography: {bodyLarge: {fontSize: 16, lineHeight: 24}}})` en MUI React
 // — define estilos de texto para toda la app (ver Theme.kt:55 typography = Typography).

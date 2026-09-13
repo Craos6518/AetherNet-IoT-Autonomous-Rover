@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol
 
 // =============================================================================
 // AetherControlApp.kt — Application Class | 6º Semestre UTP | RF-1.1, RNF-3.1
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años JS/React (App root), 2 años Python (service locator), 1 año C
 // Analogía React: este class es como `function App() { useEffect(() => { ServiceLocator.init() }, []) }` en React
 // — punto de entrada de la app Android, se ejecuta antes que MainActivity (como `index.js` en React).

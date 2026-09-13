@@ -1,6 +1,6 @@
 # =============================================================================
 # requirements.txt — Deps pinneadas Stats | 6º Semestre UTP | FOSS RNF-3.1
-# Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+# Autor: Andres Felipe Martinez Henao
 # Experiencia: 2 años Python (pip freeze), 2 años JS/React (package-lock.json),
 #              1 año C (pin ArduinoJson 6.21.3), 1 año PostgreSQL
 # FOSS: todas pinneadas exactas para CI reproducible (como firmware/platformio.ini)

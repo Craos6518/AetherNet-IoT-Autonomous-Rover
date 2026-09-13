@@ -1,7 +1,7 @@
 /*
  * =============================================================================
  * AetherNet - Test nRF24L01 ESP32 (Validación Aislada DEVOPS-05) | 6º Semestre UTP
- * Autor: Est. Tec. Desarrollo Software + Ing. Sistemas (2 años electrónica/RF,
+  * Autor: Andres Felipe Martinez Henao
  *        1 año C, 2 años JS/React) — Solo SPI/RF, sin WiFi/MQTT/UART a MEGA
  * Objetivo: Aislar "WARN: nRF24L01 not detected!" visto en gateway-esp32.ino:124
  * Cableado docs/fritzing/plano-sprint1-nrf24-reapertura.md:30

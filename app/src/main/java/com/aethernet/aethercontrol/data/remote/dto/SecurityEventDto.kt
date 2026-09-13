@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.data.remote.dto
 
 // =============================================================================
 // SecurityEventDto.kt — DTOs Security Events | 6º Semestre UTP | HU-02, RF-2.3
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 1 año PostgreSQL (security_events), 2 años Python (schemas), 2 años electrónica (láser KY-008),
 //              2 años JS/React (DTOs)
 // Analogía React: como `interface SecurityEvent { event_type: string, severity: "low"|"medium"|..., acknowledged: boolean }`

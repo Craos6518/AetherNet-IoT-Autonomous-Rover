@@ -2,6 +2,7 @@
 
 > **Ubicación canónica:** `stats/Dataset/` (36.500 filas, 3.7 MB) — espejo en `docs/Estadistica/Datasets/` para entrega académica.
 > Ambos datasets ya versionados en el repo, sin descarga adicional. Ver también `docs/Estadistica/Datasets/README.md`.
+> **Licencias:** Código del repo → Apache 2.0 (`LICENSE`); estos CSV → **CC BY-SA 4.0** (turbidez) y **CC0** (gestos) — ver [`NOTICE`](../../NOTICE) y sección Licencia abajo. Compatibles FOSS (RNF-3.1) por agregación.
 
 ---
 
@@ -46,13 +47,13 @@ gyr_acc_x, gyr_acc_y, gyr_acc_z, gyr_x, gyr_y, gyr_z, angle, water_level
 - `ir_strength` ≈ proxy turbidez/condición ambiental (impacto láser vs niebla/polvo).
 - Permite validar offline el pipeline `EMA + descriptivo + t-Student Welch` (`EST-06`, `EST-05` adaptado) previo a captura Rover real (`EST-09` latencias).
 
-Ver `stats/water_turbidity_analysis.py:1` y `notebooks/EMA_Estadistica.ipynb §7c` para reproducciones, y `stats/data/water_turbidity_report.json:1` para métricas versionables.
+Ver `stats/water_turbidity_analysis.py:1` y `docs/Estadistica/notebook/EMA_Estadistica.ipynb §7c` para reproducciones, y `stats/data/water_turbidity_report.json:1` para métricas versionables.
 
 ## Uso (Dataset 1)
 
 ```bash
 python3 stats/water_turbidity_analysis.py   # → stats/data/water_turbidity_report.json + PNGs
-jupyter lab notebooks/EMA_Estadistica.ipynb  # §7c
+jupyter lab docs/Estadistica/notebook/EMA_Estadistica.ipynb  # §7c
 ```
 
 No requiere descarga adicional — los 3 CSV ya están versionados en este repo (derivado CC BY-SA 4.0, citar).
@@ -100,7 +101,7 @@ Diseño: 5.000 filas completas (cumple mínimo 100 observaciones), con variables
 
 ```bash
 python3 stats/gesture_analysis.py        # (si existe) → stats/data/gesture_report.json
-jupyter lab notebooks/EMA_Estadistica.ipynb  # §7d — análisis gestos + retardo EMA
+jupyter lab docs/Estadistica/notebook/EMA_Estadistica.ipynb  # §7d — análisis gestos + retardo EMA
 # Análisis directo
 python3 -c "import pandas as pd; df=pd.read_csv('stats/Dataset/gesture_dataset.csv'); print(df.groupby('gesto')['distancia_cm'].describe())"
 ```

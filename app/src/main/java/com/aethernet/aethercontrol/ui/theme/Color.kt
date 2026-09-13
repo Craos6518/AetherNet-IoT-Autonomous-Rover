@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.ui.theme
 
 // =============================================================================
 // Color.kt — Paleta Material3 | 6º Semestre UTP
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años HTML/CSS/JS/React (CSS color, Material UI), 1 año C
 // Analogía React: este archivo es como `colors.js` con `export const Purple80 = '#D0BCFF'` en React/MUI
 // — define paleta Material3 para Theme.kt (como theme.palette en MUI React).

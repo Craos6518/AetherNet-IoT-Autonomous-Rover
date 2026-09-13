@@ -1,6 +1,6 @@
 # `.gitignore` — Mapa de Ignorados AetherNet
 
-> **Autor:** Estudiante 6º semestre Tecnología en Desarrollo de Software + 6º semestre Ingeniería de Sistemas y Computación (UTP)  
+> **Autor:** Andres Felipe Martinez Henao
 > **Experiencia:** 2 años electrónica y Arduino | 1 año Programación C | 2 años Python | 2 años HTML/CSS/JavaScript/React | 1 año PostgreSQL  
 > **Stack:** Git (glob `fnmatch` como `.gitignore`), Python 3.12, Android Gradle, C++ Arduino, Node-RED, Docker — 100% FOSS (RNF-3.1)  
 > **Archivo:** `.gitignore:1` (333 líneas, 13 bloques, 26 `!` whitelists) — ver `git check-ignore -v` para debug
@@ -161,7 +161,7 @@ wc -l .gitignore  # 333 (26 !)
 - `docs/prd.md:51` KPI `>85%` (`stats/data/ema_demo.json`), `docs/requirements.md:22 RF-2.2` cerrojo, `docs/sprints.md:13` DEVOPS-05 nRF24 plano `docs/fritzing/mega-cerrojo-v1.fzz`
 - `docs/architecture.md:31` `FastAPI+Mosquitto+PG` + `docs/roadmap.md:86` PG
 - `firmware/gateway-esp32/secrets.h:1` + `secrets.h.example:1` ↔ `.gitignore:225` `firmware/**/secrets.h`
-- `stats/README.md §10` `data/` evidencia + `notebooks/README.md` central `notebooks/` (no `stats/notebooks` duplicado 1.3M)
+- `stats/README.md §10` `data/` evidencia + `docs/README.md` central `notebooks/` (no `stats/notebooks` duplicado 1.3M)
 - `.github/workflows/ci.yml:38` `ruff/mypy` + `:101` `cp secrets.h.example` fallback + `:317` `gradlew` (gracias a `!gradlew`)
 
 ---
@@ -181,4 +181,3 @@ wc -l .gitignore  # 333 (26 !)
 ---
 
 *Documentado como estudiante 6º semestre que compara `.gitignore` Python (`__pycache__` como `.next`), React (`build/` como `dist/`, `!gradlew` como whitelist), C (`*.o` `*.elf` `gcc`), PostgreSQL (`postgres_data/` volumen), FOSS `RNF-3.1` nunca commitear `secrets.h`/`*.jks`, con `26 !` para trazabilidad sin `git add -f`.*
-

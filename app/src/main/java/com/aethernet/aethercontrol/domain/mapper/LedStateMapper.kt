@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.domain.mapper
 
 // =============================================================================
 // LedStateMapper.kt — Mapper LED Determinista | 6º Semestre UTP | MOV-02 RF-1.1, HU-01/HU-02
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años electrónica/Arduino (LED RGB 44/45/46, DOOR_AUTO_LOCK_MS 5000),
 //              2 años JS/React (mapper como selector), 1 año C (led.cpp millis),
 //              1 año PostgreSQL (access/security_events)

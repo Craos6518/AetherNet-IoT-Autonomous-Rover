@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.domain.validator
 
 // =============================================================================
 // PinValidator.kt — Validador PIN y Hash djb2 | 6º Semestre UTP | MOV-04 HU-01, RF-2.2
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 1 año C (djb2 en keypad_control.cpp:99), 2 años Python (hashlib),
 //              2 años JS/React (validación form), 2 años electrónica (keypad 4x4)
 // Analogía React: este object es como `const PinValidator = { isValidFormat(pin) { return /^\d{4,6}$/.test(pin) } }`

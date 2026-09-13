@@ -2,6 +2,7 @@
 
 > **Entrega académica:** `docs/Estadistica/Datasets/` es **espejo** de `stats/Dataset/` (canónico en el repo).
 > Ambos datasets ya versionados — no requieren descarga. Licencias 100% FOSS (RNF-3.1).
+> **Licencias:** Código del repo → Apache 2.0 (`LICENSE`); estos CSV → **CC BY-SA 4.0** (turbidez) y **CC0** (gestos) — ver [`NOTICE`](../../NOTICE) y [`stats/Dataset/README.md`](../../stats/Dataset/README.md). Compatibles por agregación.
 
 ## Resumen rápido
 
@@ -58,7 +59,7 @@ Banco de laboratorio con LiDAR + ultrasónico + IMU sincronizados. Factorial con
 
 ```bash
 python3 stats/water_turbidity_analysis.py   # → stats/data/water_turbidity_report.json + water_us_vs_true.png
-jupyter lab notebooks/EMA_Estadistica.ipynb  # §7c
+jupyter lab docs/Estadistica/notebook/EMA_Estadistica.ipynb  # §7c
 ```
 
 ---
@@ -117,7 +118,7 @@ El anteproyecto lo usa para el OE-5: medir retardo del EMA ante obstáculo súbi
 
 ```bash
 python3 -c "import pandas as pd; df=pd.read_csv('docs/Estadistica/Datasets/gesture_dataset.csv'); print(df.groupby('gesto')['distancia_cm'].describe())"
-jupyter lab notebooks/EMA_Estadistica.ipynb  # §7d
+jupyter lab docs/Estadistica/notebook/EMA_Estadistica.ipynb  # §7d
 ```
 
 ---

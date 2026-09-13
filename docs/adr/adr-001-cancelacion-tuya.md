@@ -22,7 +22,7 @@ Node-RED ya tenía implementado el flujo `tuya-bulb-alert → tuya-local-send` (
 
 -   **RF-4.2 → Won't (esta iteración).** Se mantiene documentado como cancelado en `docs/requirements.md:32`, no se elimina del spec para trazabilidad.
 -   **HU-02 simplificada:** `Dado armado / Cuando láser KY-008 se interrumpe / Entonces Telegram (RF-4.1) + LED RGB local en rojo (MEGA)` — sin bombillo (`docs/requirements.md:69`, `docs/architecture.md:90`).
--   **LOW-01, LOW-04 → W (Won't).** LOW-05 renombrado a “Cadena completa sin bombillo” (`docs/backlog.md:55`, `docs/materias/backlog-lowcode.md:22`).
+-   **LOW-01, LOW-04 → W (Won't).** LOW-05 renombrado a “Cadena completa sin bombillo” (`docs/backlog.md:55`, `docs/Automatizacion-LowCode/backlog-lowcode.md:22`).
 -   **Hardware:** tabla `docs/hardware-inventory.md:14` pasa a fila tachada con referencia a este ADR; único indicador visual vigente es LED RGB del MEGA (`hardware-inventory.md:18`).
 -   **Automatización:** `automation/flows/intrusion_alert.json` simplificado a `mqtt-intrusion → function-parse → telegram-alert` + `debug` (se eliminan nodos `tuya-bulb-alert`, `tuya-local-send`, `debug-tuya`). `automation/package.json` elimina `node-red-contrib-tuya-local`.
 -   **Riesgos:** R-01 y R-07 pasan a **Cerrado** con motivo “políticas API + local_key” (`docs/risk-register.md:16`), no “incompatibilidad técnica” sola.
@@ -51,7 +51,7 @@ Node-RED ya tenía implementado el flujo `tuya-bulb-alert → tuya-local-send` (
 -   `docs/architecture.md:90,103`
 -   `docs/backlog.md:51,55,58` + `docs/sprints.md:23,43,56`
 -   `docs/risk-register.md:16` R-01 (políticas API)
--   `docs/materias/backlog-lowcode.md:5,22` + `automation/flows/intrusion_alert.json`
+-   `docs/Automatizacion-LowCode/backlog-lowcode.md:5,22` + `automation/flows/intrusion_alert.json`
 
 ## Verificación de cierre
 

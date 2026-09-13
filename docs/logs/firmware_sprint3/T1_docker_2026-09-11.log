@@ -1,0 +1,18 @@
+[+] Building 0.4s (13/13) FINISHED
+ ✔ Image aethernet-iot-autonomous-rover-fastapi         Built
+ ✔ Network aethernet-iot-autonomous-rover_aethernet-net Created
+ ✔ Container aethernet-postgres                         Healthy
+ ✔ Container aethernet-mosquitto                        Started
+ ✔ Container aethernet-fastapi                          Started
+aethernet-fastapi  | INFO:     Started server process [1]
+aethernet-fastapi  | INFO:     Application startup complete.
+aethernet-fastapi  | INFO:     Uvicorn running on http://0.0.0.0:8000
+aethernet-mosquitto  | 2026-09-11T13:28:07: mosquitto version 2.0.22 starting
+aethernet-mosquitto  | 2026-09-11T13:28:07: Opening ipv4 listen socket on port 1883.
+aethernet-mosquitto  | 2026-09-11T13:28:07: Opening websockets listen socket on port 9001.
+$ curl http://192.168.1.14:8000/health
+{"status":"ok","database":"ok","version":"1.0.0-sprint1"}
+$ mosquitto_sub -h 192.168.1.14 -t "aethernet/#" -v
+aethernet/rover/command {"left_pwm":120,"right_pwm":120,"mode":1}
+aethernet/rover/command {"left_pwm":0,"right_pwm":0,"mode":0}
+# Rafaga MOV-05/06 validada 50ms throttle + deadband 60 + stop onReleased

@@ -1,7 +1,7 @@
 /*
  * =============================================================================
  * AetherNet - Test nRF24L01 UNO (Validación Aislada DEVOPS-05) | 6º Semestre UTP
- * Autor: Est. Tec. Desarrollo Software + Ing. Sistemas (2 años electrónica/RF,
+  * Autor: Andres Felipe Martinez Henao
  *        1 año C, 2 años Python) — Solo SPI/RF, sin L298N/HC-SR04/TCRT/EMA
  * Objetivo: Aislar "ERROR: nRF24L01 not detected!" visto en rover-uno.ino:135
  * Cableado docs/fritzing/plano-sprint1-nrf24-reapertura.md:38

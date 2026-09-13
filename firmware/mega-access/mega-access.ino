@@ -1,7 +1,7 @@
 /*
  * =============================================================================
  * AetherNet — MEGA Access Control (Cerrojo) | 6º Semestre UTP
- * Autor: Est. Tecnología Desarrollo Software + Ing. Sistemas (2 años Arduino/C,
+  * Autor: Andres Felipe Martinez Henao
  *        2 años Python/JS/React, 1 año PostgreSQL) — Proyecto Integrador FOSS
  * Módulo: RF-2.2 + HU-01 — feature/firmware-mega-cerrojo
  * Hardware: Arduino MEGA 2560 — Keypad 4x4 + Servo MG90S + LED RGB + UART ESP32

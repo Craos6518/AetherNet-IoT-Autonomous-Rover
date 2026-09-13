@@ -1,0 +1,118 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+%\usepackage{algorithmic} % no usado -- requiere texlive-science
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{url}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\graphicspath{{../../docs/fritzing/}{../}{./}}
+
+\begin{document}
+\title{Firmware C++ y Hardware Electrónico de AetherNet: MEGA -- Gateway ESP32 -- Rover UNO con RF, EMA y Fail-safe}
+\author{\IEEEauthorblockN{Andrés Felipe Martínez Henao}
+\IEEEauthorblockA{Firmware + Hardware -- Electrónica Embebida\\Tecnología en Desarrollo de Software (5º sem) -- Ing. Sistemas y Computación (6º sem)\\Universidad Tecnológica de Pereira\\\texttt{F.martinez5@utp.edu.co}}
+\and
+\IEEEauthorblockN{Proyecto AetherNet -- firmware/* + docs/Firmware + docs/Hardware}
+\IEEEauthorblockA{mega-access + gateway-esp32 + rover-uno -- arduino-cli 1.5.1 -- TT 6V 1:48}}
+\maketitle
+
+\begin{abstract}
+Sin PDF UTP propio, Firmware/Hardware se evalúa como electrónica y sistemas embebidos trazables a RF-2.1/2.2/2.3/3.1/3.2 y HU-01..04 (RNF-1.2 CI). El Gateway ESP32-WROOM-32U + nRF24L01 (CE5/CSN15, SCK18/MOSI23/MISO19, Ch76 2~Mbps) puentea Wi-Fi/MQTT$\leftrightarrow$UART 38400 (RX16/TX17, divisor 5V$\rightarrow$3.3V)$\leftrightarrow$RF. El MEGA 2560 integra keypad 4$\times$4 (ROW 22/24/26/28, COL 30/32/34/36), servo MG90S pin 9 (0/90°), LED RGB ánodo común 44/45/46 PWM invertido, y láser KY-008 S$\rightarrow$8 + LDR discreta 5V$\rightarrow\bullet\rightarrow$7 +10k$\rightarrow$GND INPUT (laser.cpp 50~ms CHECK, COOLDOWN 3~s, \texttt{triggerIntrusionAlert}$\rightarrow$\texttt{SECURITY:}). El Rover UNO + L298N (ENA5/ENB11, IN1 6 IN2 7 IN3 8 IN4 9, drop 1.8V) + HC-SR04 TRIG2/ECHO3 con EMA $S_t=0.2Y_t+0.8S_{t-1}$ + 3$\times$TCRT5000 A0 trasero/A1 izq/A2 der threshold 500 ejecuta evasión y fail-safe 500~ms con checksum. El calce 2026-09-11 a TT 6V 1:48 (4 motores, 0.8~KG$\cdot$cm, 120~RPM, $\sim$0.35~m/s) impone -77\% torque, 3.2A stall y MIN\_PWM 60$\rightarrow$70. Los 3 firmwares compilan en CI matriz ESP32/AVR (19252/6900 bytes) y el RF está validado HW 4/4 (\texttt{testing-rf-sprint1.md:32}, TX/RX L=120, isChipConnected=1). Pendientes: fotos 12~MP y telemetría TCRT/HC-SR04 validada \texttt{e821700}.
+\end{abstract}
+\begin{IEEEkeywords}
+Arduino MEGA/UNO, ESP32, nRF24L01 RF24, HC-SR04 EMA $\alpha=0.2$, TCRT5000, L298N, TT 1:48, KY-008 LDR, arduino-cli
+\end{IEEEkeywords}
+
+\section{Introducción: firmware como capa Edge}
+La capa Edge procesa sin depender de red (PRD \S6 Contingencia): el cerrojo y el láser funcionan aunque caiga Wi-Fi/Docker. Firmware/Hardware comparten roadmap, pines y fritzing; su DoD es compilar en CI + banco físico. Referencias: \texttt{docs/Firmware/firmware.md}, \texttt{roadmap-firmware.md}, \texttt{docs/Hardware/hardware.md}, \texttt{roadmap-hardware.md}, \texttt{hardware-inventory.md}, \texttt{fritzing/AetherNet-P*.png}.
+
+\section{Arquitectura hardware}
+\begin{table}[t]
+\centering
+\caption{Mapa componente$\rightarrow$función$\rightarrow$pines (hardware.md \S Mapa)}
+\label{tab:hw}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}llp{4cm}@{}}
+\toprule
+Componente & Función & Pines / protocolo \\
+\midrule
+ESP32 + nRF24\#1 & Gateway MW/MQTT$\leftrightarrow$UART$\leftrightarrow$RF & CE5 CSN15 + UART16/17 38400 \\
+MEGA + keypad + MG90S + LED & Cerrojo HU-01 + feedback & ROW 22/24/26/28 COL 30/32/34/36, S9, LED44/45/46 \\
+KY-008 + LDR 10k & Barrera HU-02 & TX8, RX7 INPUT, 10k$\rightarrow$GND \\
+UNO + L298N + HC-SR04 + TCRT$\times$3 & Rover HU-03/04 & ENA5 ENB11, TRIG2 ECHO3, A0/A1/A2 \\
+TT 6V 1:48 $\times$4 & Chasis & 2 motores/canal L298N \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+Fig.~1 (fritzing): P2 RF-Link, P3 MEGA-Cerrojo, P4 Rover, P5 Laser, P1 EMA-UNO -- \texttt{docs/fritzing/AetherNet-P2..P5*.png} + \texttt{compendio-planos.md}.
+
+\section{Método por subsistema}
+\subsection{Gateway ESP32 (RF-2.1)}
+\texttt{gateway-esp32.ino:59} RF24 Ch76 2~Mbps; UART 38400 a MEGA (RX16/TX17, divisor), MQTT a Mosquitto (\texttt{aethernet/rover/command:69}, \texttt{access/command:70}, \texttt{access/event:71}, \texttt{seguridad/intrusion:72}). Credenciales en \texttt{secrets.h} (gitignored) + \texttt{secrets.h.example} (DEVOPS-11). Traducción: MQTT$\leftrightarrow$UART JSON por línea + checksum, MQTT$\leftrightarrow$RF struct empaquetado \texttt{\#pragma pack}.
+
+\subsection{MEGA Acceso/Potencia (RF-2.2/2.3, HU-01/02)}
+\texttt{config.h}: \texttt{VALID\_PIN 1234}, \texttt{DOOR\_AUTO\_LOCK\_MS 5000}, \texttt{LED\_COMMON\_ANODE} (255-valor), \texttt{ROW/COL}, \texttt{SERVO\_PIN 9}, \texttt{LASER\_TX 8 LASER\_RX 7 INPUT}, \texttt{DOOR\_LOCKED 0 UNLOCKED 90}. Lógica no bloqueante \texttt{millis()} (vs \texttt{delay()}): \texttt{laser.cpp:15} 50~ms CHECK, \texttt{led.cpp} verde 5~s / rojo 1~s / azul 50~ms dígito, \texttt{door.cpp} + \texttt{keypad\_control.cpp} + \texttt{uart\_protocol.cpp:40 CMD:ACCESS} 38400 bd. Flujo HU-01: PIN$\rightarrow$\texttt{processPinAttempt}==VALID\_PIN$\rightarrow$\texttt{unlockDoor 90° 5s} + LED verde + UART \texttt{ACCESS:hash}. HU-02: \texttt{laserInit/handleLaser/triggerIntrusionAlert} $\rightarrow$ LED rojo 3~s + UART \texttt{SECURITY:}$\rightarrow$Gateway$\rightarrow$POST \texttt{/api/security-events} + \texttt{aethernet/seguridad/intrusion}. Matriz relés eliminada 2026-08-26.
+
+\subsection{Rover UNO (RF-3.1/3.2, HU-03/04)}
+Tracción L298N (drop 1.8V vs TB6612FNG): ENA5/ENB11 PWM, IN1..4 6/7/8/9, 2 motores/canal. Evasión: HC-SR04 TRIG2 ECHO3 con EMA \texttt{rover-uno.ino:259} $S_t=0.2Y_t+0.8S_{t-1}$ (init lazy, descarte fuera de rango, \texttt{test-rover-sensors.ino} 4712~b), umbrales 30/15~cm en \texttt{executeAutoMode}; anti-caída 3$\times$TCRT5000 \texttt{analogRead} threshold 500 (A0 trasero, A1 izq, A2 der) -- bug previo \texttt{digitalRead(A0)} corregido, invertido: blanca $\sim$290 BORDE vs negra/vacío $\sim$850 OK. RF: nRF24 \texttt{RF24} lib CE4/CSN10, \texttt{verifyChecksum:372-379}, telemetría \texttt{T\_telemetry\_invertida 89} (\texttt{ir\_left/right}, \texttt{ultrasonic 0--95}, \texttt{rf\_rssi -70}, \texttt{mode}). Fail-safe RF-3.3/HU-04: \texttt{FAILSAFE\_TIMEOUT\_MS 500} (\texttt{:80,209-218}) corta PWM si no llega paquete válido; no reintenta maniobra hasta nuevo comando.
+
+\subsection{Calce TT 6V 1:48 (2026-09-11)}
+Motivo: chasis oruga 9--12V no cabe en baúl lab $\rightarrow$ chasis TT compacto 4$\times$ TT 6V 1:48 (hardware-inventory.md:36, rover-uno.ino:6,89). Impacto Tab.~II.
+
+\begin{table}[t]
+\centering
+\caption{Calce Rover (fuente hardware-inventory.md \S Calce)}
+\label{tab:calce}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}llll@{}}
+\toprule
+Parámetro & 9--12V & TT 1:48 & Impacto \\
+\midrule
+Tensión & 9--12V & 6V (5V StepUp) & 3.2V ef. $\rightarrow$ 2S 7.4V \\
+Stall & 0.4A & 0.8A$\times$4=3.2A & BEC 5V 3A + disip. \\
+Vel & 170--350 RPM & 120 RPM 0.35 m/s & BASE 120$\rightarrow$150 \\
+Torque & 3.5 KG$\cdot$cm & 0.8 KG$\cdot$cm & -77\%, no rampa $>$15° \\
+PWM min & 60 & 70 & recalibrar cargado \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\section{Resultados}
+Compilación CI: mega-access 19252 bytes/7\%, rover-uno 6900 bytes/21\% (\texttt{arduino-cli} 1.5.1, ArduinoJson 6.21.3, FQBN \texttt{arduino:mega:atmega2560}/\texttt{arduino:avr:uno}) -- \texttt{ci.yml:90}. RF validado HW 2026-09-01 4/4 (\texttt{ttyUSB0}+ \texttt{ttyACM0}, RF TX/RX L=120, \texttt{isChipConnected=1}). Sprint~3 \texttt{e821700}: TCRT validado a 5~mm (A0 845 OK negra, 290 BORDE blanca), HC-SR04 US\_raw 6--33~cm EMA 6--32~cm, OBSTACLE 30~cm, \texttt{T\_telemetry\_invertida} 89, joystick RF 250$\rightarrow$249 99.6\%, 33k/7.3k/1.5k telemetrías. Notebook \texttt{Firmware\_Notebook.ipynb} 16 celdas + 20 logs \texttt{docs/logs/firmware\_sprint3/}.
+
+\section{Discusión}
+\texttt{millis()} no bloqueante es requisito para no congelar láser/TCRT; L298N drop y alimentación 2S son cuellos de botella del calce -- TB6612FNG es alternativa documentada. El threshold TCRT invertido (blanca=borde) es contraintuitivo pero validado ópticamente y debe mantenerse. Pendiente: fotos 12~MP luz natural + regla (checklist README), video TCRT 5~mm + HC-SR04 EMA, y documentar \texttt{MIN\_PWM} recalibrado en \texttt{Firmware\_Notebook.ipynb} \S4.
+
+\section{Conclusiones}
+El Edge AetherNet demuestra operación determinista con recursos limitados, EMA embebido idéntico al Python y fail-safe serie que satisface HU-04 sin añadir complejidad de Kalman.
+
+\begin{thebibliography}{10}
+\bibitem{firmware} AetherNet, Documentación Firmware, docs/Firmware/firmware.md.
+\bibitem{roadmapFW} AetherNet, Roadmap Firmware, docs/Firmware/roadmap-firmware.md.
+\bibitem{hardware} AetherNet, Documentación Hardware, docs/Hardware/hardware.md.
+\bibitem{roadmapHW} AetherNet, Roadmap Hardware, docs/Hardware/roadmap-hardware.md.
+\bibitem{inventory} AetherNet, Hardware Inventory, docs/hardware-inventory.md (pines, calce TT).
+\bibitem{rover} AetherNet, firmware/rover-uno/rover-uno.ino (EMA:259, fail-safe:63, checksum:372).
+\bibitem{mega} AetherNet, firmware/mega-access/src/config.h + laser.cpp:15 + door.cpp + uart\_protocol.cpp:40.
+\bibitem{gateway} AetherNet, firmware/gateway-esp32/gateway-esp32.ino:59 (CE5/CSN15, Ch76).
+\bibitem{rf} AetherNet, docs/testing-rf-sprint1.md:32 (nRF24 4/4 validado).
+\bibitem{fritzing} AetherNet, docs/fritzing/AetherNet-P*.png + compendio-planos.md.
+\end{thebibliography}
+\end{document}

@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.ui.screens
 
 // =============================================================================
 // DashboardScreen.kt — Pantalla Dashboard | 6º Semestre UTP | MOV-01 5.4 + MOV-02 + MOV-03 + MOV-04
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años HTML/CSS/JS/React (Dashboard como <Dashboard> en React),
 //              2 años electrónica (LED 44/45/46, MqttManager), 1 año C, 1 año PostgreSQL
 // Analogía React: este @Composable es como `function DashboardScreen({ vm, onOpenPin }) { const state = useSelector(vm.uiState); return <Scaffold><Card><Text>{state.health.status}</Text></Scaffold> }`
@@ -58,7 +58,7 @@ import kotlinx.coroutines.launch // launch — como `async () => { await updateB
  * MOV-04: botón "Abrir PIN cerrojo" navega a Dest.Pin (PinScreen dedicada).
  */
 @Composable
-fun DashboardScreen(vm: DashboardViewModel, onOpenPin: () -> Unit = {}) {
+fun DashboardScreen(vm: DashboardViewModel, onOpenPin: () -> Unit = {}, onOpenJoystick: () -> Unit = {}) {
     val state by vm.uiState.collectAsStateWithLifecycle() // state — como `const state = useSelector(vm.uiState)` en React Redux
     val scope = rememberCoroutineScope() // scope para launch — como `const scope = useCoroutineScope()` en React (coroutine)
     // Muestra y edita la baseUrl persistida (PreferencesManager.saveBaseUrl) — como `localStorage.getItem('apiBaseUrl')` en React
@@ -126,6 +126,14 @@ fun DashboardScreen(vm: DashboardViewModel, onOpenPin: () -> Unit = {}) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Abrir PIN cerrojo")
+            }
+
+            // MOV-05 RF-1.2: acceso a JoystickScreen (mando virtual Rover) — como `<Button onClick={() => navigate('/joystick')}>Joystick Rover</Button>` en React Router
+            Button(
+                onClick = onOpenJoystick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Joystick Rover — control tanque")
             }
 
             // MOV-02: Card LED local solo lectura — círculo 64dp + etiqueta + lastSync + error — como `<LedStatusCard state={state.ledState} />` en React

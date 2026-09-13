@@ -2,7 +2,7 @@
 /*
  * =============================================================================
  * door.h — Servo MG90S Cerrojo | 6º Semestre UTP | RF-2.2 / HU-01
- * Autor: Est. Tec. Desarrollo Software + Ing. Sistemas (2 años electrónica/C)
+  * Autor: Andres Felipe Martinez Henao
  * Hardware: Servo MG90S en pin 9 (PWM Timer1 MEGA) — 0° bloqueada, 90° desbloqueada
  * BDD: Dado bloqueada, Cuando "1234#" → Entonces 90° + LED verde 5s (auto-lock)
  * =============================================================================

@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.data.local
 
 // =============================================================================
 // AppDatabase.kt — Esqueleto Room | 6º Semestre UTP | MOV-08
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 1 año PostgreSQL (Room es SQLite local como PostgreSQL pero en móvil),
 //              2 años Python (SQLAlchemy), 2 años JS/React (IndexedDB/localStorage)
 // Analogía React: este archivo es como `db.ts` con `new Dexie('AppDatabase')` pero vacío —

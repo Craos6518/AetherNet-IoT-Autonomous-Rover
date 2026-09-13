@@ -1,6 +1,6 @@
 # CI/CD — `.github/workflows/ci.yml`
 
-> **Autor:** Estudiante 6º semestre Tecnología en Desarrollo de Software + 6º semestre Ingeniería de Sistemas y Computación (UTP)  
+> **Autor:** Andres Felipe Martinez Henao
 > **Experiencia:** 2 años electrónica y Arduino | 1 año Programación C | 2 años Python | 2 años HTML/CSS/JavaScript/React | 1 año PostgreSQL  
 > **Stack:** GitHub Actions (ubuntu-latest), `arduino-cli 1.5.1`, Python 3.12, Docker Compose, Trivy — 100% FOSS (RNF-3.1)  
 > **Sprint:** 1 ✅ (RNF-1.2 pipeline con `arduino-cli` en cada `push`), 2+ 🔄 — `docs/sprints.md:61`  

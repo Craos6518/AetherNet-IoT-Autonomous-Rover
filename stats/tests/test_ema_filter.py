@@ -1,7 +1,7 @@
 """
 ==============================================================================
 Tests EMA Filter — 6º Semestre UTP | TS4D3 Estadística | RNF-2.1 / HU-03
-Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+Autor: Andres Felipe Martinez Henao
 Experiencia: 2 años Python (pytest), 1 año C (port EMA), 2 años Arduino
 FOSS: pytest + pytest-cov (como Jest en React) — RNF-3.1
 ==============================================================================

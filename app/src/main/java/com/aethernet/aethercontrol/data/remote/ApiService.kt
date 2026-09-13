@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.data.remote
 
 // =============================================================================
 // ApiService.kt — Contrato Retrofit | 6º Semestre UTP | RF-1.1, RNF-3.1
-// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
+// Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años HTML/CSS/JS/React (fetch, axios), 2 años Python (FastAPI),
 //              1 año PostgreSQL (backend routers)
 // Analogía React: este interface es como `interface ApiService { getHealth(): Promise<HealthResponse>; getAccessEvents(limit: number): Promise<AccessEventOut[]> }`
