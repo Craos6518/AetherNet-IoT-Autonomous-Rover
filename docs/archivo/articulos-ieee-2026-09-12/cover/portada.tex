@@ -1,0 +1,53 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{graphicx,xcolor,hyperref,geometry,booktabs}
+\geometry{margin=2.2cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\begin{document}
+\thispagestyle{empty}
+\begin{center}
+% Logo placeholder -- reemplazar por \includegraphics[width=3.5cm]{utp-logo.png}
+{\large \textbf{Universidad Tecnológica de Pereira}}\\[2mm]
+{\small Facultad de Ingenierías -- Ingeniería de Sistemas y Computación}\\
+{\small Tecnología en Desarrollo de Software}\\[6mm]
+\hrule\vspace{6mm}
+{\LARGE \textbf{AetherNet IoT \& Autonomous Rover}}\\[4mm]
+{\Large Plataforma Distribuida de Domótica Modular,\\Telemetría Estadística y Robótica Móvil \textbf{100\% FOSS}}\\[6mm]
+\hrule\vspace{6mm}
+{\large Colección de Artículos en Formato \textbf{IEEE Conference}}\\[2mm]
+{\small 1 General Integrador + 6 por Materia (Estadística TS4D3, DevOps, Administración TS683, Programación Móvil TS6C3, Firmware/Hardware, Automatización LowCode)}\\[8mm]
+{\large \textbf{Andrés Felipe Martínez Henao}}\\
+{\small Tecnología en Desarrollo de Software -- 5º semestre}\\
+{\small Ingeniería de Sistemas y Computación -- 6º semestre}\\
+{\small \texttt{F.martinez5@utp.edu.co}}\\[6mm]
+{\small Proyecto Integrador 2026-2 -- 4 Sprints / 8 semanas (Ago--Sep 2026)}\\
+{\small \textit{Contingencia académica tras sismo del 10 de agosto (7.4) que afectó parte del campus} -- plataforma personal de estudio}\\[4mm]
+{\small Repositorio: \url{https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover}}\\[10mm]
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Volumen} & \textbf{Archivo / Materia}\\
+\midrule
+Vol.~0 & 00 -- General Integrador (visión 3 capas, PRD/RF/HU, sprints, KPIs)\\
+Vol.~1 & 01 -- Estadística TS4D3 (EMA $\alpha=0.2$, Welch $t$ + ANOVA, 36.5k filas)\\
+Vol.~2 & 02 -- DevOps (CALMS, Docker 3 svc, Mosquitto, CI 6 jobs arduino-cli)\\
+Vol.~3 & 03 -- Administración TS683 (Scrum MoSCoW, Gantt, R-01..R-13, WBS 40)\\
+Vol.~4 & 04 -- Programación Móvil TS6C3 (Kotlin/Compose MVVM, MQTT, joystick 20 Hz)\\
+Vol.~5 & 05 -- Firmware + Hardware (MEGA/UNO/ESP32, RF, HC-SR04, TCRT, TT 1:48)\\
+Vol.~6 & 06 -- Automatización LowCode (Telegram directo, Node-RED deuda, HU-02)\\
+\bottomrule
+\end{tabular}\\[10mm]
+{\small Pereira -- Risaralda -- Colombia}\\
+{\small Septiembre de 2026}\\[4mm]
+{\footnotesize Plantilla: \texttt{IEEEtran.cls} v1.8b -- \texttt{conference, compsoc, a4paper, 10pt}, doble columna. Ver \texttt{README.md} para recomendación de plantilla Overleaf.}\\
+\end{center}
+\newpage
+% Índice / Resumen ejecutivo de la colección
+\section*{Cómo usar esta colección}
+Cada volumen es un artículo independiente en formato IEEE Conference (\texttt{conference, compsoc, a4}) que compila con \texttt{pdflatex} sin dependencias externas salvo \texttt{IEEEtran.cls} vendorado en este repo. Orden de lectura sugerido: \texttt{prd.md} $\rightarrow$ \texttt{requirements.md} $\rightarrow$ \texttt{hardware-inventory.md} $\rightarrow$ \texttt{sprints.md} $\rightarrow$ \texttt{roadmap.md} $\rightarrow$ \texttt{backlog.md} $\rightarrow$ \texttt{docs/README.md} (\texttt{AGENTS.md}). El Volumen~0 sintetiza todo; los Vol.~1--6 profundizan por materia con trazabilidad RF/HU/backlog/archivo. Compilación: \texttt{cd docs/articulos-ieee \&\& ./build.sh} $\rightarrow$ \texttt{build/*.pdf} (requiere \texttt{pdflatex}; ver \texttt{build.sh} para alternativas Docker/Overleaf).
+
+\section*{Convenciones}
+Abstract 150--250 palabras + 4--6 Keywords. Secciones I--VI + Referencias numeradas \texttt{[1]..[n]}. Tablas/figuras con caption IEEE. Cumplimiento FOSS 100\% (RNF-3.1) declarado. Licencia de los datasets: \texttt{water\_level\_turbidity} CC BY-SA 4.0, \texttt{gesture} CC0.
+
+\end{document}

@@ -1,0 +1,142 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+%\usepackage{algorithmic} % no usado -- requiere texlive-science
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{url}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\graphicspath{{../../docs/fritzing/}{../}{./}}
+
+\begin{document}
+\title{AetherNet IoT \& Autonomous Rover: Plataforma Distribuida de Domótica Modular, Telemetría Estadística y Robótica Móvil 100\% FOSS}
+\author{\IEEEauthorblockN{Andrés Felipe Martínez Henao}
+\IEEEauthorblockA{Tecnología en Desarrollo de Software -- 5º semestre\\Ingeniería de Sistemas y Computación -- 6º semestre\\Universidad Tecnológica de Pereira (UTP)\\\texttt{F.martinez5@utp.edu.co}}
+\and
+\IEEEauthorblockN{Equipo AetherNet}
+\IEEEauthorblockA{Proyecto Integrador 2026-2 -- 4 Sprints / 8 semanas\\Repositorio: \url{https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover}}}
+\maketitle
+
+\begin{abstract}
+AetherNet es una plataforma distribuida que integra domótica fija, control de acceso, robótica móvil y analítica estadística bajo una restricción estricta: 100\% FOSS, sin dependencia de nubes propietarias (RNF-3.1). El sistema opera en tres capas sobre una misma LAN: (1) Edge -- MEGA 2560 (teclado 4$\times$4, servo MG90S, LED RGB, láser KY-008+LDR), UNO (rover con L298N, HC-SR04, 3$\times$TCRT5000) y Gateway ESP32 (puente UART$\leftrightarrow$RF$\leftrightarrow$MQTT); (2) Coordinación -- backend contenerizado (FastAPI, PostgreSQL 16, Mosquitto 2.0) con 8 endpoints REST y bus \texttt{aethernet/\#}; y (3) Interfaz -- app Android nativa AetherControl (Kotlin, Compose, MVVM, Paho MQTT, joystick 20~Hz). La telemetría se suaviza con filtro EMA $S_t=\alpha Y_t+(1-\alpha)S_{t-1}$, $\alpha=0.2$ (HU-03) implementado tanto en Python (\texttt{stats/ema\_filter.py}) como en firmware embebido, validado con 36.5k filas externas (Welch $t$ + ANOVA). El proyecto se gestiona en Scrum con backlog MoSCoW (MOV/DEVOPS/LOW/PM/EST), 4 sprints y pipeline CI/CD de 6 jobs (\texttt{arduino-cli} 1.5.1, ruff/mypy/pytest, Trivy, Docker). Este artículo sintetiza visión, alcance, arquitectura, KPIs ($<$50~ms MQTT, $<$10~ms RF, $>$85\% reducción de ruido, 0\% falsos positivos láser) y estado al cierre de Sprint~3.
+\end{abstract}
+\begin{IEEEkeywords}
+IoT FOSS, MQTT, ESP32, Arduino MEGA/UNO, nRF24L01, EMA, rover autónomo, Jetpack Compose, FastAPI, Scrum
+\end{IEEEkeywords}
+
+\section{Introducción}
+\subsection{Contexto académico}
+Proyecto Integrador que articula siete materias -- Estadística (TS4D3), DevOps, Administración TS683, Programación Móvil TS6C3, Firmware, Hardware y Automatización LowCode -- desarrollado por estudiante de 5º semestre de Tecnología en Desarrollo de Software y 6º semestre de Ingeniería de Sistemas y Computación (UTP). El documento de referencia para agentes es \texttt{AGENTS.md}; el orden de lectura prescrito es:
+\begin{itemize}
+\item \texttt{prd.md} $\rightarrow$ \texttt{requirements.md} $\rightarrow$ \texttt{hardware-inventory.md}
+\item $\rightarrow$ \texttt{sprints.md} $\rightarrow$ \texttt{roadmap.md} $\rightarrow$ \texttt{backlog.md} $\rightarrow$ \texttt{docs/README.md}
+\end{itemize}
+
+\subsection{Problema y visión}
+Como contingencia académica tras el sismo del 10 de agosto (7.4) que afectó parte del campus, AetherNet se plantea además como plataforma personal de estudio para demostrar que un ecosistema domótico+robótico robusto, tolerante a fallos y de baja latencia puede construirse exclusivamente con herramientas FOSS, eliminando vendor lock-in de AWS/Tuya Cloud. La visión (PRD \S1) prioriza seguridad (control de acceso + trampa láser), inspección táctica (rover) y evidencia estadística reproducible.
+
+\subsection{Contribuciones}
+(i) Arquitectura de 3 capas LAN-only con fail-safe RF; (ii) filtro EMA dual (Python$\leftrightarrow$firmware) con KPI verificable; (iii) app AetherControl con joystick de baja latencia y fallback Bluetooth SPP; (iv) metodología Scrum trazable RF$\leftrightarrow$HU$\leftrightarrow$backlog$\leftrightarrow$código.
+
+\section{Alcance y Requisitos}
+\subsection{In / Out / Cancelado / Futuro (PRD \S4)}
+\begin{itemize}
+\item \textbf{In (implementado):} app Android nativa, backend Docker, firmware C++ RF/UART/Wi-Fi, EMA $\alpha=0.2$, LED RGB local, Telegram.
+\item \textbf{Out (fuera de alcance por diseño):} nubes de pago, iOS, visión artificial en rover.
+\item \textbf{Cancelado:} bombillo Tuya/\texttt{tuya-local} (ADR-001, 2026-09-01) por exigir cuenta propietaria y \texttt{local\_key} (viola RNF-3.1). HU-02 se cumple solo con LED RGB + Telegram.
+\item \textbf{Futuro (no implementado en esta iteración):} flujo LowCode como referencia exportable (\texttt{automation/flows/intrusion\_alert.json}) y dashboard Node-RED opcional.
+\end{itemize}
+
+\subsection{Requisitos funcionales y no funcionales}
+RF-1.1 Dashboard Compose en tiempo real (MQTT/WS); RF-1.2 joystick X,Y$\rightarrow$ESP32; RF-1.3 fallback Bluetooth SPP; RF-2.1 Gateway ESP32 como router MQTT$\leftrightarrow$UART$\leftrightarrow$RF; RF-2.2 MEGA teclado+servo; RF-2.3 láser KY-008; RF-3.1 rover nRF24L01; RF-3.2 evasión HC-SR04 + anti-caída TCRT5000; RF-3.3 fail-safe 500~ms (HU-04); RF-4.1 Telegram directo (HTTP \texttt{api.telegram.org}). RNF-1.1 docker-compose, RNF-1.2 CI \texttt{arduino-cli}, RNF-2.1 EMA, RNF-2.2 histórico PG, RNF-3.1 FOSS 100\%.
+
+\subsection{Historias de usuario BDD}
+HU-01 (acceso PIN), HU-02 (intrusión láser$\rightarrow$Telegram+LED rojo 3~s), HU-03 (EMA $\alpha=0.2$ estabiliza HC-SR04), HU-04 (fail-stop RF). Criterios Dado/Cuando/Entonces son oracle de tests.
+
+\subsection{KPIs (PRD \S5)}
+Latencia MQTT $<$50~ms, RF $<$10~ms, reducción ruido $>$85\%, falsos positivos láser 0\%, FOSS 100\%. Cada KPI es verificable programáticamente (ej. \texttt{calculate\_noise\_reduction()} retorna \texttt{meets\_kpi}).
+
+\section{Arquitectura}
+\subsection{Vista de 3 capas}
+Edge (MEGA/Uno/ESP32) $\rightarrow$ Coordinación (FastAPI+Mosquitto+PostgreSQL, topics \texttt{aethernet/rover/telemetry}, \texttt{access/event}, \texttt{seguridad/intrusion}, \texttt{rover/command}, \texttt{system/status}, ACL \texttt{aethernet/\#}) $\rightarrow$ Interfaz (AetherControl + Telegram Bot). Única salida a Internet: Telegram Bot API (contingencia PRD \S6: sin Internet, MEGA sigue operando Edge).
+
+\subsection{Protocolos y latencias}
+RF 2.4~GHz (nRF24L01, SPI, ch~76, 2~Mbps) $<$10~ms motor; UART 38400 bd MEGA$\leftrightarrow$Gateway; MQTT/WS $<$50~ms; Bluetooth SPP respaldo RF-1.3; HTTPS Telegram.
+
+\subsection{Flujo HU-02 (intrusión)}
+\begin{enumerate}
+\item Láser KY-008 se interrumpe $\rightarrow$ MEGA detecta corte.
+\item LED RGB local en rojo 3~s (sin red).
+\item UART \texttt{SECURITY:} 38400 bd $\rightarrow$ Gateway.
+\item Gateway publica \texttt{aethernet/seguridad/intrusion}.
+\item Backend persiste en PG y dispara Telegram; App refleja alerta.
+\end{enumerate}
+Pasos 2 y 5 son independientes (LED funciona sin MQTT).
+
+\subsection{Flujo EMA (HU-03)}
+\begin{enumerate}
+\item Sensor HC-SR04 $\rightarrow$ firmware $S_t=0.2Y_t+0.8S_{t-1}$.
+\item MQTT $\rightarrow$ PostgreSQL.
+\item Offline: \texttt{stats/} Welch/ANOVA $\rightarrow$ notebook \texttt{EMA\_Estadistica.ipynb}.
+\end{enumerate}
+
+\subsection{Decisiones y alternativas descartadas}
+MQTT vs polling (escalabilidad); RF vs Wi-Fi para rover (latencia); EMA vs Kalman (KPI con menor costo embebido); despliegue LAN-only.
+
+\section{Planificación Scrum}
+\subsection{Sprints}
+Sprint~1 (sem 1-2) Infra DEVOPS-01..05 + MOV-01 + EST-01; Sprint~2 (3-4) Domótica MEGA cerrojo/láser + MOV-02/03/04 + DEVOPS-06/07 + LOW-02 deuda; Sprint~3 (5-6) Rover L298N/HC-SR04/TCRT + MOV-05/06 joystick (Done 2026-09-11 \texttt{3ca12c9/e821700}); Sprint~4 (7-8) LowCode Telegram directo, EST-02..07, MOV-08..10. Dependencias críticas: DEVOPS-01..05 bloquea todo; MOV-06$\leftarrow$RF; EST-04$\leftarrow$DEVOPS-12.
+
+\subsection{Backlog MoSCoW y trazabilidad}
+5 áreas, IDs MOV/DEVOPS/LOW/PM/EST con columnas Prioridad/Sprint/Depende de/Origen. Convención commit: \texttt{MOV-05: implementa joystick virtual}. Cada Must no cerrado escala a \texttt{risk-register.md} y \texttt{gantt.md} (Mermaid).
+
+\subsection{Estado al 2026-09-11}
+Sprint~3 en curso, Sprint~2 cerrado documental (\texttt{docs/revision-sprint2-completa@ec5d70b}). Done: Docker 3 svc, Mosquitto \texttt{aethernet/\#}, CI 6 jobs, RF validado HW \texttt{testing-rf-sprint1.md:32}, MEGA cerrojo+lun láser v2 \texttt{c7ce065}, app MVVM+MQTT+PIN+joystick 16 tests, datasets 36.5k. Pendiente: BT fallback, EMA KY-037, t-Student con latencias reales.
+
+\section{Resultados por subsistema}
+\subsection{Firmware/Hardware}
+MEGA: keypad ROW 22/24/26/28 COL 30/32/34/36, servo 9 (0/90°), LED 44/45/46 PWM ánodo común, láser TX 8 / LDR RX 7 INPUT 10k, UART 16/17 38400, auto-lock 5~s. Rover: UNO + L298N (ENA5/ENB11, IN1 6 IN2 7 IN3 8 IN4 9), TRIG2 ECHO3 + EMA $\alpha=0.2$, TCRT A0 trasero/A1 izq/A2 der threshold 500, TT 6V 1:48 (calce 2026-09-11: -77\% torque, 120 RPM, 0.35~m/s), fail-safe 500~ms + checksum, RF CE4/CSN10. Gateway ESP32 CE5/CSN15.
+
+\subsection{Backend y DevOps}
+\texttt{docker-compose.yml} (FastAPI 1.0.0-sprint1, Postgres 16, Mosquitto 2.0, net \texttt{aethernet-net}, \texttt{postgres\_data}, healthcheck \texttt{pg\_isready}, \texttt{depends\_on} healthy). 8 endpoints (\texttt{routers/events.py:25}), 21 tests pytest. CI \texttt{ci.yml} 1.5.1: backend-test (ruff/mypy/pytest), firmware-compile (matriz ESP32/AVR), docker-build (curl \texttt{/health} 200), stats-test, android-build (condicional), security-scan Trivy SARIF.
+
+\subsection{App AetherControl}
+Kotlin + Compose + MVVM (StateFlow, \texttt{DashboardUiState} sellado), Room, DataStore, Retrofit, Paho 1.2.5 (tcp://1883 + ws://9001 fallback), ServiceLocator DI manual, Navigation. Done: \texttt{LedStatusCard} 64dp + poll 5~s, \texttt{MqttManager} SharedFlow, \texttt{PinViewModel} throttle 5/60~s + \texttt{aethernet/access/command:70}$\rightarrow$UART \texttt{CMD:ACCESS:40}$\rightarrow$\texttt{ACCESS:hash} 201, \texttt{JoystickScreen} Canvas 120dp + \texttt{JoystickMapper} deadband 60 + throttle 50~ms QoS0 + \texttt{aethernet/rover/command:69} (250$\rightarrow$249 99.6\% TX).
+
+\subsection{Estadística}
+EMA prototipo \texttt{ema\_filter.py:15} + bench 531 muestras + \texttt{water\_turbidity\_analysis.py} Welch/ANOVA 36.5k (\texttt{water\_level\_turbidity} 31.5k CC BY-SA 4.0 + \texttt{gesture} 5k CC0, PNGs en \texttt{docs/fritzing/}).
+
+\subsection{Automatización LowCode}
+Telegram \texttt{POST /api/security-events} $\rightarrow$ \texttt{sendMessage} Markdown; flujo JSON (\texttt{automation/flows/}) solo como referencia exportable.
+
+\section{Discusión y limitaciones}
+La restricción FOSS forzó ADR-001 y deuda Node-RED, pero simplificó el deploy LAN y preservó la evaluabilidad. La concentración de EST en Sprint~4 se mitigó adelantando EST-01 y validación externa 36.5k. Limitaciones: T6 Prometheus/Grafana no implementado (logs Docker + \texttt{aethernet/system/status} heartbeat como MVP); presupuesto hardware real vs estimado aún informal; fotos de campo pendientes (checklist 12~MP). Riesgos críticos: LOW-01/02 cerrados, DEVOPS-01..05 como base fundacional, PM-05 (sprints.md desactualizado $\rightarrow$ agentes a ciegas).
+
+\section{Conclusiones}
+AetherNet demuestra viabilidad FOSS de un sistema IoT+robótica con trazabilidad completa requisito$\rightarrow$código$\rightarrow$test. Al cierre de Sprint~3 el núcleo domótico+rover es operable y medible contra KPIs; Sprint~4 cierra el lazo LowCode/estadístico y la demo E2E (HU-01$\rightarrow$HU-04).
+
+\section*{Agradecimientos}
+A los docentes UTP de Estadística, Programación Móvil, Administración, DevOps y Automatización y LowCode por los lineamientos y la guía durante el proyecto. Firmware y Hardware se sustentan en formación previa.
+
+\begin{thebibliography}{10}
+\bibitem{prd} Equipo AetherNet, \emph{PRD v1.0.0}, docs/prd.md, Ago 2026.
+\bibitem{req} Equipo AetherNet, \emph{Requirements Specification}, docs/requirements.md, Ago 2026.
+\bibitem{arch} Equipo AetherNet, \emph{Arquitectura Técnica}, docs/architecture.md, Sep 2026.
+\bibitem{hw} Equipo AetherNet, \emph{Hardware Inventory}, docs/hardware-inventory.md, Sep 2026.
+\bibitem{sprints} Equipo AetherNet, \emph{Planeación de Sprints}, docs/sprints.md, Sep 2026.
+\bibitem{roadmap} Equipo AetherNet, \emph{Roadmap por Materia}, docs/roadmap.md, Sep 2026.
+\bibitem{backlog} Equipo AetherNet, \emph{Backlog MoSCoW}, docs/backlog.md, Sep 2026.
+\bibitem{adr001} Equipo AetherNet, \emph{ADR-001 Cancelación Tuya}, docs/adr/adr-001-cancelacion-tuya.md, Sep 2026.
+\bibitem{gantt} Equipo AetherNet, \emph{Diagrama Gantt PM-04}, docs/gantt.md, Sep 2026.
+\bibitem{risk} Equipo AetherNet, \emph{Risk Register R-01..R-13}, docs/risk-register.md, Sep 2026.
+\end{thebibliography}
+\end{document}
