@@ -9,10 +9,12 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 ## 1. Programación Para Móviles — App "AetherControl"
 
 **Conocimientos previos esperados**
+
 - Kotlin básico (sintaxis, null-safety, coroutines a nivel conceptual).
 - Fundamentos de arquitectura MVVM (separación View / ViewModel / Model).
 
 **Conocimientos a adquirir**
+
 - Jetpack Compose (composables, `State`/`StateFlow`, recomposición) — necesario para RF-1.1 (Dashboard) y RF-1.2 (Joystick).
 - `Coroutines` + `Flow` para consumir streams de telemetría sin bloquear el hilo principal.
 - Cliente MQTT en Android (librería tipo Eclipse Paho o HiveMQ) y/o WebSockets con `Retrofit`/`OkHttp`.
@@ -28,10 +30,12 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 ## 2. DevOps — Infraestructura Containerizada & CI/CD
 
 **Conocimientos previos esperados**
+
 - Docker básico (`Dockerfile`, `docker-compose.yml`).
 - Git/GitHub (branches, PRs).
 
 **Conocimientos a adquirir**
+
 - Orquestación con `docker-compose` de múltiples servicios interdependientes (FastAPI + PostgreSQL + Mosquitto) — RNF-1.1.
 - Configuración de broker Mosquitto MQTT (topics, ACLs, persistencia) — usado por RF-2.1 y RF-4.1.
 - GitHub Actions: sintaxis de workflows, runners, cacheo de dependencias.
@@ -48,12 +52,14 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 ## 3. Automatizaciones y LowCode — Motor de Reglas & Notificaciones
 
 **Conocimientos previos esperados**
+
 - Conceptos de eventos/webhooks.
 - JSON básico (los flujos de Node-RED se exportan/importan como JSON).
 
 **Conocimientos a adquirir**
-- **Telegram Bot API directo (vigente Sprint 2-4):** creación del bot vía BotFather, envío HTTP `POST https://api.telegram.org/bot<token>/sendMessage` con `chat_id` + `parse_mode Markdown` — sin Node-RED (ver `automation/flows/intrusion_alert.json` como referencia JSON exportable).
-- **Node-RED — DEUDA TÉCNICA 2026-09-09:** flujos, nodos `mqtt in`/`mqtt out`, function nodes JS, debug/inject — **no se deploya esta iteración** por indicación asesor (ver `docs/sprints.md:42`, `docs/backlog.md:56` LOW-02 Won't; `architecture.md` §3/§5). El flujo `automation/flows/intrusion_alert.json` (`mqtt-intrusion` → `function-parse-intrusion` → `telegram-alert` → `http-telegram`) queda como referencia versionada para retomar en Sprint 4 si cambia la directriz.
+
+- **Telegram Bot API directo (vigente):** creación del bot vía BotFather, envío HTTP `POST https://api.telegram.org/bot<token>/sendMessage` con `chat_id` + `parse_mode Markdown` — sin Node-RED como capa operativa.
+- **Node-RED — referencia técnica y no base operativa:** flujos, nodos `mqtt in`/`mqtt out`, function nodes JS, debug/inject — **no se usa como motor principal** en la versión actual. El flujo `automation/flows/intrusion_alert.json` queda como documento de referencia histórica.
 - ~~`tuya-local`~~ — **CANCELADO 2026-09-01** (ADR-001, R-01 políticas API propietaria — viola RNF-3.1). Ya no se requiere `local_key`; notificación solo LED RGB local + Telegram directo.
 - Home Assistant (opcional según cuánto se use como capa intermedia vs. Node-RED puro — también en deuda si Node-RED no se retoma).
 
@@ -68,9 +74,11 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 ## 4. Administración y Planeación de Proyectos — Gestión Metodológica
 
 **Conocimientos previos esperados**
+
 - Fundamentos de Scrum (roles, ceremonias, backlog).
 
 **Conocimientos a adquirir**
+
 - Redacción de Historias de Usuario con formato INVEST + criterios de aceptación BDD (`Dado/Cuando/Entonces`) — ya aplicado en `requirements.md`, pero el equipo debe poder extender el patrón para nuevas HU.
 - WBS (Work Breakdown Structure) para descomponer cada sprint en tareas verificables.
 - Matriz de riesgos — particularmente relevante para riesgos de integración hardware/software.
@@ -86,10 +94,12 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 ## 5. Estadística — Filtrado en Tiempo Real & Analítica
 
 **Conocimientos previos esperados**
+
 - Estadística descriptiva básica (media, varianza, desviación estándar).
 - Python básico (o R) para manipulación de datos.
 
 **Conocimientos a adquirir**
+
 - Media Móvil Exponencial (EMA): entender el rol de `α = 2/(N+1)` en el trade-off entre suavizado y latencia de respuesta — se usa con `α = 0.2` según HU-03. Prototipado en `stats/ema_filter.py:15` y validado en banco `firmware/test-ema-uno` + `docs/Estadistica/notebook/EMA_Estadistica.ipynb:2` + validación externa 36.5k `stats/water_turbidity_analysis.py:1` (`water_level_turbidity` 31.5k CC BY-SA 4.0 + `gesture` 5k CC0, ver `stats/Dataset/README.md` / `docs/Estadistica/Datasets/README.md`).
 - Filtro de Kalman (mencionado como alternativa/complemento a EMA en la matriz del PDF) — al menos su intuición conceptual (predicción + corrección) aunque se implemente la versión EMA.
 - Pandas/SciPy para análisis descriptivo e inferencial sobre los datos históricos almacenados en PostgreSQL + validación externa (`stats/materias/estadistica.md`, `docs/Estadistica/notebook/EMA_Estadistica.ipynb:6` barrido α Monte Carlo 100×, `stats/water_turbidity_analysis.py` Welch `t-Student` + ANOVA sobre `us_value` vs `water_level` por turbidez/angle).
@@ -109,6 +119,7 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 **Conocimientos previos:** C++ básico Arduino (setup/loop, pinMode, digitalRead).
 
 **Conocimientos a adquirir:**
+
 - millis() no bloqueante vs delay() — crítico para no congelar láser/TCRT (`firmware/mega-access/src/laser.cpp:15` 50ms CHECK).
 - Librería RF24 (nRF24L01 SPI CE/CSN, channel 76 2MBPS) — `firmware/gateway-esp32/gateway-esp32.ino:59`, `firmware/rover-uno/rover-uno.ino:372`.
 - HC-SR04 TRIG2 ECHO3 + EMA α=0.2 en firmware (`rover-uno.ino:259`), TCRT5000 analogRead threshold 500 (`test-rover-sensors.ino`).
@@ -116,6 +127,7 @@ Organizado por materia (5º semestre UTP). Cada bloque indica: conocimientos pre
 - **Se despliega:** Sprint 1-3. **Habilita:** RF-2.1/2.2/2.3/3.1/3.2, HU-01/02/03/04.
 
 **Datasheets (búsqueda Google sugerida):**
+
 - `nRF24L01+ datasheet Nordic Semiconductor pdf`
 - `HC-SR04 datasheet ultrasonic distance sensor timing diagram`
 - `TCRT5000 Vishay datasheet reflective optical sensor`
@@ -153,15 +165,15 @@ Ver roadmap: `docs/Hardware/roadmap-hardware.md` · Diario: `docs/Hardware/noteb
 
 ## Búsquedas Google consolidadas (todas las materias)
 
-| Materia | Búsqueda ejemplo |
-|---|---|
-| Firmware | nRF24L01 RF24 library arduino datasheet 2.4GHz |
-| Hardware | KY008 laser datasheet LDR voltage divider Arduino |
-| Móvil | Eclipse Paho Android MQTT client tutorial 2024 StateFlow |
-| Estadística | exponential moving average alpha 0.2 Welch t-test SciPy |
-| DevOps | docker compose FastAPI PostgreSQL Mosquitto tutorial |
-| LowCode | Telegram Bot API sendMessage BotFather tutorial |
-| Administración | risk register matrix probability impact Scrum |
+| Materia        | Búsqueda ejemplo                                         |
+| -------------- | -------------------------------------------------------- |
+| Firmware       | nRF24L01 RF24 library arduino datasheet 2.4GHz           |
+| Hardware       | KY008 laser datasheet LDR voltage divider Arduino        |
+| Móvil          | Eclipse Paho Android MQTT client tutorial 2024 StateFlow |
+| Estadística    | exponential moving average alpha 0.2 Welch t-test SciPy  |
+| DevOps         | docker compose FastAPI PostgreSQL Mosquitto tutorial     |
+| LowCode        | Telegram Bot API sendMessage BotFather tutorial          |
+| Administración | risk register matrix probability impact Scrum            |
 
 ## Orden sugerido de aprendizaje (si el equipo parte de cero)
 

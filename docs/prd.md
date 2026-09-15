@@ -1,15 +1,27 @@
 # Product Requirements Document (PRD)
+
 **Producto:** AetherNet IoT & Autonomous Rover  
-**Versión:** 1.0.0  
-**Fecha:** Agosto 2026  
-**Contexto:** Proyecto Integrador Universitario (UTP) - 100% FOSS  
+**Versión:** 1.1.0  
+**Fecha:** Septiembre 2026  
+**Contexto:** Proyecto Integrador Universitario (UTP) - 100% FOSS
+
+## Estado de alcance vigente (2026-09-14)
+
+El alcance del proyecto se mantiene alineado con la implementación actual del repositorio y con la decisión de simplificar la automatización: la clave de seguridad y la alerta de intrusión se resuelven de forma local y directa, sin depender de servicios cloud ni de una capa Node-RED activa en producción. La infraestructura sigue siendo local dentro de la LAN y la integración con Telegram se hace mediante HTTP directo a la API del bot.
+
+- Bombillo inteligente Tuya: cancelado.
+- Node-RED: referenciado como flujo de documentación y deuda técnica; no se usa como capa activa.
+- Telegram: canal de notificación de intrusión vigente.
+- LED RGB local: único indicador visual de acceso y alarma local.
 
 ---
 
 ## 1. Visión del Producto
+
 AetherNet es una plataforma integral de domótica y robótica móvil orientada a la seguridad y la automatización inteligente. Su propósito es demostrar que es posible construir un ecosistema de hardware y software robusto, tolerante a fallos y de baja latencia utilizando exclusivamente herramientas de código abierto (FOSS), eliminando la dependencia de servicios en la nube propietarios (como AWS o Tuya Cloud).
 
 ## 2. Audiencia Objetivo y Usuarios
+
 1. **Administradores / Habitantes:** Usuarios finales que interactúan con la habitación a través de la App móvil (Android) para controlar luces, revisar accesos y pilotar el Rover en caso de emergencias.
 2. **Evaluadores / Docentes Técnicos:** Profesores universitarios que auditarán la arquitectura de software, la aplicación de estadística, la electrónica y la automatización.
 
@@ -17,26 +29,28 @@ AetherNet es una plataforma integral de domótica y robótica móvil orientada a
 
 ## 3. Casos de Uso Principales (Core Use Cases)
 
-*   **Monitoreo y Alertas en Tiempo Real:** El sistema supervisa variables de entorno (presencia, ruido) e interrupciones físicas (láser). Ante una anomalía, alerta instantáneamente vía App Móvil y Telegram.
-*   **Control Físico y Robótico Táctico:** El usuario puede tomar control remoto del Rover Tanque mediante un joystick virtual para inspeccionar visualmente un área, o ponerlo en modo de patrullaje autónomo anti-colisión.
-*   **Gestión de Acceso Local:** Control de entrada a la habitación basado en un panel físico (Teclado 4x4) gestionado de forma descentralizada por un Arduino, reportando la auditoría al servidor central.
+- **Monitoreo y Alertas en Tiempo Real:** El sistema supervisa variables de entorno (presencia, ruido) e interrupciones físicas (láser). Ante una anomalía, alerta instantáneamente vía App Móvil y Telegram.
+- **Control Físico y Robótico Táctico:** El usuario puede tomar control remoto del Rover Tanque mediante un joystick virtual para inspeccionar visualmente un área, o ponerlo en modo de patrullaje autónomo anti-colisión.
+- **Gestión de Acceso Local:** Control de entrada a la habitación basado en un panel físico (Teclado 4x4) gestionado de forma descentralizada por un Arduino, reportando la auditoría al servidor central.
 
 ---
 
 ## 4. Alcance (Scope)
 
 ### ✅ Dentro del Alcance (In-Scope)
-*   Aplicación nativa de Android en Kotlin (MVVM, Jetpack Compose).
-*   Backend local contenerizado en Docker (FastAPI, PostgreSQL, Mosquitto MQTT).
-*   Automatización LowCode — **Node-RED en deuda técnica 2026-09-09** (asesor: no se deploya esta iteración; flujo `automation/flows/intrusion_alert.json` como referencia exportable); notificaciones vía **Telegram Bot directo** (RF-4.1, HU-02).
-*   ~~Control local de bombillería inteligente vía IP (`tuya-local`)~~ — **CANCELADO 2026-09-01** (ver `docs/adr/adr-001-cancelacion-tuya.md`, `docs/risk-register.md:16` R-01 — políticas API propietaria viola RNF-3.1). Iluminación de intrusión solo vía LED RGB local.
-*   Firmware C++ en microcontroladores interconectados por RF (2.4 GHz), UART y Wi-Fi.
-*   Implementación de algoritmos estadísticos (Media Móvil Exponencial) en el firmware.
+
+- Aplicación nativa de Android en Kotlin (MVVM, Jetpack Compose).
+- Backend local contenerizado en Docker (FastAPI, PostgreSQL, Mosquitto MQTT).
+- Automatización LowCode — **Node-RED en deuda técnica 2026-09-09** (asesor: no se deploya esta iteración; flujo `automation/flows/intrusion_alert.json` como referencia exportable); notificaciones vía **Telegram Bot directo** (RF-4.1, HU-02).
+- ~~Control local de bombillería inteligente vía IP (`tuya-local`)~~ — **CANCELADO 2026-09-01** (ver `docs/adr/adr-001-cancelacion-tuya.md`, `docs/risk-register.md:16` R-01 — políticas API propietaria viola RNF-3.1). Iluminación de intrusión solo vía LED RGB local.
+- Firmware C++ en microcontroladores interconectados por RF (2.4 GHz), UART y Wi-Fi.
+- Implementación de algoritmos estadísticos (Media Móvil Exponencial) en el firmware.
 
 ### ❌ Fuera del Alcance (Out-of-Scope)
-*   Despliegues en servidores Cloud de pago (AWS, GCP, Azure).
-*   Aplicación para iOS o interfaces web complejas en React/Angular.
-*   Visión artificial o procesamiento de imágenes (Computer Vision) en el Rover.
+
+- Despliegues en servidores Cloud de pago (AWS, GCP, Azure).
+- Aplicación para iOS o interfaces web complejas en React/Angular.
+- Visión artificial o procesamiento de imágenes (Computer Vision) en el Rover.
 
 ---
 
@@ -44,18 +58,18 @@ AetherNet es una plataforma integral de domótica y robótica móvil orientada a
 
 Para garantizar la viabilidad y calidad del producto, el sistema será evaluado contra los siguientes indicadores clave de rendimiento:
 
-| Métrica | Objetivo | Propósito |
-| :--- | :--- | :--- |
-| **Latencia de Red (Wi-Fi/MQTT)** | $< 50$ ms | Asegurar que el cambio de color de las luces o el control desde la App se sienta inmediato. |
-| **Latencia de RF (2.4 GHz)** | $< 10$ ms | Garantizar la respuesta instantánea de los motores del Rover ante comandos del Joystick. |
+| Métrica                              | Objetivo                    | Propósito                                                                                                                                                           |
+| :----------------------------------- | :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Latencia de Red (Wi-Fi/MQTT)**     | $< 50$ ms                   | Asegurar que el cambio de color de las luces o el control desde la App se sienta inmediato.                                                                         |
+| **Latencia de RF (2.4 GHz)**         | $< 10$ ms                   | Garantizar la respuesta instantánea de los motores del Rover ante comandos del Joystick.                                                                            |
 | **Precisión del Filtro Estadístico** | Reducción de ruido $> 85\%$ | Suavizar las lecturas del sensor HC-SR04 utilizando la función $S_t=\alpha \cdot Y_t+(1-\alpha) \cdot S_{t-1}$ para evitar falsos positivos en la evasión autónoma. |
-| **Tasa de Falsos Positivos (Láser)** | $0\%$ | El algoritmo de interrupción hardware no debe disparar alarmas si no se rompe físicamente la barrera. |
-| **Cumplimiento FOSS** | $100\%$ | Ninguna línea de código, SDK o plataforma debe requerir una licencia comercial restrictiva o pago recurrente. |
+| **Tasa de Falsos Positivos (Láser)** | $0\%$                       | El algoritmo de interrupción hardware no debe disparar alarmas si no se rompe físicamente la barrera.                                                               |
+| **Cumplimiento FOSS**                | $100\%$                     | Ninguna línea de código, SDK o plataforma debe requerir una licencia comercial restrictiva o pago recurrente.                                                       |
 
 ---
 
 ## 6. Suposiciones y Restricciones Técnicas
 
-*   **Restricción de Red:** Todos los dispositivos Wi-Fi (ESP32, ESP8266, App y Servidor Docker) deben operar estrictamente en la misma subred LAN. ~~Bombillo Tuya~~ eliminado del alcance.
-*   **Restricción de Energía:** El Rover depende de baterías Lipo/18650, por lo que su tiempo de operación autónoma está limitado a la capacidad de la batería, sin estación de recarga automática en esta versión.
-*   **Contingencia:** Si el router principal falla o pierde conexión a Internet, la automatización IP se caerá, pero el acceso a la puerta (Teclado/Servomotor) seguirá operando gracias al procesamiento *Edge* del Arduino MEGA.
+- **Restricción de Red:** Todos los dispositivos Wi-Fi (ESP32, ESP8266, App y Servidor Docker) deben operar estrictamente en la misma subred LAN. ~~Bombillo Tuya~~ eliminado del alcance.
+- **Restricción de Energía:** El Rover depende de baterías Lipo/18650, por lo que su tiempo de operación autónoma está limitado a la capacidad de la batería, sin estación de recarga automática en esta versión.
+- **Contingencia:** Si el router principal falla o pierde conexión a Internet, la automatización IP se caerá, pero el acceso a la puerta (Teclado/Servomotor) seguirá operando gracias al procesamiento _Edge_ del Arduino MEGA.
