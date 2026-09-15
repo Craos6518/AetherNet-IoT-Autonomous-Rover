@@ -20,22 +20,22 @@ name: CI/CD Pipeline
 # ---------------------------------------------------------------------------
 on:
   push:
-    branches: ['**']  # cualquier push a cualquier rama — como `on: push: branches: ['**']` en CI de React (valida cada commit)
+    branches: ["**"] # cualquier push a cualquier rama — como `on: push: branches: ['**']` en CI de React (valida cada commit)
   pull_request:
-    branches: [main, develop]  # PR a main/develop — como `on: pull_request` en CI de React (protege main)
+    branches: [main, develop] # PR a main/develop — como `on: pull_request` en CI de React (protege main)
 
 # ---------------------------------------------------------------------------
 # Permisos — principle of least privilege (como `permissions: contents: read` en Actions de Node)
 # ---------------------------------------------------------------------------
 permissions:
-  contents: read  # lee repo — como `permissions: contents: read` en CI de React (checkout)
-  security-events: write  # escribe SARIF para Trivy — como `security-events: write` en CI de React con CodeQL
+  contents: read # lee repo — como `permissions: contents: read` en CI de React (checkout)
+  security-events: write # escribe SARIF para Trivy — como `security-events: write` en CI de React con CodeQL
 
 # ---------------------------------------------------------------------------
 # Env global — versiones pinneadas (como `env: NODE_VERSION: 18` en CI de React)
 # ---------------------------------------------------------------------------
 env:
-  ARDUINO_CLI_VERSION: 1.5.1  # pin 1.5.1 — como `ARDUINO_CLI_VERSION` en Actions de Arduino (evita breaking con latest)
+  ARDUINO_CLI_VERSION: 1.5.1 # pin 1.5.1 — como `ARDUINO_CLI_VERSION` en Actions de Arduino (evita breaking con latest)
 
 jobs:
   # =============================================================================
@@ -44,20 +44,20 @@ jobs:
   # Como `npm run lint && npm test` en CI de React, pero con `ruff check` + `mypy` + `pytest`.
   # =============================================================================
   backend-test:
-    name: Backend Tests (FastAPI)  # nombre en UI Actions — como `name: Lint and Test` en CI de React
-    runs-on: ubuntu-latest  # runner — como `runs-on: ubuntu-latest` en CI de React (FOSS)
+    name: Backend Tests (FastAPI) # nombre en UI Actions — como `name: Lint and Test` en CI de React
+    runs-on: ubuntu-latest # runner — como `runs-on: ubuntu-latest` en CI de React (FOSS)
     defaults:
       run:
-        working-directory: ./backend  # cwd — como `working-directory: ./app` en CI de React (no repetir `cd backend`)
+        working-directory: ./backend # cwd — como `working-directory: ./app` en CI de React (no repetir `cd backend`)
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # checkout — como `actions/checkout@v4` en CI de React (clona repo)
+        uses: actions/checkout@v4 # checkout — como `actions/checkout@v4` en CI de React (clona repo)
 
       - name: Set up Python
-        uses: actions/setup-python@v5  # setup Python — como `actions/setup-node@v4` en CI de React pero para Python
+        uses: actions/setup-python@v5 # setup Python — como `actions/setup-node@v4` en CI de React pero para Python
         with:
-          python-version: '3.12'  # 3.12 — como `node-version: 18` en CI de React (pin para reproducibilidad)
-          cache: 'pip'  # cache pip — como `cache: npm` en CI de React (acelera `pip install`)
+          python-version: "3.12" # 3.12 — como `node-version: 18` en CI de React (pin para reproducibilidad)
+          cache: "pip" # cache pip — como `cache: npm` en CI de React (acelera `pip install`)
 
       - name: Install dependencies
         run: |
@@ -89,10 +89,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        firmware:  # matrix 3 firmwares — como `matrix: { firmware: [gateway-esp32, mega-access, rover-uno] }` en CI de React
-          - gateway-esp32  # ESP32 — FQBN esp32:esp32:esp32 (ver gateway-esp32.ino:1, CI fallback secrets.h)
-          - mega-access    # MEGA — FQBN arduino:avr:mega (ver mega-access.ino:1, config.h:30 LED 44/45/46)
-          - rover-uno      # UNO — FQBN arduino:avr:uno (ver rover-uno.ino:1, EMA α=0.2)
+        firmware: # matrix 3 firmwares — como `matrix: { firmware: [gateway-esp32, mega-access, rover-uno] }` en CI de React
+          - gateway-esp32 # ESP32 — FQBN esp32:esp32:esp32 (ver gateway-esp32.ino:1, CI fallback secrets.h)
+          - mega-access # MEGA — FQBN arduino:avr:mega (ver mega-access.ino:1, config.h:30 LED 44/45/46)
+          - rover-uno # UNO — FQBN arduino:avr:uno (ver rover-uno.ino:1, EMA α=0.2)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -112,21 +112,21 @@ jobs:
           arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json  # índice ESP32 — como `npm update` para core ESP32
 
       - name: Install ESP32 core (for gateway-esp32)
-        if: matrix.firmware == 'gateway-esp32'  # solo ESP32 — como `if: matrix.node == '18'` en CI de React
+        if: matrix.firmware == 'gateway-esp32' # solo ESP32 — como `if: matrix.node == '18'` en CI de React
         run: |
           export PATH="$(pwd)/bin:$HOME/bin:$PATH"
           arduino-cli core install esp32:esp32  # instala core ESP32 — como `arduino-cli core install esp32:esp32` en PlatformIO (ver gateway-esp32/platformio.ini)
           arduino-cli lib install "PubSubClient" "ArduinoJson@6.21.3" "RF24"  # libs — como `lib_deps` en platformio.ini: PubSubClient, ArduinoJson 6.21.3 (pin, no latest), RF24
 
       - name: Install AVR core (for mega-access, rover-uno)
-        if: matrix.firmware != 'gateway-esp32'  # MEGA/UNO — como `if: matrix.firmware != 'gateway-esp32'` en CI de React
+        if: matrix.firmware != 'gateway-esp32' # MEGA/UNO — como `if: matrix.firmware != 'gateway-esp32'` en CI de React
         run: |
           export PATH="$(pwd)/bin:$HOME/bin:$PATH"
           arduino-cli core install arduino:avr  # instala core AVR — como `arduino:avr` en PlatformIO (ver mega-access/platformio.ini)
           arduino-cli lib install "Keypad" "Servo" "RF24" "NewPing" "ArduinoJson@6.21.3" "PubSubClient"  # libs MEGA/Rover — Keypad 4x4, Servo MG90S, RF24 nRF24L01, NewPing HC-SR04
 
       - name: Prepare secrets fallback (DEVOPS-11 — gateway sin secrets.h usa defaults)
-        if: matrix.firmware == 'gateway-esp32'  # solo gateway — tiene secrets.h gitignored
+        if: matrix.firmware == 'gateway-esp32' # solo gateway — tiene secrets.h gitignored
         run: |
           if [ ! -f firmware/gateway-esp32/secrets.h ] && [ -f firmware/gateway-esp32/secrets.h.example ]; then
             echo "secrets.h missing — copying from secrets.h.example for CI (defaults AetherNet-LAN/changeme)"  # fallback — como `cp .env.example .env` en CI de React con dotenv
@@ -148,7 +148,7 @@ jobs:
   docker-build:
     name: Docker Build + Integration Test
     runs-on: ubuntu-latest
-    needs: [backend-test, firmware-compile]  # espera backend + firmware — como `needs: [backend-test, firmware-compile]` en CI de React (no construye Docker si tests fallan)
+    needs: [backend-test, firmware-compile] # espera backend + firmware — como `needs: [backend-test, firmware-compile]` en CI de React (no construye Docker si tests fallan)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -229,7 +229,7 @@ jobs:
           echo "All integration checks passed"  # todo ok — como `console.log('All integration checks passed')` en CI de React
 
       - name: Show logs on failure
-        if: failure()  # solo si falla — como `if: failure()` en CI de React (no en success)
+        if: failure() # solo si falla — como `if: failure()` en CI de React (no en success)
         run: |
           docker compose logs --tail=100 postgres || true  # logs postgres — como `docker logs postgres` en local (para debug)
           docker compose logs --tail=100 mosquitto || true  # logs mosquitto — ver backend/mosquitto/log/mosquitto.log
@@ -237,7 +237,7 @@ jobs:
           docker compose ps || true  # ps — como `docker ps` en local
 
       - name: Cleanup
-        if: always()  # siempre — como `if: always()` en CI de React (limpia aunque falle)
+        if: always() # siempre — como `if: always()` en CI de React (limpia aunque falle)
         run: |
           docker compose down -v  # down -v — borra contenedores + volumes (como `docker compose down -v` en local, limpia postgres_data)
 
@@ -251,7 +251,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./stats  # cwd stats — como `working-directory: ./stats` en CI de React para `npm test` en stats/
+        working-directory: ./stats # cwd stats — como `working-directory: ./stats` en CI de React para `npm test` en stats/
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -259,8 +259,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -290,7 +290,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check if Android project exists (MOV-12 — skip si app solo está vacía)
-        id: check  # id check — como `id: check` en CI de React para `if: steps.check.outputs.exists == 'true'`
+        id: check # id check — como `id: check` en CI de React para `if: steps.check.outputs.exists == 'true'`
         run: |
           if [ -f "app/build.gradle.kts" ] || [ -f "app/settings.gradle.kts" ] || [ -f "gradlew" ]; then  # si hay Gradle files — como `if [ -f package.json ]` en CI de React
             echo "exists=true" >> $GITHUB_OUTPUT  # output exists=true — como `echo "exists=true" >> $GITHUB_OUTPUT` en CI de React
@@ -300,15 +300,17 @@ jobs:
           fi
 
       - name: Set up JDK 17
-        if: steps.check.outputs.exists == 'true'  # solo si existe — como `if: steps.check.outputs.exists == 'true'` en CI de React
-        uses: actions/setup-java@v5  # setup Java — como `actions/setup-node@v4` en CI de React pero para JDK (Android necesita JDK 17)
+        if: steps.check.outputs.exists == 'true' # solo si existe — como `if: steps.check.outputs.exists == 'true'` en CI de React
+        uses: actions/setup-java@v5 # setup Java — como `actions/setup-node@v4` en CI de React pero para JDK (Android necesita JDK 17)
         with:
-          distribution: 'temurin'  # temurin — como `distribution: 'temurin'` en CI de React con `setup-java`
-          java-version: '17'  # JDK 17 — como `java-version: '17'` en CI de React (AGP 8.7 necesita 17)
+          distribution: "temurin" # temurin — como `distribution: 'temurin'` en CI de React con `setup-java`
+          java-version: "17" # JDK 17 — como `java-version: '17'` en CI de React (AGP 8.7 necesita 17)
 
       - name: Setup Android SDK
         if: steps.check.outputs.exists == 'true'
-        uses: android-actions/setup-android@v3  # setup Android SDK — como `setup-android` en CI de React (instala SDK 37, build-tools)
+        uses: android-actions/setup-android@v4 # setup Android SDK — como `setup-android` en CI de React (instala SDK 37, build-tools)
+        with:
+          packages: "platform-tools platforms;android-37 build-tools;37.0.0"
 
       - name: Build Debug APK
         if: steps.check.outputs.exists == 'true'
@@ -329,15 +331,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master  # Trivy — como `aquasecurity/trivy-action` en CI de React (scan fs)
+        uses: aquasecurity/trivy-action@master # Trivy — como `aquasecurity/trivy-action` en CI de React (scan fs)
         with:
-          scan-type: 'fs'  # fs — escanea filesystem (como `npm audit` en React pero para todos los archivos)
-          scan-ref: '.'  # ref . — escanea repo root
-          format: 'sarif'  # SARIF — formato para GitHub Security tab (como `sarif` en CodeQL)
-          output: 'trivy-results.sarif'  # output — como `output: trivy-results.sarif` en CI de React
+          scan-type: "fs" # fs — escanea filesystem (como `npm audit` en React pero para todos los archivos)
+          scan-ref: "." # ref . — escanea repo root
+          format: "sarif" # SARIF — formato para GitHub Security tab (como `sarif` en CodeQL)
+          output: "trivy-results.sarif" # output — como `output: trivy-results.sarif` en CI de React
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3  # upload SARIF — como `codeql-action/upload-sarif` en CI de React (muestra en Security tab)
-        continue-on-error: true  # no falla job si upload falla — como `continue-on-error: true` en CI de React
+        uses: github/codeql-action/upload-sarif@v3 # upload SARIF — como `codeql-action/upload-sarif` en CI de React (muestra en Security tab)
+        continue-on-error: true # no falla job si upload falla — como `continue-on-error: true` en CI de React
         with:
-          sarif_file: 'trivy-results.sarif'  # SARIF file — como `sarif_file: 'trivy-results.sarif'` en CI de React
+          sarif_file: "trivy-results.sarif" # SARIF file — como `sarif_file: 'trivy-results.sarif'` en CI de React
