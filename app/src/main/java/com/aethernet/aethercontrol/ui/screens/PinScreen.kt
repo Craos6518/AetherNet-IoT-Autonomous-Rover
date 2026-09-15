@@ -15,6 +15,8 @@ package com.aethernet.aethercontrol.ui.screens
 // Navega desde DashboardScreen "Abrir PIN cerrojo" -> NavGraph Dest.Pin (NavGraph.kt:35).
 // =============================================================================
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background // background — como `backgroundColor` en CSS
 import androidx.compose.foundation.layout.Arrangement // gap — como `gap` en CSS Flex
 import androidx.compose.foundation.layout.Box // Box — como `<div>` con `position: relative` en React
@@ -40,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp // sp — como `px` pero scaled (accesibilidad)
 import androidx.lifecycle.compose.collectAsStateWithLifecycle // collectAsStateWithLifecycle — como `useSelector` con lifecycle
+import com.aethernet.aethercontrol.data.bluetooth.BluetoothConnectionState
 import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState
 import com.aethernet.aethercontrol.ui.viewmodel.PinViewModel
 
@@ -57,6 +60,16 @@ fun PinScreen(
 ) {
     val s by vm.pinState.collectAsStateWithLifecycle() // pin state — como `const s = useSelector(vm.pinState)` en React Redux
     val mqtt by vm.mqttState.collectAsStateWithLifecycle() // mqtt state — como `const mqtt = useSelector(vm.mqttState)` en React
+    val isBtMode by vm.isBluetoothMode.collectAsStateWithLifecycle()
+    val btState by vm.bluetoothConnectionState.collectAsStateWithLifecycle()
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { perms ->
+        if (perms.values.all { it }) {
+            vm.connectBluetooth()
+        }
+    }
 
     Scaffold { innerPadding ->
         Column(
@@ -73,6 +86,55 @@ fun PinScreen(
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray
             )
+
+            // MOV-07: Toggle Wi-Fi / Bluetooth SPP (HC-06 fallback RF-1.3)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(
+                    onClick = { vm.setBluetoothMode(false) },
+                    enabled = isBtMode
+                ) {
+                    Text("Wi-Fi / MQTT")
+                }
+                Button(
+                    onClick = { vm.setBluetoothMode(true) },
+                    enabled = !isBtMode
+                ) {
+                    Text("Bluetooth SPP")
+                }
+            }
+
+            if (isBtMode) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    val btConnected = btState is BluetoothConnectionState.Connected
+                    Text(
+                        text = when (btState) {
+                            is BluetoothConnectionState.Connected -> "BT ● ${(btState as BluetoothConnectionState.Connected).deviceName}"
+                            is BluetoothConnectionState.Connecting -> "BT ○ Conectando..."
+                            is BluetoothConnectionState.Error -> "BT ✕ ${(btState as BluetoothConnectionState.Error).msg}"
+                            is BluetoothConnectionState.Disconnected -> "BT - Desconectado"
+                        },
+                        color = if (btConnected) Color(0xFF4CAF50) else Color.Gray,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    if (btConnected) {
+                        OutlinedButton(onClick = { vm.disconnectBluetooth() }) {
+                            Text("Desconectar")
+                        }
+                    } else {
+                        Button(onClick = {
+                            permissionLauncher.launch(
+                                arrayOf(
+                                    android.Manifest.permission.BLUETOOTH_CONNECT,
+                                    android.Manifest.permission.BLUETOOTH_SCAN,
+                                    android.Manifest.permission.ACCESS_FINE_LOCATION
+                                )
+                            )
+                        }) {
+                            Text("Conectar HC-06")
+                        }
+                    }
+                }
+            }
 
             // Dots 6x — sin exponer PIN (seguridad) — como `Array(6).fill(0).map((_, i) => <Dot filled={i < pin.length} />)` en React
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

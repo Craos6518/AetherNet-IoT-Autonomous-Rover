@@ -72,4 +72,11 @@ interface AetherRepository {
     /** MOV-05 RF-1.2: envía vectores joystick normalizados -1..1 o PWM directo -255..255 al Rover vía MQTT aethernet/rover/command. */
     suspend fun sendRoverCommand(leftPwm: Int, rightPwm: Int, mode: Int = 1): Result<Unit> // publish aethernet/rover/command {"left_pwm":..} -> Gateway handleRoverCommand:303 -> radio.write -> rover-uno.ino:219
     suspend fun sendRoverVector(x: Float, y: Float): Result<Unit> // helper x,y -1..1 → PWM tank-steering (JoystickMapper)
+
+    // MOV-07: Fallback Bluetooth SPP (RF-1.3) — conexión directa con HC-06 en nodo de acceso
+    val bluetoothConnectionState: StateFlow<com.aethernet.aethercontrol.data.bluetooth.BluetoothConnectionState>
+    val bluetoothMessageFlow: SharedFlow<String>
+    suspend fun connectBluetooth(deviceAddress: String? = null): Result<Unit>
+    fun disconnectBluetooth()
+    suspend fun sendBluetoothAccessCommand(pin: String): Result<Unit>
 }

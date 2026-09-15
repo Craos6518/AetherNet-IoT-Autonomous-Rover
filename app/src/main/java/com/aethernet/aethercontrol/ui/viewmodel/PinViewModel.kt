@@ -16,8 +16,10 @@ package com.aethernet.aethercontrol.ui.viewmodel
 // Observa accessEventFlow para confirmar success/fail (LedUiState ya pinta verde 5s en DashboardViewModel).
 // =============================================================================
 
+import android.util.Log // MOV-07 debug — filtrar con `adb logcat -s AetherBT`
 import androidx.lifecycle.ViewModel // ViewModel — como `useState` + `useEffect` en React pero con ciclo vida
 import androidx.lifecycle.viewModelScope // scope — como `useEffect` con cancel en unmount
+import com.aethernet.aethercontrol.data.bluetooth.BluetoothConnectionState
 import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState // estado MQTT — como connectionState en WebSocket JS
 import com.aethernet.aethercontrol.data.repository.AetherRepository // repo — como apiService en React
 import com.aethernet.aethercontrol.domain.model.PinUiState // UiState PIN — como `type PinFormState` en TS
@@ -48,29 +50,73 @@ class PinViewModel(
     // Expone mqtt state para badge "MQTT ●" en PinScreen:138 — como `mqttState` en React props
     val mqttState: StateFlow<MqttConnectionState> get() = repo.mqttConnectionState // delega a repo — como `const mqttState = useMqttState()` en React
 
+    // MOV-07: Bluetooth SPP fallback state
+    val bluetoothConnectionState: StateFlow<BluetoothConnectionState> get() = repo.bluetoothConnectionState
+    private val _isBluetoothMode = MutableStateFlow(false)
+    val isBluetoothMode: StateFlow<Boolean> = _isBluetoothMode.asStateFlow()
+
+    fun setBluetoothMode(enabled: Boolean) {
+        _isBluetoothMode.value = enabled
+        _pinState.update { it.copy(error = null) }
+    }
+
+    fun connectBluetooth(address: String? = null) {
+        viewModelScope.launch {
+            _pinState.update { it.copy(isLoading = true, error = null) }
+            val res = repo.connectBluetooth(address)
+            _pinState.update {
+                it.copy(
+                    isLoading = false,
+                    error = if (res is Result.Error) res.msg else null,
+                    lastMessage = if (res is Result.Success) "✓ Conectado a HC-06" else null
+                )
+            }
+        }
+    }
+
+    fun disconnectBluetooth() {
+        repo.disconnectBluetooth()
+        _pinState.update { it.copy(lastMessage = "Bluetooth desconectado") }
+    }
+
     private var accessJob: Job? = null // job colecta accessEventFlow — como `socket.on('access', handler)` handle
+    private var btJob: Job? = null // job colecta bluetoothMessageFlow
     private var windowStartMs: Long = 0L // inicio ventana throttle 60s — como `windowStart` en rate limiter Express
     private var cooldownJob: Job? = null // job auto-limpia lastMessage tras 3s — como `setTimeout(() => clearMessage(), 3000)` en JS
 
     init {
-        // Observa confirmación del Gateway/MEGA — como `socket.on('access/event', (ev) => setLastResult(ev.success))` en JS
+        // Observa confirmación del Gateway/MEGA via MQTT — como `socket.on('access/event', ...)` en JS
         accessJob = viewModelScope.launch {
-            repo.accessEventFlow.collect { ev -> // SharedFlow — push del Gateway tras processPinAttempt (keypad_control.cpp:67)
-                _pinState.update {
-                    it.copy(
-                        lastResultSuccess = ev.success, // true/false — como `ev.success` en JS (viene de MEGA success)
-                        lastMessage = if (ev.success) "✓ Desbloqueado" else "✕ Denegado", // mensaje UI — como feedback en React
-                        // limpia error previo si llega confirmación — como `setError(null)` en React
-                        error = null
-                    )
-                }
-                // auto-limpia mensaje tras 3s — como `setTimeout(() => setMessage(null), 3000)` en React (evita mensaje pegado)
-                cooldownJob?.cancel()
-                cooldownJob = viewModelScope.launch {
-                    delay(3000) // 3s — como `await sleep(3000)` en JS
-                    _pinState.update { s -> if (s.lastMessage != null) s.copy(lastMessage = null, lastResultSuccess = null) else s }
+            repo.accessEventFlow.collect { ev ->
+                if (!_isBluetoothMode.value) {
+                    handleAccessConfirmation(ev.success)
                 }
             }
+        }
+        // Observa mensajes entrantes del HC-06 via Bluetooth SPP (MOV-07 RF-1.3)
+        btJob = viewModelScope.launch {
+            repo.bluetoothMessageFlow.collect { msg ->
+                Log.d("AetherBT", "VM RX: btMode=${_isBluetoothMode.value} msg=$msg") // MOV-07: confirma que el flow entrega a la UI
+                if (_isBluetoothMode.value) {
+                    val success = msg.contains("success\":true") || msg.contains("✓") || msg.contains("OK") || msg.contains("Desbloqueado")
+                    handleAccessConfirmation(success)
+                }
+            }
+        }
+    }
+
+    private fun handleAccessConfirmation(success: Boolean) {
+        _pinState.update {
+            it.copy(
+                lastResultSuccess = success,
+                lastMessage = if (success) "✓ Desbloqueado" else "✕ Denegado",
+                error = null
+            )
+        }
+        cooldownJob?.cancel()
+        cooldownJob = viewModelScope.launch {
+            delay(3000)
+            _pinState.update { s -> if (s.lastMessage != null) s.copy(lastMessage = null, lastResultSuccess = null) else s }
         }
     }
 
@@ -116,11 +162,20 @@ class PinViewModel(
             return
         }
 
-        // guard MQTT — como `if (!socket.connected) return Error` en JS (ver AetherRepositoryImpl:86)
-        val mqtt = repo.mqttConnectionState.value
-        if (mqtt !is MqttConnectionState.Connected) {
-            _pinState.update { it.copy(error = "MQTT no conectado — verifica Wi-Fi/broker") }
-            return
+        val isBt = _isBluetoothMode.value
+        if (isBt) {
+            val btSt = repo.bluetoothConnectionState.value
+            if (btSt !is BluetoothConnectionState.Connected) {
+                _pinState.update { it.copy(error = "Bluetooth no conectado al HC-06") }
+                return
+            }
+        } else {
+            // guard MQTT — como `if (!socket.connected) return Error` en JS (ver AetherRepositoryImpl:86)
+            val mqtt = repo.mqttConnectionState.value
+            if (mqtt !is MqttConnectionState.Connected) {
+                _pinState.update { it.copy(error = "MQTT no conectado — verifica Wi-Fi/broker") }
+                return
+            }
         }
 
         // throttle 5 intentos / 60s — como rate limit en Express `rateLimit({windowMs: 60000, max: 5})` (evita spam cerrojo)
@@ -136,7 +191,8 @@ class PinViewModel(
 
         viewModelScope.launch {
             _pinState.update { it.copy(isLoading = true, error = null, lastMessage = null, lastResultSuccess = null) } // loading — como `setIsLoading(true)` en React
-            when (val r = repo.sendAccessCommand(pin)) { // publish MQTT — como `await fetch('/api/access-command', {method:'POST', body: JSON.stringify({pin})})` en JS
+            val r = if (isBt) repo.sendBluetoothAccessCommand(pin) else repo.sendAccessCommand(pin)
+            when (r) {
                 is Result.Success -> {
                     _pinState.update {
                         it.copy(
@@ -144,10 +200,9 @@ class PinViewModel(
                             pinInput = "", // limpia input tras envío — como `inputBuffer = ""` en C tras processPinAttempt
                             isValid = false,
                             attemptsInWindow = it.attemptsInWindow + 1, // incrementa contador throttle
-                            lastMessage = "Enviado, esperando confirmación…" // feedback — espera accessEventFlow push del MEGA
+                            lastMessage = if (isBt) "Enviado por Bluetooth SPP…" else "Enviado, esperando confirmación…" // feedback
                         )
                     }
-                    // confirmación real llega vía accessEventFlow colectado en init (ver MqttManager:138 access/event)
                 }
                 is Result.Error -> {
                     _pinState.update {
@@ -166,6 +221,7 @@ class PinViewModel(
 
     override fun onCleared() {
         accessJob?.cancel() // cancela colecta access — como `socket.off('access')` en JS cleanup
+        btJob?.cancel()
         cooldownJob?.cancel() // cancela auto-limpia — como `clearTimeout(id)` en JS
         super.onCleared() // super — como `useEffect return () => cleanup` en React
     }

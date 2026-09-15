@@ -11,6 +11,12 @@
 
     <!-- INTERNET para Retrofit HTTP y Paho MQTT TCP 1883 — como fetch necesita internet -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- MOV-07 RF-1.3: Bluetooth Classic SPP permissions (HC-06 access node fallback) -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".AetherControlApp"

@@ -14,6 +14,7 @@ import com.aethernet.aethercontrol.data.mqtt.AccessEventMqtt
 import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState
 import com.aethernet.aethercontrol.data.mqtt.RoverTelemetryMqtt
 import com.aethernet.aethercontrol.data.mqtt.SecurityEventMqtt
+import com.aethernet.aethercontrol.data.bluetooth.BluetoothConnectionState
 import com.aethernet.aethercontrol.data.repository.AetherRepository
 import com.aethernet.aethercontrol.domain.mapper.LedStateMapper
 import com.aethernet.aethercontrol.domain.model.LedColor
@@ -88,6 +89,18 @@ class DashboardViewModelTest {
         override suspend fun getLedState(): Result<LedUiState> =
             if (ledError != null) Result.Error(ledError)
             else Result.Success(ledState ?: LedUiState(color = LedColor.OFF, state = LedState.OFF, label = "Apagado"))
+
+        private val _btState = MutableStateFlow<BluetoothConnectionState>(BluetoothConnectionState.Disconnected)
+        override val bluetoothConnectionState: StateFlow<BluetoothConnectionState> get() = _btState
+        override val bluetoothMessageFlow: SharedFlow<String> get() = MutableSharedFlow()
+        override suspend fun connectBluetooth(deviceAddress: String?): Result<Unit> {
+            _btState.value = BluetoothConnectionState.Connected("HC-06", "00:11:22:33:44:55")
+            return Result.Success(Unit)
+        }
+        override fun disconnectBluetooth() {
+            _btState.value = BluetoothConnectionState.Disconnected
+        }
+        override suspend fun sendBluetoothAccessCommand(pin: String): Result<Unit> = Result.Success(Unit)
 
         override suspend fun sendAccessCommand(pin: String): Result<Unit> = Result.Success(Unit)
         override suspend fun sendRoverCommand(leftPwm: Int, rightPwm: Int, mode: Int): Result<Unit> = Result.Success(Unit)

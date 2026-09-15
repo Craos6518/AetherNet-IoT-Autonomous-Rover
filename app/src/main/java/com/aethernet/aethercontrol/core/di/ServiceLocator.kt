@@ -14,6 +14,7 @@ package com.aethernet.aethercontrol.core.di
 
 import android.content.Context
 import com.aethernet.aethercontrol.BuildConfig // BuildConfig.DEBUG — como `process.env.NODE_ENV !== 'production'` en React
+import com.aethernet.aethercontrol.data.bluetooth.SppClient
 import com.aethernet.aethercontrol.data.local.PreferencesManager
 import com.aethernet.aethercontrol.data.local.preferencesManager // extension Context.preferencesManager() — como `createStore()` en Zustand
 import com.aethernet.aethercontrol.data.mqtt.MqttManager
@@ -98,6 +99,7 @@ object ServiceLocator { // object — singleton Kotlin (como `const ServiceLocat
     private var cachedApi: ApiService? = null // cache ApiService
     private var cachedRepo: AetherRepository? = null
     private var cachedMqtt: MqttManager? = null
+    private var cachedSppClient: SppClient? = null
 
     private fun buildRetrofit(url: String): Retrofit =
         Retrofit.Builder() // Builder — como `axios.create({baseURL: url})` en JS pero con Retrofit
@@ -126,9 +128,15 @@ object ServiceLocator { // object — singleton Kotlin (como `const ServiceLocat
             cachedMqtt ?: MqttManager(requireContext()).also { cachedMqtt = it } // MqttManager — como `new MqttManager(context)` en JS
         }
 
+    // MOV-07: Bluetooth SPP client for HC-06 node access fallback
+    val sppClient: SppClient
+        get() = synchronized(this) {
+            cachedSppClient ?: SppClient(requireContext()).also { cachedSppClient = it }
+        }
+
     val repository: AetherRepository
         get() = synchronized(this) {
-            cachedRepo ?: AetherRepositoryImpl(apiService, mqttManager).also { cachedRepo = it } // repo — como `new AetherRepositoryImpl(api, mqtt)` en JS
+            cachedRepo ?: AetherRepositoryImpl(apiService, mqttManager, sppClient).also { cachedRepo = it } // repo — como `new AetherRepositoryImpl(api, mqtt, spp)` en JS
         }
 
     /** MOV-03: reconecta MQTT usando la URL HTTP actual (para DashboardScreen guardar URL). */
@@ -159,7 +167,8 @@ object ServiceLocator { // object — singleton Kotlin (como `const ServiceLocat
             cachedApi = cachedRetrofit!!.create(ApiService::class.java)
             // reutiliza mqttManager existente para reconexión en próximo reconnectMqtt() — como `mqttManager.reconnect()` en JS
             val mqtt = cachedMqtt ?: MqttManager(requireContext()).also { cachedMqtt = it }
-            cachedRepo = AetherRepositoryImpl(cachedApi!!, mqtt)
+            val spp = cachedSppClient ?: SppClient(requireContext()).also { cachedSppClient = it }
+            cachedRepo = AetherRepositoryImpl(cachedApi!!, mqtt, spp)
         }
         return normalized
     }

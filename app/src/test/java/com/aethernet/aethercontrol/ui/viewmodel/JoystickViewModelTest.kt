@@ -15,6 +15,7 @@ import com.aethernet.aethercontrol.data.remote.dto.SecurityEventOut
 import com.aethernet.aethercontrol.data.remote.dto.SensorEventCreate
 import com.aethernet.aethercontrol.data.remote.dto.SensorEventOut
 import com.aethernet.aethercontrol.data.repository.AetherRepository
+import com.aethernet.aethercontrol.data.bluetooth.BluetoothConnectionState
 import com.aethernet.aethercontrol.domain.model.LedUiState
 import com.aethernet.aethercontrol.util.Result
 import kotlinx.coroutines.Dispatchers
@@ -65,6 +66,18 @@ class JoystickViewModelTest {
         override suspend fun getRoverTelemetry(limit:Int) = Result.Success(emptyList<RoverTelemetryOut>())
         override suspend fun postRoverTelemetry(payload: RoverTelemetryCreate) = Result.Error("not impl")
         override suspend fun getLedState(): Result<LedUiState> = Result.Success(LedUiState())
+        private val _btState = MutableStateFlow<BluetoothConnectionState>(BluetoothConnectionState.Disconnected)
+        override val bluetoothConnectionState: StateFlow<BluetoothConnectionState> get() = _btState
+        override val bluetoothMessageFlow: SharedFlow<String> get() = MutableSharedFlow()
+        override suspend fun connectBluetooth(deviceAddress: String?): Result<Unit> {
+            _btState.value = BluetoothConnectionState.Connected("HC-06", "00:11:22:33:44:55")
+            return Result.Success(Unit)
+        }
+        override fun disconnectBluetooth() {
+            _btState.value = BluetoothConnectionState.Disconnected
+        }
+        override suspend fun sendBluetoothAccessCommand(pin: String): Result<Unit> = Result.Success(Unit)
+
         override suspend fun sendAccessCommand(pin:String): Result<Unit> = Result.Success(Unit)
         override suspend fun sendRoverCommand(leftPwm:Int, rightPwm:Int, mode:Int): Result<Unit> {
             lastLeft = leftPwm; lastRight = rightPwm; lastMode = mode; sendCount++

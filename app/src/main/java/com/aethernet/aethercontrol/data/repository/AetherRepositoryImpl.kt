@@ -14,6 +14,8 @@ package com.aethernet.aethercontrol.data.repository
 // Pattern: Repository envuelve ApiService (HTTP) + MqttManager (MQTT push) — ViewModel no conoce Paho ni Retrofit directo (MVVM).
 // =============================================================================
 
+import com.aethernet.aethercontrol.data.bluetooth.BluetoothConnectionState
+import com.aethernet.aethercontrol.data.bluetooth.SppClient
 import com.aethernet.aethercontrol.data.mqtt.AccessEventMqtt
 import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState
 import com.aethernet.aethercontrol.data.mqtt.MqttManager
@@ -42,7 +44,8 @@ import kotlinx.coroutines.flow.StateFlow
  */
 class AetherRepositoryImpl(
     private val api: ApiService, // Retrofit — HTTP GET/POST a FastAPI (ver ApiService.kt:22)
-    private val mqtt: MqttManager? = null // Paho — MQTT push, nullable para tests sin Context (como mock en Jest)
+    private val mqtt: MqttManager? = null, // Paho — MQTT push, nullable para tests sin Context (como mock en Jest)
+    private val sppClient: SppClient? = null // MOV-07 Bluetooth SPP HC-06 client
 ) : AetherRepository {
 
     // Cada método envuelve `api.*` en `safeCall` — captura IOException/HttpException a Result.Error (ver util/Result.kt:20)
@@ -126,5 +129,29 @@ class AetherRepositoryImpl(
         val (l, r) = com.aethernet.aethercontrol.domain.model.JoystickMapper.vectorToPwm(x, y, applyDeadband = true)
         val mode = if (l == 0 && r == 0) 0 else 1
         return sendRoverCommand(l, r, mode)
+    }
+
+    // MOV-07: Fallback Bluetooth SPP (RF-1.3)
+    override val bluetoothConnectionState: StateFlow<BluetoothConnectionState>
+        get() = sppClient?.connectionState ?: MutableStateFlow(BluetoothConnectionState.Disconnected)
+    override val bluetoothMessageFlow: SharedFlow<String>
+        get() = sppClient?.incomingMessages ?: MutableSharedFlow()
+
+    override suspend fun connectBluetooth(deviceAddress: String?): Result<Unit> {
+        val s = sppClient ?: return Result.Error("Bluetooth no inicializado")
+        return s.connect(deviceAddress)
+    }
+
+    override fun disconnectBluetooth() {
+        sppClient?.disconnect()
+    }
+
+    override suspend fun sendBluetoothAccessCommand(pin: String): Result<Unit> {
+        val s = sppClient ?: return Result.Error("Bluetooth no inicializado")
+        val st = s.connectionState.value
+        if (st !is BluetoothConnectionState.Connected) {
+            return Result.Error("Bluetooth no conectado al HC-06")
+        }
+        return s.sendAccessCommand(pin)
     }
 }
