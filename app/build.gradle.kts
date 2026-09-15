@@ -18,13 +18,13 @@ plugins {
 android {
     namespace = "com.aethernet.aethercontrol" // namespace — como `name` en package.json (`com.aethernet.aethercontrol`)
     compileSdk {
-        version = release(37) // compileSdk 37 (Android 15) — como `target: es2022` en TS (máximo que compilas)
+        version = release(36) // compileSdk 36 (Android 15) — como `target: es2022` en TS (máximo que compilas)
     }
 
     defaultConfig {
         applicationId = "com.aethernet.aethercontrol" // appId — como `name` en package.json + `bundleId` en React Native
         minSdk = 24 // minSdk 24 (Android 7.0) — como `browserslist: ["chrome >= 60"]` en React (mínimo soportado)
-        targetSdk = 37 // targetSdk 37 — como `targetSdk` en Android (optimizado para 15)
+        targetSdk = 36 // targetSdk 36 — como `targetSdk` en Android (optimizado para 15)
         versionCode = 1 // versionCode 1 — como `versionCode` en React Native (entero para Play Store)
         versionName = "1.0" // versionName "1.0" — como `version: "1.0.0"` en package.json (visible usuario)
 
