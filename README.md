@@ -1,32 +1,36 @@
 # AetherNet — IoT & Autonomous Rover
 
-Plataforma distribuida de domótica modular, telemetría estadística y robótica móvil. Proyecto Integrador de 5º semestre de Ingeniería de Sistemas / Desarrollo de Software (UTP) — **100% FOSS**, sin dependencia de nubes propietarias (AWS, GCP, Azure, Tuya Cloud).
+Plataforma distribuida de domótica modular, telemetría estadística y robótica móvil. Proyecto Integrador del 5º semestre de Ingeniería de Sistemas / Desarrollo de Software (UTP), con enfoque en automatización local, control de acceso físico y navegación autónoma con hardware abierto y sin dependencia de nubes propietarias.
 
-El sistema controla acceso físico (teclado + cerrojo), detecta intrusiones (trampa láser), notifica en tiempo real vía Telegram + LED RGB local, y opera un rover tanque con evasión autónoma — todo coordinado desde app Android y backend en la misma LAN (bombillo Tuya cancelado 2026-09-01).
+El sistema integra una app Android, un backend local con FastAPI + PostgreSQL + Mosquitto, firmware en ESP32, Arduino MEGA y UNO, y un rover con evasión autónoma. En la versión vigente, la notificación de intrusión se gestiona por Telegram directo y el LED RGB local del MEGA sigue siendo el indicador físico principal, mientras que la integración con bombillo Tuya quedó cancelada por incompatibilidad con la política FOSS del proyecto.
 
-## 🧠 ¿Eres un agente de código?
+## 🧠 Regla de trabajo
 
-Lee **[`AGENTS.md`](./AGENTS.md)** antes de tocar cualquier archivo. Ahí está el orden de lectura de `/docs`, el mapa de stack por componente y las convenciones de trabajo — no se repiten aquí para evitar que queden desincronizados.
+Lee [AGENTS.md](AGENTS.md) antes de tocar cualquier archivo. Allí se define el orden de lectura, el mapa del stack por componente y las convenciones del repositorio.
 
 ## 🗂️ Estructura del repositorio
 
-```
+```text
 .
-├── app/                      # App Android "AetherControl" — Kotlin, Jetpack Compose, MVVM
-├── backend/                  # FastAPI + PostgreSQL + Mosquitto MQTT + Docker Compose
-├── automation/               # Node-RED, Telegram Bot API (tuya-local cancelado 2026-09-01)
+├── app/                        # App Android "AetherControl" — Kotlin + Jetpack Compose
+├── backend/                    # FastAPI + PostgreSQL + Mosquitto + Docker Compose
+├── automation/                 # Referencia JSON del flujo de alertas e integración Telegram
 ├── firmware/
-│   ├── gateway-esp32/        # Gateway central — ESP32, UART, nRF24L01
-│   ├── mega-access/          # Control de acceso/potencia — Arduino MEGA
-│   └── rover-uno/            # Rover tanque autónomo — Arduino UNO, L298N
-├── stats/                    # Filtrado EMA / prueba t-Student — Python o R
-├── docs/                     # PRD, requisitos, hardware, sprints, roadmap, backlog
-├── .github/workflows/        # CI/CD con arduino-cli
+│   ├── gateway-esp32/         # Gateway central — ESP32 + UART + RF24
+│   ├── mega-access/           # Control de acceso y alarma — Arduino MEGA
+│   ├── rover-uno/             # Rover tanque autónomo — Arduino UNO + L298N
+│   └── ...                    # bancos de prueba e integración
+├── stats/                      # EMA, datasets, scripts de análisis y validación
+├── docs/                       # PRD, requisitos, hardware, sprints, roadmap y backlog
+├── .github/workflows/          # CI/CD para firmware y validación del proyecto
 ├── AGENTS.md
-└── README.md
+├── README.md
+├── LICENSE
+├── NOTICE
+├── docker-compose.yml
+├── build.gradle.kts
+└── settings.gradle.kts
 ```
-
-> Rutas orientativas hasta confirmar la estructura real del repo — ajústalas aquí si difieren.
 
 ## 🚀 Levantar el entorno local
 
@@ -35,41 +39,71 @@ Requisitos: Docker y Docker Compose.
 ```bash
 git clone https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover.git
 cd AetherNet-IoT-Autonomous-Rover
-cp .env.example .env    # ajusta las variables (ver DEVOPS-08 en docs/backlog.md)
-docker-compose up       # levanta FastAPI + PostgreSQL + Mosquitto MQTT
+cp backend/.env.example backend/.env
+cp firmware/gateway-esp32/secrets.h.example firmware/gateway-esp32/secrets.h
+docker compose up --build
 ```
 
-<!-- TODO: agrega instrucciones de compilación/flasheo de firmware por microcontrolador (arduino-cli) y de build de la app Kotlin -->
+Para la app Android se usa Gradle local:
 
-## 📚 Documentación
+```bash
+./gradlew assembleDebug
+```
 
-El detalle completo (visión, requisitos, hardware, sprints, roadmap, backlog) vive en [`/docs`](./docs). Para saber en qué orden leerlos y por qué, ver la sección 1 de [`AGENTS.md`](./AGENTS.md).
+## 📚 Documentación central
 
-## 🧪 Estado actual
+La documentación del proyecto vive en [docs/README.md](docs/README.md). El orden recomendado de lectura es:
 
-Sprint activo: `<pendiente de definir>` — ver [`docs/sprints.md`](./docs/sprints.md#estado-actual).
+1. [docs/prd.md](docs/prd.md)
+2. [docs/requirements.md](docs/requirements.md)
+3. [docs/hardware-inventory.md](docs/hardware-inventory.md)
+4. [docs/sprints.md](docs/sprints.md)
+5. [docs/roadmap.md](docs/roadmap.md)
+6. [docs/backlog.md](docs/backlog.md)
+7. [docs/architecture.md](docs/architecture.md)
 
-**2026-09-01:** bombillo Tuya / `tuya-local` **CANCELADO** (R-01). Riesgo crítico cerrado; HU-02 ahora solo Telegram + LED RGB local.
+## 🧪 Estado actual (2026-09-14)
 
-## 📱 App AetherControl — Arquitectura MOV-01 (RF-1.1, RNF-3.1)
+- Sprint activo: Sprint 3, centrado en rover, telemetría y validación del enlace RF + evasión por sensores.
+- Integración de seguridad: Telegram directo vía Bot API HTTP; Node-RED queda como referencia técnica y no como flujo activo de producción.
+- Bombillo inteligente Tuya: cancelado por incompatibilidad con la política FOSS del proyecto.
+- LED RGB local en Arduino MEGA: sigue siendo el indicador visual principal para acceso y alarma local.
+- El backend FastAPI y el servicio MQTT están documentados como una base local de coordinación y persistencia, no como sistema de nube.
 
-**Stack:** Kotlin 2.2.10, Jetpack Compose (BOM 2026.02.01), MVVM + StateFlow, Retrofit 2.11.0 + OkHttp 4.12.0 + kotlinx.serialization 1.8.0, Navigation Compose 2.8.4, DataStore 1.1.1 — todo FOSS.
+## 📱 App AetherControl
 
-**DI manual (RNF-3.1):** `core/di/ServiceLocator.kt:1` es `object ServiceLocator` con `lateinit appContext` / `by lazy` para `OkHttpClient`, `Retrofit`, `ApiService`, `PreferencesManager`, `AetherRepository`. Se inicializa en `AetherControlApp.kt:1` (`Application.onCreate`) y se registra en `app/src/main/AndroidManifest.xml:5` (`android:name=".AetherControlApp"`). `ui/viewmodel/ViewModelFactory.kt:1` expone `DashboardViewModelFactory(repo) : ViewModelProvider.Factory` y se usa en `MainActivity.kt:16` como `viewModel(factory = DashboardViewModelFactory(ServiceLocator.repository))`. No se usa Hilt/Koin a propósito — decisión documentada para evaluación académica RNF-3.1.
+La app Android está diseñada como una interfaz de supervisión y control local, con:
 
-**Networking:** `data/remote/ApiService.kt:1` espeja `backend/app/main.py:48` y `backend/app/routers/events.py:31,58,92,123`; `baseUrl = "http://10.0.2.2:8000/"` (emulador) extraído a `ServiceLocator`/`PreferencesManager` (no hardcodeado en ViewModel). `Json { ignoreUnknownKeys=true; isLenient=true }` + `HttpLoggingInterceptor` solo en `BuildConfig.DEBUG`.
+- Dashboard en tiempo real.
+- Estado de MQTT y backend.
+- LED local derivado de eventos de acceso y seguridad.
+- Pantalla de PIN para desbloqueo físico.
+- Joystick virtual para control del rover.
+- Arquitectura MVVM con flujo de estados y repositorio central.
 
-**DTOs:** `data/remote/dto/*` espejo de `backend/app/schemas.py:17,26,33,47,56,73,79,95,106` con `@Serializable` y `@SerialName("event_metadata")` donde aplica.
+## 🧰 Stack principal
+
+- Android: Kotlin + Jetpack Compose + MVVM + StateFlow
+- Backend: FastAPI + SQLAlchemy + PostgreSQL + Mosquitto MQTT
+- Firmware: ESP32, Arduino MEGA, Arduino UNO
+- Protocolos clave: UART, RF24, MQTT, HTTP
+- Estadística: EMA, análisis descriptivo y validación experimental
 
 ## 📄 Licencia
 
-**Código del proyecto:** [Apache License 2.0](./LICENSE) — 100% FOSS (RNF-3.1).
+El código del proyecto se distribuye bajo la [LICENSE](LICENSE) (Apache 2.0).
 
-**Datasets incluidos (agregación, no re-licenciados):**
+Los datasets usados para análisis y validación conservan sus licencias de origen; la documentación y el código del proyecto mantienen la compatibilidad con el principio de software 100% FOSS.
 
-| Dataset | Ubicación | Filas | Licencia | Fuente |
-|---|---|---|---|---|
-| Turbidez del agua — *Water level identification with distance sensors* | `stats/Dataset/water-level_turbidity-{low,medium,high}.csv` (espejo `docs/Estadistica/Datasets/`) | 31.500 | **CC BY-SA 4.0** — https://creativecommons.org/licenses/by-sa/4.0/ | https://www.kaggle.com/datasets/caetanoranieri/water-level-identification-with-lidar — Ranieri et al. (2024) https://doi.org/10.1016/j.engappai.2023.107235 |
-| Gestos de manos — *Hand Gesture Dataset* (HC-SR04) | `stats/Dataset/gesture_dataset.csv` (espejo `docs/Estadistica/Datasets/`) | 5.000 | **CC0 1.0** dominio público — https://creativecommons.org/publicdomain/zero/1.0/ | https://www.kaggle.com/datasets/marisolgil/hand-gesture-dataset — https://doi.org/10.34740/kaggle/dsv/16239431 |
+## 🔎 Repositorios y documentación clave
 
-Ver atribución completa y obligaciones ShareAlike en [`NOTICE`](./NOTICE) + [`stats/Dataset/README.md`](./stats/Dataset/README.md) + [`docs/Estadistica/Datasets/README.md`](./docs/Estadistica/Datasets/README.md). Los CSV mantienen su licencia original; el código permanece Apache 2.0 (compatibilidad por agregación).
+- [docs/architecture.md](docs/architecture.md)
+- [docs/prd.md](docs/prd.md)
+- [docs/requirements.md](docs/requirements.md)
+- [docs/backlog.md](docs/backlog.md)
+- [docs/roadmap.md](docs/roadmap.md)
+- [docs/hardware-inventory.md](docs/hardware-inventory.md)
+- [stats/README.md](stats/README.md)
+- [backend/README.md](backend/README.md)
+- [app/README.md](app/README.md)
+- [firmware/README.md](firmware/README.md)
