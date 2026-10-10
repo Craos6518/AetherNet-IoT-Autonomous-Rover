@@ -58,7 +58,12 @@ import kotlinx.coroutines.launch // launch — como `async () => { await updateB
  * MOV-04: botón "Abrir PIN cerrojo" navega a Dest.Pin (PinScreen dedicada).
  */
 @Composable
-fun DashboardScreen(vm: DashboardViewModel, onOpenPin: () -> Unit = {}, onOpenJoystick: () -> Unit = {}) {
+fun DashboardScreen(
+    vm: DashboardViewModel,
+    onOpenPin: () -> Unit = {},
+    onOpenJoystick: () -> Unit = {},
+    onOpenBluetooth: () -> Unit = {} // MOV-07 RF-1.3: fallback Bluetooth SPP (nodo compacto HC-06)
+) {
     val state by vm.uiState.collectAsStateWithLifecycle() // state — como `const state = useSelector(vm.uiState)` en React Redux
     val scope = rememberCoroutineScope() // scope para launch — como `const scope = useCoroutineScope()` en React (coroutine)
     // Muestra y edita la baseUrl persistida (PreferencesManager.saveBaseUrl) — como `localStorage.getItem('apiBaseUrl')` en React
@@ -134,6 +139,15 @@ fun DashboardScreen(vm: DashboardViewModel, onOpenPin: () -> Unit = {}, onOpenJo
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Joystick Rover — control tanque")
+            }
+
+            // MOV-07 RF-1.3: acceso a BluetoothScreen (fallback SPP HC-06 — PIN + presencia si cae Wi-Fi)
+            // como `<Button onClick={() => navigate('/bluetooth')}>Bluetooth Fallback</Button>` en React Router
+            Button(
+                onClick = onOpenBluetooth,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Bluetooth Fallback — Nodo Acceso Compacto")
             }
 
             // MOV-02: Card LED local solo lectura — círculo 64dp + etiqueta + lastSync + error — como `<LedStatusCard state={state.ledState} />` en React

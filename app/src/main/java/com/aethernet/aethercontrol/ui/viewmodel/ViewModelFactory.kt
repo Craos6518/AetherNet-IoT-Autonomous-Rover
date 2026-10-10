@@ -15,6 +15,7 @@ package com.aethernet.aethercontrol.ui.viewmodel
 
 import androidx.lifecycle.ViewModel // ViewModel — como `useState` + `useEffect` en React
 import androidx.lifecycle.ViewModelProvider // Factory — como `createContext` en React
+import com.aethernet.aethercontrol.data.bluetooth.BluetoothManager // BluetoothManager — como `new BluetoothManager(context)` en JS (MOV-07 RF-1.3)
 import com.aethernet.aethercontrol.data.repository.AetherRepository // repo — como apiService en React props
 
 /**
@@ -41,6 +42,25 @@ class DashboardViewModelFactory(
         // Crea JoystickViewModel — usado en MainActivity:26 `val joyVm: JoystickViewModel = viewModel(factory = vmFactory)` (MOV-05 RF-1.2)
         if (modelClass.isAssignableFrom(JoystickViewModel::class.java)) {
             return JoystickViewModel(repo) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}") // error si piden otro ViewModel no registrado (como `throw new Error('Unknown type')` en JS)
+    }
+}
+
+/**
+ * Factory manual para BluetoothViewModel — MOV-07 RF-1.3 (fallback SPP HC-06, RNF-3.1).
+ * Inyecta BluetoothManager (no AetherRepository: BT no pasa por backend/MQTT, es plan B local).
+ * Uso en MainActivity: viewModel(factory = BluetoothViewModelFactory(ServiceLocator.bluetoothManager)).
+ * Si vienes de React: es como `function createBluetoothViewModel(bt) { return new BluetoothViewModel(bt) }` en JS.
+ */
+class BluetoothViewModelFactory(
+    private val bt: BluetoothManager // gestor BT inyectado — como `const bt = useBluetoothManager()` en React props
+) : ViewModelProvider.Factory {
+
+    @Suppress("UNCHECKED_CAST") // cast `as T` es seguro porque verificamos isAssignableFrom — como `as unknown as T` en TS
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(BluetoothViewModel::class.java)) {
+            return BluetoothViewModel(bt) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}") // error si piden otro ViewModel no registrado (como `throw new Error('Unknown type')` en JS)
     }

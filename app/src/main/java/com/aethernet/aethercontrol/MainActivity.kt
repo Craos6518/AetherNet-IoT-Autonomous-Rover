@@ -20,6 +20,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel // viewModel — como `use
 import com.aethernet.aethercontrol.core.di.ServiceLocator // ServiceLocator — DI manual (como `useContext(ServiceLocatorContext)` en React)
 import com.aethernet.aethercontrol.ui.navigation.NavGraph // NavGraph — como `<Router><Routes>...</Routes></Router>` en React Router
 import com.aethernet.aethercontrol.ui.theme.AetherControlTheme // Theme — como `<ThemeProvider theme={theme}>` en MUI React
+import com.aethernet.aethercontrol.ui.viewmodel.BluetoothViewModel // BluetoothViewModel — MOV-07 RF-1.3
+import com.aethernet.aethercontrol.ui.viewmodel.BluetoothViewModelFactory // Factory BT — como `createBluetoothViewModelFactory(bt)` en React
 import com.aethernet.aethercontrol.ui.viewmodel.DashboardViewModelFactory // Factory — como `createViewModelFactory(repo)` en React
 import com.aethernet.aethercontrol.ui.viewmodel.JoystickViewModel
 import com.aethernet.aethercontrol.ui.viewmodel.PinViewModel
@@ -36,7 +38,9 @@ class MainActivity : ComponentActivity() { // ComponentActivity — Activity bas
                     viewModel(factory = vmFactory) // DashboardVM — como `const vm = useViewModel(factory, 'dashboard')` en React (crea/reusa ViewModel)
                 val pinVm: PinViewModel = viewModel(factory = vmFactory) // PinVM — MOV-04 Plan B, mismo factory reusa repo (como `useViewModel(factory, 'pin')`)
                 val joyVm: JoystickViewModel = viewModel(factory = vmFactory) // JoystickVM — MOV-05 RF-1.2 joystick virtual Rover (tank-steering)
-                NavGraph(viewModel = vm, pinViewModel = pinVm, joystickViewModel = joyVm) // NavGraph — como `<NavGraph ... />` en React Router
+                val btFactory = BluetoothViewModelFactory(ServiceLocator.bluetoothManager) // factory BT — inyecta BluetoothManager (MOV-07 RF-1.3)
+                val btVm: BluetoothViewModel = viewModel(factory = btFactory) // BluetoothVM — MOV-07 RF-1.3 fallback SPP HC-06 (PIN + presencia)
+                NavGraph(viewModel = vm, pinViewModel = pinVm, joystickViewModel = joyVm, bluetoothViewModel = btVm) // NavGraph — como `<NavGraph ... />` en React Router
             }
         }
     }
