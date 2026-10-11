@@ -110,3 +110,7 @@ Cada ítem referencia su RF/HU de origen y el sprint donde debe quedar cerrado s
 - IDs de este backlog pueden citarse en commits/PRs (ej. `MOV-05: implementa joystick virtual`).
 - Cada ítem "Must" sin cerrar al final de su sprint debe reflejarse en la matriz de riesgos (PM-03) y en el Gantt (PM-04).
 - Este archivo es operativo y debe actualizarse conforme avanza el proyecto; `docs/roadmap.md` explica el *conocimiento* necesario, este archivo explica el *trabajo* necesario.
+
+## Decisiones de rama y limpieza
+
+- **Rama `feature/app-joystick-virtual` (e086068..7806dd3):** contiene implementación BT duplicada (`SppClient.kt`, `node-compact/`, `test-bluetooth-uno/`, métodos BT en `AetherRepository`/`Impl`, toggle en `PinScreen`/`PinViewModel`, overrides BT en 3 tests). **Decisión 2026-10-10:** al mergear a `develop`, **excluir bloque BT completo** (supersedido por `BluetoothManager`/`BluetoothViewModel`/`BluetoothScreen` en `feature/app-bluetooth-fallback`); **conservar** solo docs DevOps (`DevOps_AetherNet_Contingencia_10Agosto.pptx/md`, `Diario_*.ipynb` actualizaciones). Merge recomendado via `git merge --no-ff --no-commit` + `git checkout --ours -- <BT-files>` o rebase interactivo.
