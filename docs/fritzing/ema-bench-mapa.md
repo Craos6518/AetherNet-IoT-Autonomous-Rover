@@ -92,7 +92,7 @@ graph LR
 |---|---|---|---|---|
 | Offline | `stats/ema_filter.py:17` | 0.2 | `test_noise_reduction_kpi:78` (87.4% con σ=10) | Sprint 1-2 sin hardware |
 | Firmware | `rover.ino:66`, `258` | 0.2f | Lectura real 0-200 cm, `OBSTACLE_DISTANCE_CM 30` | Sprint 2-3 banco B/C |
-| Informe | `docs/materias/informe-estadistica.md` (Sprint 4) | — | Gráficas `filtered vs raw` desde `stats/data/*.csv` | EST-07 |
+| Informe | `docs/Estadistica/informe-estadistica.md` (Sprint 4) | — | Gráficas `filtered vs raw` desde `stats/data/*.csv` | EST-07 |
 
 ---
 

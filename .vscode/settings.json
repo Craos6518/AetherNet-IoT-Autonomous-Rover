@@ -1,0 +1,36 @@
+{
+  // AetherNet — ocultar 2940 archivos ignorados del Explorer (git ls-files -i 2940)
+  // Fix .gitignore 84 inline-comments 2026-09-11: 932→0 untracked, ahora explorer limpio
+  "explorer.excludeGitIgnore": true,
+  "explorer.decorations.colors": true,
+  "explorer.decorations.badges": true,
+  "files.exclude": {
+    "**/.gradle": true,
+    "**/.idea": true,
+    "**/.venv": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true,
+    "**/__pycache__": true,
+    "**/build": true,
+    "**/out": true,
+    "**/.cxx": true,
+    "**/.externalNativeBuild": true,
+    "**/node_modules": true,
+    "**/.coverage": true,
+    "**/htmlcov": true,
+    "**/postgres_data": true,
+    "**/mosquitto/data": true,
+    "**/mosquitto/log": true,
+    "**/.pio": true,
+    "**/.pioenvs": true
+  },
+  // Source Control ya oculta .gitignored con explorer.excludeGitIgnore; esto oculta en Explorer
+  "search.exclude": {
+    "**/.gradle": true,
+    "**/.idea": true,
+    "**/.venv": true,
+    "**/build": true,
+    "**/__pycache__": true
+  }
+}

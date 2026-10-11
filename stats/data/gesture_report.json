@@ -1,0 +1,309 @@
+{
+  "dataset": "hand-gesture HC-SR04 @20Hz",
+  "source": {
+    "url": "https://www.kaggle.com/datasets/marisolgil/hand-gesture-dataset",
+    "citation": "Marisol Gil Valenzuela, 2026. Hand Gesture Dataset. Kaggle. doi:10.34740/kaggle/dsv/16239431",
+    "doi": "https://doi.org/10.34740/kaggle/dsv/16239431",
+    "license": "CC0 - Dominio p\u00fablico (https://creativecommons.org/publicdomain/zero/1.0/)",
+    "license_compatible_RNF31": true,
+    "n_total": 5000,
+    "design": "5 gestos \u00d7 50 frames \u00d7 20Hz aprox + repeticiones = 5000 filas, 1 sujeto mgv1"
+  },
+  "n_total": 5000,
+  "n_valido": 4959,
+  "n_invalido": 41,
+  "descriptive": {
+    "n_total": 5000,
+    "n_valido": 4959,
+    "n_invalido": 41,
+    "by_gesto": {
+      "('distancia_cm', 'mean')": {
+        "acercar": 79.82,
+        "alejar": 95.02,
+        "estatico_cerca": 62.1,
+        "estatico_lejos": 82.38,
+        "none": 204.46
+      },
+      "('distancia_cm', 'std')": {
+        "acercar": 83.17,
+        "alejar": 83.01,
+        "estatico_cerca": 67.88,
+        "estatico_lejos": 20.39,
+        "none": 0.73
+      },
+      "('distancia_cm', 'min')": {
+        "acercar": -1.0,
+        "alejar": -1.0,
+        "estatico_cerca": 28.82,
+        "estatico_lejos": 75.28,
+        "none": 203.61
+      },
+      "('distancia_cm', 'max')": {
+        "acercar": 218.64,
+        "alejar": 217.57,
+        "estatico_cerca": 215.27,
+        "estatico_lejos": 205.85,
+        "none": 214.56
+      },
+      "('distancia_cm', 'median')": {
+        "acercar": 42.79,
+        "alejar": 54.79,
+        "estatico_cerca": 31.65,
+        "estatico_lejos": 79.52,
+        "none": 204.44
+      },
+      "('velocidad_cm_s', 'mean')": {
+        "acercar": -38.06,
+        "alejar": 2.78,
+        "estatico_cerca": 0.08,
+        "estatico_lejos": -0.1,
+        "none": 0.1
+      },
+      "('velocidad_cm_s', 'std')": {
+        "acercar": 904.4,
+        "alejar": 1042.03,
+        "estatico_cerca": 465.36,
+        "estatico_lejos": 277.96,
+        "none": 20.22
+      },
+      "('velocidad_cm_s', 'min')": {
+        "acercar": -4091.22,
+        "alejar": -4147.32,
+        "estatico_cerca": -3621.68,
+        "estatico_lejos": -2592.5,
+        "none": -200.94
+      },
+      "('velocidad_cm_s', 'max')": {
+        "acercar": 4177.92,
+        "alejar": 4158.2,
+        "estatico_cerca": 3623.04,
+        "estatico_lejos": 2560.2,
+        "none": 201.62
+      },
+      "('velocidad_cm_s', 'median')": {
+        "acercar": -17.0,
+        "alejar": 13.09,
+        "estatico_cerca": 0.0,
+        "estatico_lejos": 0.0,
+        "none": 0.0
+      },
+      "('aceleracion_cm_s2', 'mean')": {
+        "acercar": 246.19,
+        "alejar": 2.6,
+        "estatico_cerca": -0.73,
+        "estatico_lejos": -0.92,
+        "none": 1.86
+      },
+      "('aceleracion_cm_s2', 'std')": {
+        "acercar": 28116.55,
+        "alejar": 33898.19,
+        "estatico_cerca": 13827.03,
+        "estatico_lejos": 7847.32,
+        "none": 701.44
+      },
+      "('aceleracion_cm_s2', 'min')": {
+        "acercar": -163914.0,
+        "alejar": -165246.8,
+        "estatico_cerca": -135483.2,
+        "estatico_lejos": -52026.8,
+        "none": -8044.4
+      },
+      "('aceleracion_cm_s2', 'max')": {
+        "acercar": 142541.59,
+        "alejar": 162533.59,
+        "estatico_cerca": 134266.0,
+        "estatico_lejos": 51986.0,
+        "none": 4345.2
+      },
+      "('aceleracion_cm_s2', 'median')": {
+        "acercar": 20.4,
+        "alejar": 81.6,
+        "estatico_cerca": 0.0,
+        "estatico_lejos": 0.0,
+        "none": 0.0
+      }
+    },
+    "counts_gesto": {
+      "acercar": 1000,
+      "alejar": 1000,
+      "estatico_cerca": 1000,
+      "estatico_lejos": 1000,
+      "none": 1000
+    },
+    "counts_mano": {
+      "derecha": 5000,
+      "izquierda": 0
+    },
+    "counts_velocidad": {
+      "lenta": 1750,
+      "normal": 1750,
+      "rapida": 1500
+    },
+    "balanceado": true,
+    "global": {
+      "distancia_cm": {
+        "mean": 104.755522,
+        "std": 79.74491509321557,
+        "min": -1.0,
+        "max": 218.64,
+        "median": 79.27
+      },
+      "valido_pct": 99.18
+    }
+  },
+  "ema_distancia": {
+    "global_continuous": {
+      "raw_mse": 861.9710346541641,
+      "filtered_mse": 1009.3860130489483,
+      "noise_reduction_pct": -17.102080286715115,
+      "meets_kpi": false,
+      "variance_reduction_pct": 22.9,
+      "raw_mae": 6.332,
+      "filt_mae": 14.918,
+      "n": 4959,
+      "n_invalido_excluido": 41
+    },
+    "per_gesto": {
+      "acercar": {
+        "raw_mse": 1771.201210762101,
+        "filtered_mse": 2368.3224013671943,
+        "noise_reduction_pct": -33.71278130214059,
+        "meets_kpi": false,
+        "variance_reduction_pct": 46.5,
+        "raw_mae": 13.355,
+        "filt_mae": 34.672,
+        "n": 971
+      },
+      "alejar": {
+        "raw_mse": 1658.1212258603239,
+        "filtered_mse": 2103.62516745804,
+        "noise_reduction_pct": -26.86799581656427,
+        "meets_kpi": false,
+        "variance_reduction_pct": 44.0,
+        "raw_mae": 11.799,
+        "filt_mae": 29.667,
+        "n": 988
+      },
+      "estatico_cerca": {
+        "raw_mse": 631.890194525,
+        "filtered_mse": 478.2883118115182,
+        "noise_reduction_pct": 24.30831876239926,
+        "meets_kpi": false,
+        "variance_reduction_pct": 17.1,
+        "raw_mae": 4.023,
+        "filt_mae": 7.032,
+        "n": 1000
+      },
+      "estatico_lejos": {
+        "raw_mse": 303.897904675,
+        "filtered_mse": 157.6732185119772,
+        "noise_reduction_pct": 48.11638511275721,
+        "meets_kpi": false,
+        "variance_reduction_pct": 49.7,
+        "raw_mae": 2.606,
+        "filt_mae": 3.023,
+        "n": 1000
+      },
+      "none": {
+        "raw_mse": 0.5214460250000006,
+        "filtered_mse": 0.07014769427661961,
+        "noise_reduction_pct": 86.54746782725604,
+        "meets_kpi": true,
+        "variance_reduction_pct": 85.6,
+        "raw_mae": 0.286,
+        "filt_mae": 0.163,
+        "n": 1000
+      }
+    },
+    "delay_step_response": {
+      "mean_samples": 2.94,
+      "median_samples": 3.0,
+      "mean_ms": 147.2,
+      "n_steps_measured": 18,
+      "note": "Escalones reales 215\u219277cm en gesto acercar (picos HC-SR04), no sint\u00e9ticos"
+    },
+    "false_obstacles": {
+      "count": 4,
+      "pct": 0.081,
+      "umbral_cm": 30,
+      "note": "filt<30 cuando true>50 = freno innecesario (seguridad)"
+    },
+    "alpha_comparison": {
+      "0.1": {
+        "noise_reduction_pct": -102.8,
+        "variance_reduction_pct": 35.0,
+        "filt_mae": 23.031,
+        "meets_kpi": false
+      },
+      "0.2": {
+        "noise_reduction_pct": -17.1,
+        "variance_reduction_pct": 22.9,
+        "filt_mae": 14.918,
+        "meets_kpi": false
+      },
+      "0.3": {
+        "noise_reduction_pct": 15.6,
+        "variance_reduction_pct": 16.4,
+        "filt_mae": 11.034,
+        "meets_kpi": false
+      },
+      "0.5": {
+        "noise_reduction_pct": 30.3,
+        "variance_reduction_pct": 9.7,
+        "filt_mae": 7.919,
+        "meets_kpi": false
+      },
+      "0.8": {
+        "noise_reduction_pct": 18.0,
+        "variance_reduction_pct": 3.7,
+        "filt_mae": 6.539,
+        "meets_kpi": false
+      }
+    },
+    "alpha": 0.2,
+    "note": "true = rolling median 15 (robusta a picos). Global = EMA continuo (con retardo inter-gesto). Per-gesto = EMA reseteado (solo varianza intra)."
+  },
+  "hypothesis_tests": {
+    "ttest_acercar_vs_alejar": {
+      "H0": "mu_acercar == mu_alejar",
+      "H1": "mu_acercar != mu_alejar",
+      "t": -3.7167,
+      "p": 0.00020753824556233818,
+      "reject_H0_05": true,
+      "cohen_d": -0.168,
+      "interpretacion_d": "peque\u00f1o",
+      "shapiro_a_p": 2.0917800685729886e-36,
+      "shapiro_b_p": 4.032416912116489e-36,
+      "n_a": 971,
+      "n_b": 988,
+      "mean_a": 82.24,
+      "mean_b": 96.18
+    },
+    "anova_distancia_por_gesto": {
+      "F": 858.205,
+      "p": 0.0,
+      "reject_H0_05": true
+    },
+    "ttest_cerca_vs_lejos": {
+      "t": -9.048,
+      "p": 5.865222717045334e-19,
+      "reject_H0_05": true,
+      "cohen_d": -0.4046,
+      "interpretacion_d": "peque\u00f1o",
+      "mean_cerca": 62.1,
+      "mean_lejos": 82.38
+    },
+    "mannwhitney_acercar_vs_alejar": {
+      "U": 427814.5,
+      "p": 3.429700915105265e-05,
+      "reject_H0_05": true
+    },
+    "correlation_dist_vel": {
+      "pearson_r": 0.2102,
+      "pearson_p": 1.219506624503446e-50,
+      "spearman_r": 0.1698,
+      "spearman_p": 2.0770633295517056e-33
+    }
+  },
+  "conclusion": "EMA \u03b1=0.2 @20Hz: MSE global -17.1% (<85 \u2014 no aplica KPI PRD en serie con movimiento: lag penaliza MSE vs proxy median15); varianza global 22.9% (suavizado real). Per-gesto varianza: acercar 46%, alejar 44%, none 86% (\u2713 KPI >85 en est\u00e1tico sin movimiento, s\u00edmil PRD 50cm quieto). MAE 6.33\u219214.92cm (lag). Retardo 2.9 muestras (147ms). Falsos 4 (0.081%). t-test acercar vs alejar p=2.08e-04 (rechaza H0), ANOVA 5 gestos F=858."
+}

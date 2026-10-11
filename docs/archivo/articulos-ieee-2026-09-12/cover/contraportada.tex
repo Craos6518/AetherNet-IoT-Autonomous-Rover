@@ -1,0 +1,38 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{graphicx,hyperref,geometry}
+\geometry{margin=2.2cm}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\begin{document}
+\thispagestyle{empty}
+\begin{center}
+{\large \textbf{Contraportada -- AetherNet IoT \& Autonomous Rover}}\\[4mm]
+{\small Colección IEEE Conference -- Septiembre 2026}\\
+\hrule\vspace{8mm}
+\end{center}
+
+\section*{Agradecimientos}
+A los docentes UTP de \textbf{Estadística (TS4D3)}, \textbf{Programación Móvil (TS6C3)}, \textbf{Administración y Planeación de Proyectos (TS683)}, \textbf{DevOps} y \textbf{Automatización y LowCode} por los lineamientos y la guía durante el proyecto. Firmware y Hardware se sustentan en formación previa del autor.
+
+\section*{Licenciamiento y reproducibilidad}
+\begin{itemize}
+\item Código y documentación del proyecto: \textbf{100\% FOSS} (RNF-3.1), sin dependencia de nubes propietarias. Repositorio: \url{https://github.com/Craos6518/AetherNet-IoT-Autonomous-Rover}
+\item Datasets externos: \texttt{water\_level\_turbidity} (31.5k filas) \textbf{CC BY-SA 4.0}, \texttt{gesture\_dataset} (5k filas) \textbf{CC0}. Ver \texttt{stats/Dataset/README.md} y \texttt{docs/Estadistica/Datasets/README.md}.
+\item Plantilla LaTeX: \texttt{IEEEtran.cls} v1.8b (Michael Shell) vendorada en \texttt{docs/articulos-ieee/IEEEtran.cls}. Compilación reproducible con \texttt{pdflatex} / \texttt{latexmk} o Docker \texttt{texlive/texlive:latest}.
+\item Cada artículo declara su trazabilidad RF/HU/backlog/archivo en \S Referencias para auditoría docente.
+\end{itemize}
+
+\section*{Contacto}
+\textbf{Andrés Felipe Martínez Henao} -- Tecnología en Desarrollo de Software (5º sem) / Ingeniería de Sistemas y Computación (6º sem) -- Universidad Tecnológica de Pereira\\
+\texttt{F.martinez5@utp.edu.co} -- Pereira, Colombia -- 2026-2
+
+\section*{Nota sobre la plantilla IEEE}
+Esta colección usa \texttt{IEEEtran} en modo \texttt{conference, compsoc, a4paper, 10pt}, doble columna -- equivalente a la plantilla recomendada \textbf{\#15 IEEE Conference Template} (IEEE, \url{https://es.overleaf.com/latex/templates/ieee-conference-template/grfzhhncsfqn}) y a la \textbf{\#11 IEEE Bare Demo Template for Conferences} (Michael Shell). Ver \texttt{cover/README\_PLANTILLA.md} para la recomendación completa.
+
+\vfill
+\begin{center}
+{\footnotesize \textit{Contraportada -- imprimir al reverso de la Portada o como última página al encuadernar la colección.}}\\
+\end{center}
+\end{document}

@@ -1,0 +1,120 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+%\usepackage{algorithmic} % no usado -- requiere texlive-science
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{url}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\graphicspath{{../../docs/fritzing/}{../}{./}}
+
+\begin{document}
+\title{AetherControl en Kotlin/Compose: del Programa .NET/Xamarin (TS6C3) a MVVM Reactivo con MQTT y Joystick de Baja Latencia}
+\author{\IEEEauthorblockN{Andrés Felipe Martínez Henao}
+\IEEEauthorblockA{Programación Móvil TS6C3 -- 3 créditos\\Tecnología en Desarrollo de Software (5º sem) -- Ing. Sistemas y Computación (6º sem)\\Universidad Tecnológica de Pereira\\\texttt{F.martinez5@utp.edu.co}}
+\and
+\IEEEauthorblockN{Proyecto AetherNet -- Área 1 (App AetherControl)}
+\IEEEauthorblockA{IDs MOV-01..12 -- docs/Programacion-Movil/ -- Kotlin + Compose + Paho}}
+\maketitle
+
+\begin{abstract}
+El programa TS6C3 está redactado sobre .NET/C\#/Xamarin.Forms/XAML; AetherControl lo implementa con la pila nativa moderna Kotlin/Jetpack Compose preservando los mismos patrones. Se mapean U1 plataforma/lenguaje, U2 front declarativo (XAML$\rightarrow$Compose), U3 back MVVM + emuladores, y U4 datos/hardware (JSON-REST$\rightarrow$MQTT/WebSocket, Room, Bluetooth SPP). La app expone MVVM estricto con \texttt{DashboardViewModel} y \texttt{sealed interface DashboardUiState} (Connected/Connecting/Disconnected/Error), \texttt{StateFlow} + coroutines, Room y \texttt{DataStore}. El núcleo de comunicación es \texttt{MqttManager} (Eclipse Paho 1.2.5, tcp://1883 + ws://9001 fallback, ACL \texttt{aethernet/\#}, \texttt{SharedFlow} para \texttt{rover/telemetry}, \texttt{access/event}, \texttt{seguridad/intrusion}), \texttt{ServiceLocator} DI manual y \texttt{AetherRepository}. El diferencial es el joystick virtual custom (Canvas 120~dp, \texttt{pointerInput/detectDragGestures}, normalización X,Y$\in[-1,1]$, deadband 60, throttle 50~ms/20~Hz, QoS0 \texttt{aethernet/rover/command}) que logra $<$50~ms app$\rightarrow$motor vía Gateway RF (99.6\% TX 250$\rightarrow$249). Al 2026-09-11: MOV-01..06 Done (assembleDebug + 16 tests), pendiente MOV-07 BT SPP y MOV-08..10 dashboard/tests.
+\end{abstract}
+\begin{IEEEkeywords}
+Kotlin Jetpack Compose, MVVM StateFlow, Eclipse Paho MQTT, Room, joystick virtual, Bluetooth SPP, Retrofit
+\end{IEEEkeywords}
+
+\section{Introducción: adaptación .NET$\rightarrow$Kotlin}
+El PDF \texttt{2361\_6. TS6C3} enseña plataforma .NET, XAML, Pages/StackLayout/Grid/Views, Xamarin.Forms y MVVM. El PRD \S4 excluye iOS/web y exige Android nativo; por tanto AetherControl traduce cada unidad a su equivalente Kotlin/Compose sin pérdida conceptual (Tab.~I, docs/Programacion-Movil/programacion-movil.md).
+
+\begin{table}[t]
+\centering
+\caption{Equivalencia TS6C3 (PDF) $\rightarrow$ AetherNet}
+\label{tab:equiv}
+\begin{tabular}{@{}cll@{}}
+\toprule
+U & PDF (.NET/Xamarin) & AetherNet (Kotlin/Compose) \\
+\midrule
+U1 & Framework, IDE, C\# & Android Studio, Gradle, Kotlin null-safety \\
+U2 & XAML, Pages, layouts & Compose composables, Column/Row/LazyGrid \\
+U3 & Xamarin MVVM, emuladores & ViewModel+StateFlow, AVD \\
+U4 & JSON-REST, permisos, HW & MQTT/WS, Room, Bluetooth SPP \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Mapeo U1--U4 $\rightarrow$ Implementación}
+\subsection{U1 Plataforma y Lenguaje}
+Android Studio + Gradle KTS + JDK17 (CI \texttt{android-build}), Kotlin data classes (\texttt{RoverTelemetry}, \texttt{AccessEvent}) + sealed interfaces para estados exhaustivos (\texttt{DashboardUiState}), coroutines (\texttt{viewModelScope.launch}, \texttt{Dispatchers.IO}), colecciones inmutables expuestas como \texttt{StateFlow}.
+
+\subsection{U2 Front Móvil (XAML$\rightarrow$Compose)}
+Principio declarativo idéntico: se declara \emph{qué} se ve. \texttt{Theme.kt} (Material3), \texttt{MainActivity} single-activity con \texttt{NavGraph}, \texttt{Column/Row/Box/modifiers} $\equiv$ StackLayout/Grid, \texttt{LazyVerticalGrid} para RF-1.1 Dashboard, controles: LED RGB local, joystick custom, telemetría. Throttling visual: recomposición solo en cambios de \texttt{uiState}.
+
+\subsection{U3 Back Móvil / MVVM}
+MVVM literal: View (Compose) $\xrightarrow{\text{collectAsState}}$ \texttt{uiState} $\leftarrow$ \texttt{DashboardViewModel} $\leftarrow$ Repository $\leftarrow$ Room/MQTT. \texttt{DashboardUiState} con 4 estados (\texttt{Connected(roverTelemetry,lastAccessEvent)}, \texttt{Disconnected(reason)}, \texttt{Connecting}, \texttt{Error(message)}) evita estados indefinidos. Puente \texttt{MutableStateFlow.asLiveData()} si se requiere. AVD para pruebas sin hardware.
+
+\subsection{U4 Datos y Hardware}
+Canal principal \emph{no} es REST puro sino pub/sub MQTT (decisión IoT): topics JSON sobre \texttt{aethernet/\#} (mismo payload que REST). Retrofit/\texttt{kotlinx.serialization} queda para request/response. Persistencia Room (\texttt{Entities.kt, Daos.kt, AppDatabase.kt}) como caché offline-first. Permisos runtime Android 12+: \texttt{BLUETOOTH\_CONNECT}, \texttt{ACCESS\_FINE\_LOCATION} (SPP $\neq$ BLE). Hardware remoto (rover/cerrojo) vía MQTT$\rightarrow$ESP32; fallback \texttt{BluetoothSocket} SPP al HC-06 del nodo de acceso (RF-1.3, MOV-07) con UUID \texttt{00001101-...}, loop en \texttt{Dispatchers.IO}.
+
+\section{Método: arquitectura y comunicación}
+\subsection{Estructura MVVM + Repository}
+\texttt{ServiceLocator} (DI manual) expone \texttt{mqttManager} derivado de \texttt{getCurrentBaseUrl()} (\texttt{ServiceLocator.kt:114}) + \texttt{PreferencesManager} DataStore con \texttt{updateBaseUrl()} dinámico + \texttt{network\_security\_config} cleartext para \texttt{192.168.1.14:8000} (\texttt{MOV-01 f03190b}). \texttt{AetherRepository} expone Flows: \texttt{mqttConnectionState}, \texttt{roverTelemetryFlow}, \texttt{accessEventFlow}; \texttt{DashboardViewModel} colecta push y hace fallback poll 5~s si \texttt{Disconnected} (MOV-03).
+
+\subsection{MQTT (MOV-03/11)}
+\texttt{MqttManager} Paho 1.2.5: conexión tcp://host:1883 con fallback ws://9001, usuario \texttt{appbackend} (ACL DEVOPS-02), \texttt{SharedFlow} para 4 topics (\texttt{rover/telemetry:69}, \texttt{access/command:70}, \texttt{access/event:71}, \texttt{seguridad/intrusion:72}, \texttt{system/status:73}), reconexión backoff, indicador UI \texttt{MQTT $\bullet$/$\circ$/$\times$}. Verificado con \texttt{mosquitto\_sub -h 192.168.1.14 -t aethernet/\#} $<$50~ms (\texttt{prd.md:50}).
+
+\subsection{Joystick virtual (MOV-05/06)}
+\texttt{JoystickScreen} Canvas circular 120~dp + knob; \texttt{pointerInput\{detectDragGestures\}} $\rightarrow$ offset normalizado clampeado al radio, al soltar anima a (0,0) y emite centro exacto. \texttt{JoystickMapper} X,Y$\in[-1,1]$ con deadband $\pm$0.15 (bajo eso =0) y mapeo \texttt{pwm=round(v*255)}; \texttt{ViewModel} throttling \texttt{sample(50ms)} $\Rightarrow$ $\leq$20 msg/s QoS0 a \texttt{aethernet/rover/command:69} $\rightarrow$ Gateway CE5/CSN15 Ch76 2~Mbps $\rightarrow$ Rover CE4/CSN10 ENA5/ENB11 (RF TX 250$\rightarrow$249 99.6\%). Fail-safe HU-04 500~ms en rover corta PWM si no llega comando. Tests: \texttt{JoystickMapperTest} 10 + \texttt{ViewModelTest} 6 verdes; \texttt{mosquitto\_sub} 251 cmds, \texttt{T3} 33k, \texttt{T4} 7.3k verificados.
+
+\subsection{PIN y dashboard (MOV-02/04/08)}
+\texttt{LedState.kt} + \texttt{LedStateMapper} espejo \texttt{led.cpp:64/config.h:52} (poll 5~s, ventanas 5s/10s/1s), \texttt{LedStatusCard} 64~dp. \texttt{PinViewModel} throttle 5/60~s + \texttt{PinScreen} 4$\times$3 dots + \texttt{publishAccessCommand} \texttt{aethernet/access/command:70} $\rightarrow$ \texttt{handleAccessCommand:332} $\rightarrow$ \texttt{CMD:ACCESS:40} $\rightarrow$ \texttt{VALID\_PIN 1234:48} $\rightarrow$ \texttt{ACCESS:hash 7c78c98f} POST 201 + \texttt{aethernet/access/event:71} (verificado mosquitto pub/sub + curl limit 3, 35 tests). MOV-08 dashboard consolidado (Luces/Rover/Acceso) con navegación inferior y Room offline-first.
+
+\section{Resultados}
+\begin{table}[t]
+\centering
+\caption{Estado MOV al 2026-09-11 (backlog.md Área~1)}
+\label{tab:mov}
+\begin{tabular}{@{}cll@{}}
+\toprule
+ID & Tarea & Estado \\
+\midrule
+MOV-01 & Setup MVVM base & \checkmark f03190b \\
+MOV-02 & LED local solo lectura & \checkmark \\
+MOV-03 & MQTT telemetría $<$50~ms & \checkmark \\
+MOV-04 & PIN cerrojo Plan B & \checkmark 35 tests \\
+MOV-05/06 & Joystick 20~Hz & \checkmark 3ca12c9/e821700 \\
+MOV-07 & BT SPP fallback & Pendiente S3 \\
+MOV-08..10 & Dashboard + tests & Pendiente S4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+Latencia percibida $<$50~ms comando$\rightarrow$motor validada con timestamps y contador broker (\texttt{assembleDebug} + \texttt{testDebugUnitTest} verdes, \texttt{192.168.1.14:8000/health} ok en SM-X620). Capturas en \texttt{docs/Programacion-Movil/capturas/} (\texttt{dashboard-led.png}, \texttt{pin-screen.png}, \texttt{joystick-drag.png}, \texttt{mqtt-status.png}, \texttt{rover-card.png}) + notebook \texttt{AetherControl\_Notebook.ipynb} \S capturas.
+
+\section{Discusión y limitaciones}
+La traducción XAML$\rightarrow$Compose preserva arquitectura pero exige re-aprender recomposición y \texttt{remember/mutableStateOf}; Paho clásico requiere servicio persistente y manejo explícito de reconexión (mapeado a \texttt{DashboardUiState}). El debounce 20~Hz es compromiso entre fluidez y saturación RF; valores mayores saturan nRF24. Queda habilitar CI \texttt{android-build} (quitar \texttt{if:false}, cache Gradle, subir APK) y cerrar BT SPP (permisos runtime + socket bloqueante).
+
+\section{Conclusiones}
+AetherControl demuestra que los patrones TS6C3 son transferibles a Kotlin/Compose sin reescribir la didáctica, y que MQTT + MVVM reactivo entrega telemetría y control de baja latencia con trazabilidad RF-1.1/1.2/1.3.
+
+\begin{thebibliography}{10}
+\bibitem{ts6c3} UTP, Programa TS6C3 Programación Móvil, 2361\_6. TS6C3.pdf.
+\bibitem{movil} AetherNet, Documentación Móvil, docs/Programacion-Movil/programacion-movil.md.
+\bibitem{roadmapMov} AetherNet, Roadmap Móvil, docs/Programacion-Movil/roadmap-movil.md.
+\bibitem{backlogMov} AetherNet, Backlog Móvil MOV-01..12, docs/Programacion-Movil/backlog-movil.md.
+\bibitem{arch} AetherNet, Arquitectura \S3 topics aethernet/\#, docs/architecture.md.
+\bibitem{mqtt} AetherNet, app MqttManager.kt (Paho 1.2.5) + ServiceLocator.kt:114.
+\bibitem{joystick} AetherNet, JoystickScreen.kt + JoystickMapperTest.kt (10 tests).
+\bibitem{pin} AetherNet, PinViewModel/Screen + handleAccessCommand:332 + CMD:ACCESS:40.
+\bibitem{prd} AetherNet, PRD \S4 Scope (out iOS), docs/prd.md.
+\bibitem{notebook} AetherNet, docs/Programacion-Movil/notebook/AetherControl\_Notebook.ipynb.
+\end{thebibliography}
+\end{document}

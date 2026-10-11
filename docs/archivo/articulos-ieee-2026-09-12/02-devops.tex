@@ -1,0 +1,133 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+%\usepackage{algorithmic} % no usado -- requiere texlive-science
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{url}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\graphicspath{{../../docs/fritzing/}{../}{./}}
+
+\begin{document}
+\title{DevOps FOSS para IoT Embebido: de CALMS a CI/CD con arduino-cli — Orquestación Docker, Mosquitto y 6 Jobs en AetherNet}
+\author{\IEEEauthorblockN{Andrés Felipe Martínez Henao}
+\IEEEauthorblockA{DevOps -- Electiva (Proyecto Final)\\Tecnología en Desarrollo de Software (5º sem) -- Ing. Sistemas y Computación (6º sem)\\Universidad Tecnológica de Pereira\\\texttt{F.martinez5@utp.edu.co}}
+\and
+\IEEEauthorblockN{Proyecto AetherNet -- Área 2}
+\IEEEauthorblockA{IDs DEVOPS-01..15 -- docs/DevOps/ -- ci.yml 6 jobs -- docker-compose 3 svc}}
+\maketitle
+
+\begin{abstract}
+El programa DevOps UTP (T1 CALMS -- T6 observabilidad, Talleres 1--2 y Proyecto Final) se instancia en AetherNet como orquestación 100\% FOSS de un sistema IoT embebido. La infraestructura Docker Compose orquesta FastAPI 1.0.0-sprint1 + PostgreSQL 16 + Mosquitto 2.0 (bridge \texttt{aethernet-net}, volumen \texttt{postgres\_data}, healthcheck \texttt{pg\_isready}, \texttt{depends\_on} healthy, topics \texttt{aethernet/\#}). El broker expone 1883 TCP y 9001 WebSocket con ACLs mínimas y autenticación \texttt{password\_file}. El pipeline GitHub Actions (\texttt{.github/workflows/ci.yml} v1.5.1) ejecuta 6 jobs: \texttt{backend-test} (ruff/mypy/pytest 21 tests), \texttt{firmware-compile} (matriz \texttt{arduino-cli} ESP32/AVR, 19252/6900 bytes), \texttt{docker-build} (build no-cache + curl \texttt{/health} 200), \texttt{stats-test}, \texttt{android-build} (plantilla), \texttt{security-scan} Trivy SARIF. Se documenta el caso especial CI/CD para firmware (FQBN \texttt{esp32:esp32:esp32} vs \texttt{arduino:avr:mega/uno}), el puente MQTT$\rightarrow$PostgreSQL (\texttt{aiomqtt}), el protocolo UART Gateway$\leftrightarrow$MEGA y la gestión de secretos (\texttt{secrets.h}/\texttt{.env.example}). Al 2026-09-11: DEVOPS-01..07 Done, RF nRF24L01 validado HW \texttt{testing-rf-sprint1.md:32}, láser v2 \texttt{c7ce065}, logs reales Sprint~3 (\texttt{T1\_docker\_live.log} 160 líneas, \texttt{T1\_mqtt\_live.log} 303 líneas).
+\end{abstract}
+\begin{IEEEkeywords}
+DevOps CALMS, Docker Compose, Mosquitto ACL, GitHub Actions, arduino-cli, Trivy, FastAPI, IoT embebido
+\end{IEEEkeywords}
+
+\section{Introducción: DevOps como Proyecto Final}
+El PDF \texttt{docs/DevOps/DEVOPS - EST.pdf} define T1 Fundamentos CALMS, T2 Git, T3 Linux, T4 Contenedores, T5 CI/CD y T6 Monitoreo, con Taller~1 (Compose multi-servicio), Taller~2 (CI GitHub Actions) y Proyecto Final. AetherNet \emph{es} ese Proyecto Final, con la particularidad de que el artefacto crítico corre en microcontroladores, no en servidores. RNF-1.1 (docker-compose) y RNF-1.2 (pipeline \texttt{arduino-cli}) son los anclajes formales; RNF-3.1 (FOSS) prohíbe Heroku/Render y similares -- el despliegue es local LAN (plataformas con tier gratuito no se consideran por restricción FOSS).
+
+\section{Mapeo T1--T6 $\rightarrow$ Implementación}
+\begin{table}[t]
+\centering
+\caption{Mapeo CALMS y T2--T6 (fuente docs/DevOps/devops.md \S2)}
+\label{tab:calms}
+\begin{tabular}{@{}clp{4.2cm}@{}}
+\toprule
+Pilar & Tema & Evidencia AetherNet \\
+\midrule
+C & Culture & FOSS estricto, AGENTS.md como contrato \\
+A & Automation & 6 jobs en cada push (\S3) \\
+L & Lean & Sprint~1 fundacional bloquea sprints 2--4 \\
+M & Measurement & KPIs + healthcheck PG \\
+S & Sharing & Trazabilidad HU$\leftrightarrow$RF$\leftrightarrow$sprint$\leftrightarrow$archivo \\
+\midrule
+T2 & Git & main/develop, PRs disparan CI \\
+T3 & Linux & Mint + shell scripts arduino-cli \\
+T4 & Compose & 3 svc + net + volúmenes (\S2) \\
+T5 & CI/CD & 6 jobs paralelos + Trivy \\
+T6 & Logs & Volúmenes Mosquitto + T1 logs reales \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{T1 CALMS}
+Culture: decisión FOSS sin Tuya Cloud (ADR-001). Automation: firmware, lint, tests y build Docker 100\% automáticos. Lean: infra Sprint~1 habilita todo (atraso aquí = atraso total). Measurement: latencias $<$50/$<$10~ms, $>$85\% ruido, healthcheck. Sharing: docs indexados para humanos y agentes.
+
+\subsection{T2 Git}
+Repo único, branches \texttt{main/develop} como triggers (\texttt{ci.yml:3-9}), PRs con convención \texttt{MOV-05: ...} (trazabilidad \texttt{backlog.md}). Branch protection: CI verde obligatorio para merge.
+
+\subsection{T3 Linux}
+Desarrollo sobre Linux Mint; pipeline instala \texttt{arduino-cli} vía curl, gestiona cores/libs por shell; diagnóstico con \texttt{ping/nmap/tcpdump}.
+
+\subsection{T4 Contenedores (Taller~1)}
+\texttt{docker-compose.yml}: \texttt{fastapi} (build local Dockerfile), \texttt{postgres:16-alpine}, \texttt{eclipse-mosquitto:2.0}; red \texttt{aethernet-net} (resolución por nombre), volumen \texttt{postgres\_data}, mounts read-only \texttt{mosquitto.conf/acl.conf/init.sql}, env vars \texttt{\$\{POSTGRES\_USER:-aethernet\}} con plantilla \texttt{env.example}/\texttt{backend/.env.example}, healthcheck \texttt{pg\_isready} + \texttt{depends\_on} healthy. Backend: \texttt{FastAPI lifespan, CORS LAN, routers, SQLAlchemy async, Pydantic v2} (\texttt{backend/app/main.py}, \texttt{routers/events.py:25} 8 endpoints, \texttt{schemas.py}).
+
+\subsection{T5 CI/CD (Taller~2)}
+Pipeline \texttt{ci.yml} 1.5.1 (Tab.~II). Caché pip y Arduino15; secrets GitHub vs \texttt{.env} local; badges y required checks.
+
+\begin{table}[t]
+\centering
+\caption{6 jobs del pipeline (docs/DevOps/devops.md \S2 T5)}
+\label{tab:ci}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Job & Qué hace & Tema \\
+\midrule
+backend-test & ruff+ mypy+ pytest 21 & T5 pruebas \\
+firmware-compile & arduino-cli matriz 3 fw & T4+T5 IoT \\
+docker-build & build+ up+ curl /health & T4+T5 deploy \\
+stats-test & pytest módulo estadístico & T5 \\
+android-build & JDK17 + gradlew (if:false) & -- brecha \\
+security-scan & Trivy SARIF $\rightarrow$ Security & T5 seguridad \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{T6 Monitoreo}
+Parcial: logs Mosquitto montados, \texttt{docker-compose ps} en CI, logs reales Sprint~3 (\texttt{docs/logs/firmware\_sprint3/}: \texttt{T1\_docker\_live.log} Uvicorn+\texttt{GET /health 200}+Mosquitto 2.0.22 1883/9001, \texttt{T1\_mqtt\_live.log} \texttt{aethernet/\#} \texttt{access/event, seguridad/intrusion, rover/command|telemetry}) documentados en \texttt{Diario\_DevOps.ipynb} \S4. Prometheus/Grafana fuera de alcance; heartbeat \texttt{aethernet/system/status} + \texttt{/health} degradado como MVP. Alertas de negocio (Telegram+LED) $\neq$ salud infra.
+
+\section{Caso Especial: CI/CD para Firmware Embebido}
+\texttt{arduino-cli} 1.5.1 fijado (reproducibilidad), FQBN por hardware (\texttt{esp32:esp32:esp32} gateway vs \texttt{arduino:avr:mega/uno}), instalación de librerías por firmware (ArduinoJson 6.21.3, RF24), tamaños 19252/6900 bytes. Regla: ningún push de firmware mergea sin compilar (AGENTS.md \S3). Matriz + \texttt{actions/cache$\sim$/.arduino15} reduce $\geq$60\% el tiempo del segundo run.
+
+\section{Broker, Backend y Puentes}
+\subsection{Mosquitto (DEVOPS-02)}
+\texttt{mosquitto.conf}: \texttt{listener 1883} + \texttt{listener 9001 protocol websockets}, \texttt{password\_file}, \texttt{acl\_file}, \texttt{persistence true}, \texttt{log\_dest file}. Usuarios \texttt{gateway/nodered/appbackend} vía \texttt{mosquitto\_passwd}; ACL: \texttt{gateway} rw \texttt{aethernet/\#}, \texttt{nodered} r \texttt{aethernet/seguridad|access/\#}, \texttt{appbackend} r \texttt{aethernet/\#} w \texttt{aethernet/app/\#}, \texttt{allow\_anonymous false}.
+
+\subsection{Endpoints y puente MQTT$\rightarrow$PG (DEVOPS-06/12)}
+\texttt{GET /health} (degraded si PG/MQTT down), \texttt{POST /api/access-events}, \texttt{/sensor-events}, \texttt{/security-events}, \texttt{/rover/telemetry} + GET con filtros (\texttt{limit 1..200}, \texttt{sensor\_type/event\_type/session\_id}), validación 422, OpenAPI 8 ops. Puente \texttt{backend/app/mqtt\_bridge.py} suscribe \texttt{aethernet/access/event, seguridad/intrusion, rover/telemetry} con \texttt{aiomqtt}, persiste en \texttt{AccessEvent/SecurityEvent/SensorEvent}, reconexión backoff 1$\rightarrow$30~s. Tests: \texttt{test\_events.py} 14 + \texttt{test\_health.py} 7 (mock DB + integración, mock/integración).
+
+\subsection{UART Gateway$\leftrightarrow$MEGA (DEVOPS-13) y secretos (DEVOPS-11)}
+Serial2 115200, framing documentado en \texttt{docs/uart-protocol.md} (JSON por línea + checksum), encoder/decoder espejo. Credenciales fuera de git: \texttt{firmware/gateway-esp32/secrets.h} (gitignored) + \texttt{secrets.h.example}, CI genera \texttt{secrets.h} desde example.
+
+\section{Resultados y estado}
+DEVOPS-01..05 Done, DEVOPS-06/07 Done (21 tests verdes, ruff/mypy OK), DEVOPS-08 Done (\texttt{.env.example}, \texttt{secrets.h.example}, \texttt{.gitignore:219}), DEVOPS-11 hecho, RF validado HW 2026-09-01 (nRF24 TX/RX L=120, \texttt{isChipConnected=1}), láser v2, app MQTT $<$50~ms. Sprint~3: joystick RF 250$\rightarrow$249 99.6\% TX, 33k telemetrías T3. Pendiente: DEVOPS-09 arranque único (\texttt{scripts/up.sh}), Prometheus/Grafana post-proyecto, habilitar \texttt{android-build} (quitar \texttt{if:false}, cache Gradle, subir APK artifact).
+
+\section{Discusión}
+DevOps embebido exige traducir Taller~1/2 web a constraints de hardware: compilación cruzada, secrets en flash, y latencias reales medidas con \texttt{millis()} para alimentar EST-05. La decisión LAN-only simplifica seguridad (sin TLS) pero traslada observabilidad a logs locales y healthchecks de negocio. La deuda Node-RED no afecta el bus: Telegram directo preserva RF-4.1.
+
+\section{Conclusiones}
+El stack FOSS orquestado cumple RNF-1.1/1.2 y sostiene trazabilidad completa; el pipeline de 6 jobs es la puerta de calidad que reemplaza tests unitarios embebidos inexistentes.
+
+\begin{thebibliography}{10}
+\bibitem{devops} UTP, Programa DevOps (Electiva), docs/DevOps/DEVOPS - EST.pdf.
+\bibitem{devopsDoc} AetherNet, Documentación DevOps, docs/DevOps/devops.md.
+\bibitem{roadmapDev} AetherNet, Roadmap DevOps, docs/DevOps/roadmap-devops.md.
+\bibitem{backlogDev} AetherNet, Backlog DevOps DEVOPS-01..15, docs/DevOps/backlog-devops.md.
+\bibitem{compose} AetherNet, docker-compose.yml (3 svc, aethernet-net, healthcheck).
+\bibitem{ci} AetherNet, .github/workflows/ci.yml v1.5.1 (6 jobs, arduino-cli 1.5.1, Trivy).
+\bibitem{mosquitto} AetherNet, backend/mosquitto/config/mosquitto.conf + acl.conf (aethernet/\#).
+\bibitem{api} AetherNet, backend/app/main.py + routers/events.py:25 (8 endpoints) + models.py 4 tablas.
+\bibitem{rf} AetherNet, docs/testing-rf-sprint1.md:32 (4/4 nRF24 validado).
+\bibitem{diario} AetherNet, docs/DevOps/notebook/Diario\_DevOps.ipynb (10 celdas, logs T1).
+\end{thebibliography}
+\end{document}

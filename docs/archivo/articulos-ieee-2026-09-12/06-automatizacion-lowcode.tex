@@ -1,0 +1,115 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+%\usepackage{algorithmic} % no usado -- requiere texlive-science
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{url}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\graphicspath{{../../docs/fritzing/}{../}{./}}
+
+\begin{document}
+\title{Automatización LowCode en AetherNet: Notificación de Intrusión vía Telegram Bot API Directo (Node-RED en Deuda Técnica) -- HU-02}
+\author{\IEEEauthorblockN{Andrés Felipe Martínez Henao}
+\IEEEauthorblockA{Automatización y LowCode -- Sin lineamientos (provisional)\\Tecnología en Desarrollo de Software (5º sem) -- Ing. Sistemas y Computación (6º sem)\\Universidad Tecnológica de Pereira\\\texttt{F.martinez5@utp.edu.co}}
+\and
+\IEEEauthorblockN{Proyecto AetherNet -- Área 3}
+\IEEEauthorblockA{IDs LOW-01..07 -- docs/Automatizacion-LowCode/ -- RF-4.1/HU-02}}
+\maketitle
+
+\begin{abstract}
+Esta materia no cuenta aún con lineamientos docentes formales; el artículo se basa en los roadmaps/backlogs internos y en las decisiones ADR-001 y deuda LOW-02. El alcance original incluía bombillo Tuya (\texttt{tuya-local}, RF-4.2) y Node-RED como motor LowCode (RF-4.1). Ambas capas fueron reconducidas: Tuya se cancela definitivamente el 2026-09-01 (ADR-001, R-01: exigir cuenta propietaria y \texttt{local\_key} viola RNF-3.1 FOSS) y Node-RED pasa a deuda técnica el 2026-09-09 (indicación asesor: no deploy esta iteración). El flujo vigente HU-02 se resuelve sin Node-RED: \texttt{MEGA KY-008$\rightarrow$UART SECURITY:$\rightarrow$Gateway ESP32$\rightarrow$MQTT aethernet/seguridad/intrusion:72$\rightarrow$Telegram Bot API directo (POST https://api.telegram.org/bot<token>/sendMessage, parse\_mode Markdown) + LED RGB rojo 3~s + App dashboard}. El flujo JSON \texttt{automation/flows/intrusion\_alert.json} (mqtt-intrusion$\rightarrow$function-parse-intrusion$\rightarrow$telegram-alert$\rightarrow$http-telegram) queda como referencia exportable de 7 nodos para retomar en Sprint~4. Se documentan topics \texttt{aethernet/\#} (DEVOPS-02), endpoint \texttt{POST /api/security-events}, manejo de reconexión y criterios E2E (latencia $<$3~s, 0 falsos positivos en 10 disparos). Estado: LOW-01/04 Won't, LOW-02 deuda, pendiente LOW-03 bot directo y LOW-05 E2E Sprint~4.
+\end{abstract}
+\begin{IEEEkeywords}
+LowCode, Node-RED deuda técnica, Telegram Bot API, MQTT aethernet/seguridad/intrusion, HU-02, ADR-001, FOSS
+\end{IEEEkeywords}
+
+\section{Introducción: LowCode provisional}
+A diferencia de TS4D3/TS683/TS6C3/DevOps, Automatización LowCode no tiene PDF académico entregado por el docente al 2026-09-11. El contenido aquí es \emph{provisional} y se deriva de \texttt{docs/Automatizacion-LowCode/roadmap-lowcode.md}, \texttt{backlog-lowcode.md}, \texttt{docs/roadmap.md} \S3/\S8, \texttt{docs/backlog.md} Área~3 y la bitácora \texttt{Diario\_LowCode.ipynb}. La evaluación se anticipa por HU-02 y RF-4.1/4.2, con trazabilidad a ADR-001 y risk R-01.
+
+\section{Alcance y decisiones}
+\subsection{Alcance PRD y RF}
+PRD \S4 In: automatización LowCode con Node-RED + Telegram (asesor: flujo \texttt{intrusion\_alert.json} exportable); RF-4.1 captura eventos críticos $\rightarrow$ Telegram; RF-4.2 (cancelado) bombillo Tuya. KPI HU-02: latencia intrusión$\rightarrow$notificación y 0\% falsos positivos láser (PRD \S5).
+
+\subsection{ADR-001: cancelación Tuya (2026-09-01)}
+Barrera técnica (lote Mercury LB401 20MER93 sin \texttt{local\_key} estable) + barrera determinante de políticas API: obtener \texttt{local\_key} exige Tuya IoT Platform propietaria $\rightarrow$ viola RNF-3.1 FOSS y crea vendor lock-in. Decisión: RF-4.2$\rightarrow$Won't, HU-02 sin bombillo, LOW-01/04$\rightarrow$W, flujo JSON simplificado (se eliminan \texttt{tuya-bulb-alert}, \texttt{tuya-local-send}), dependencia \texttt{node-red-contrib-tuya-local} removida, R-01/R-07 cerrados. Verificación: \texttt{grep -i tuya} solo retorna líneas \texttt{CANCELADO}; JSON válido 7 nodos.
+
+\subsection{Deuda LOW-02: Node-RED no deployado (2026-09-09)}
+Indicación asesor: no usar Node-RED esta iteración. El flujo \texttt{automation/flows/intrusion\_alert.json} (\texttt{mqtt in aethernet/seguridad/intrusion} $\rightarrow$ \texttt{function-parse-intrusion} $\rightarrow$ \texttt{telegram-alert} $\rightarrow$ \texttt{http-telegram} $\rightarrow$ \texttt{debug}) queda versionado como referencia para Sprint~4. HU-02 se cumple vía Telegram HTTP directo, sin capa LowCode en runtime (\texttt{architecture.md} \S3/\S5, \texttt{sprints.md:42}).
+
+\section{Método: flujo vigente HU-02 sin Node-RED}
+\begin{table}[t]
+\centering
+\caption{Topics y payloads (architecture.md \S7, acl.conf:1)}
+\label{tab:topics}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Topic & Dirección & Payload JSON \\
+\midrule
+aethernet/seguridad/intrusion & MEGA$\rightarrow$GW$\rightarrow$Backend/App & SecurityEvent 72 \\
+aethernet/access/event & MEGA$\rightarrow$GW$\rightarrow$App & AccessEvent 71 \\
+aethernet/rover/telemetry & Rover$\rightarrow$GW$\rightarrow$App & RoverTelemetry 69 \\
+aethernet/rover/command & App$\rightarrow$GW$\rightarrow$Rover & RoverCommand 69 \\
+aethernet/system/status & Gateway heartbeat & status 73 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Cadena E2E (Fig.~1)}
+1) KY-008 se interrumpe $\rightarrow$ MEGA \texttt{laser.cpp:15} (50~ms CHECK, COOLDOWN 3~s) $\rightarrow$ 2) LED RGB rojo 3~s no bloqueante (feedback local sin red) $\rightarrow$ 3) UART \texttt{SECURITY:\{"event\_type":"intrusion"\}} 38400 bd $\rightarrow$ 4) Gateway publica \texttt{aethernet/seguridad/intrusion} $\rightarrow$ 5) Backend persiste \texttt{POST /api/security-events} (PostgreSQL) $\rightarrow$ 6) Gateway/Backend dispara \texttt{POST https://api.telegram.org/bot<token>/sendMessage} con \texttt{chat\_id} + \texttt{parse\_mode Markdown} $\rightarrow$ 7) App suscrita refleja alerta en dashboard (RF-1.1). Pasos 2 y 6 son independientes (LED funciona sin MQTT/Telegram).
+
+\subsection{Telegram Bot directo (LOW-03)}
+Creación vía BotFather (\texttt{/newbot} $\rightarrow$ token + \texttt{chat\_id}), envío HTTP con \texttt{Markdown}, token solo en variable entorno (\texttt{process.env.TELEGRAM\_TOKEN}), nunca en JSON versionado (\texttt{grep token} auditoría). Formato mensaje: hora/sensor/acción sugerida, prioridad alta HU-02, $<$2~s tras publicar intrusión (criterio LOW-03).
+
+\subsection{Node-RED como referencia}
+Importar JSON en runtime local (misma LAN), credenciales broker usuario \texttt{nodered} (ACL DEVOPS-02: read \texttt{aethernet/seguridad|access/\#}), \texttt{function-parse-intrusion} filtra duplicados (láser puede disparar ráfaga) con debounce/rate-limit, \texttt{debug} verifica parseo. Manejo caída broker: reconexión o pérdida documentada (LOW-07). Dashboard Node-RED opcional (LOW-06) reutiliza mismos topics si sobra tiempo.
+
+\section{Resultados y estado backlog}
+\begin{table}[t]
+\centering
+\caption{Backlog LowCode (backlog.md Área~3 + backlog-lowcode.md)}
+\label{tab:low}
+\begin{tabular}{@{}clll@{}}
+\toprule
+ID & Tarea & Prioridad & Estado \\
+\midrule
+LOW-01 & Validar tuya-local & W & Cancelado ADR-001 \\
+LOW-02 & Flujo Node-RED sub & W & Deuda 2026-09-09 (ref JSON) \\
+LOW-03 & Bot Telegram directo & M S4 & Pendiente \\
+LOW-04 & Integración tuya-local & W & Cancelado ADR-001 \\
+LOW-05 & Intrusión Telegram+rojo & M S4 & Pendiente E2E \\
+LOW-06 & Dashboard Node-RED & C S4 & Opcional \\
+LOW-07 & Reconexión broker & W & Deuda \\
+\bottomrule
+\end{tabular}
+\end{table}
+\texttt{Diario\_LowCode.ipynb} documenta estado con diagrama Mermaid + flujo validado sin Node-RED (MEGA$\rightarrow$Gateway$\rightarrow$MQTT$\rightarrow$Telegram+LED+App). Evidencia Sprint~3: láser v2 \texttt{c7ce065} + \texttt{T1\_mqtt\_live.log} con \texttt{seguridad/intrusion} 303 líneas.
+
+\section{Discusión y limitaciones}
+La deuda Node-RED simplifica deploy LAN y preserva FOSS, pero pospone la evidencia LowCode ``pura'' (flujo ejecutándose). La limitación se mitiga entregando JSON importable + bitácora + E2E Telegram directo medible. Riesgo: si el docente exige demo Node-RED, el flujo está listo para deploy en 1 sprint sin cambiar HU-02. Recomendación: acordar criterios de evaluación provisional por escrito y registrar este artículo como anexo.
+
+\section{Conclusiones}
+HU-02 es cumplible 100\% FOSS sin Tuya ni Node-RED en runtime; la trazabilidad ADR-001 + deuda LOW-02 + Telegram directo satisface RF-4.1 con dos capas independientes (LED determinista + Telegram).
+
+\begin{thebibliography}{10}
+\bibitem{roadmapLC} AetherNet, Roadmap LowCode, docs/Automatizacion-LowCode/roadmap-lowcode.md.
+\bibitem{backlogLC} AetherNet, Backlog LowCode LOW-01..07, docs/Automatizacion-LowCode/backlog-lowcode.md.
+\bibitem{roadmap} AetherNet, Roadmap \S3 Automatizaciones, docs/roadmap.md.
+\bibitem{backlog} AetherNet, Backlog Área~3, docs/backlog.md.
+\bibitem{arch} AetherNet, Arquitectura \S3/\S5/\S7 topics, docs/architecture.md.
+\bibitem{adr001} AetherNet, ADR-001 Cancelación Tuya, docs/adr/adr-001-cancelacion-tuya.md.
+\bibitem{flow} AetherNet, automation/flows/intrusion\_alert.json (7 nodos, referencia).
+\bibitem{diario} AetherNet, docs/Automatizacion-LowCode/notebook/Diario\_LowCode.ipynb.
+\bibitem{sprints} AetherNet, Sprints \S4 + deuda LOW-02 2026-09-09, docs/sprints.md.
+\bibitem{prd} AetherNet, PRD \S4 In/Out + \S5 KPI 0\% falsos positivos, docs/prd.md.
+\end{thebibliography}
+\end{document}

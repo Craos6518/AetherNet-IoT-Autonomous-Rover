@@ -1,0 +1,103 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+%\usepackage{algorithmic} % no usado -- requiere texlive-science
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{url}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\graphicspath{{../../docs/fritzing/}{../}{./}}
+
+\begin{document}
+\title{Gestión Scrum de un Sistema Ciberfísico FOSS: Backlog MoSCoW, Gantt, Riesgos y Costos en AetherNet -- TS683}
+\author{\IEEEauthorblockN{Andrés Felipe Martínez Henao}
+\IEEEauthorblockA{Administración y Planeación TS683 -- 3 créditos\\Tecnología en Desarrollo de Software (5º sem) -- Ing. Sistemas y Computación (6º sem)\\Universidad Tecnológica de Pereira\\\texttt{F.martinez5@utp.edu.co}}
+\and
+\IEEEauthorblockN{Proyecto AetherNet -- Área 4 (Transversal)}
+\IEEEauthorblockA{IDs PM-01..PM-11 -- docs/Administracion-Proyectos/ -- WBS 40 -- Gantt Mermaid}}
+\maketitle
+
+\begin{abstract}
+El programa TS683 (U1 Scrum/PSP/TSP y planificación, U2 riesgos/configuración/medición, U3 calidad/costos/monitoreo, evaluación 30+30+40) se aplica en AetherNet como gestión Scrum de un ciberfísico con 4 Historias de Usuario BDD (HU-01..04) y backlog MoSCoW en 5 áreas (MOV/DEVOPS/LOW/PM/EST) sobre 8 semanas / 4 sprints ($\S$ sprints.md). Se formalizan Product Backlog trazable RF$\leftrightarrow$HU$\leftrightarrow$Sprint$\leftrightarrow$archivo, matriz de riesgos R-01..R-13 (R-01 tuya-local cerrado ADR-001, R-12 secretos resuelto, R-02/R-03 críticos), diagrama Gantt Mermaid (PM-04) con dependencias, tablero Kanban 6 columnas (PM-02, Project 14), WBS 40 paquetes, presupuesto COP 176k/1.176M y puertas de calidad CI (6 jobs). El documento \texttt{Proyecto\_AetherNet\_\-Andres\_Felipe\_\-Martinez\_Henao.docx} (99~KB, 14 secciones) y los calendarios \texttt{.ics} son los entregables. Al 2026-09-11: PM-01/03/04 Done, PM-02 Done, PM-08 auditoría Done, PM-05/06 operando cada sprint, pendiente PM-09 trazabilidad final y PM-10 presupuesto plan vs real.
+\end{abstract}
+\begin{IEEEkeywords}
+Scrum MoSCoW, BDD Dado/Cuando/Entonces, WBS, Gantt Mermaid, risk register R-01..R-13, PSP/TSP, velocity, burndown
+\end{IEEEkeywords}
+
+\section{Introducción: TS683 transversal}
+TS683 no produce código pero gobierna cómo se planifica, mide y controla todo lo demás. El PDF \texttt{2350\_TS683} evalúa por cortes y exige evidencias de backlog, matriz de riesgos, Gantt y tablero. En AetherNet esta área es la que evita que ``un agente que lea un sprint desactualizado trabaje mal'' (advertencia \texttt{sprints.md}). AGENTS.md \S4 y ROADMAP \S4 son las interfaces entre gestión y ejecución.
+
+\section{Mapeo U1--U3 $\rightarrow$ Proyecto}
+\subsection{U1 Metodologías y Planificación}
+Scrum: backlog MoSCoW (\texttt{docs/backlog.md} 5 áreas, 4 sprints, dependencias ``Depende de'') + 4 HU BDD fuente de verdad para tests (\texttt{requirements.md} \S4) + INVEST implícito. WBS: 40 paquetes en \texttt{Proyecto\_AetherNet.docx}. PSP/TSP adaptado: proceso formalizado como reglas para agentes (qué leer, cuándo pedir confirmación -- umbrales láser/PIN/EMA $\alpha$, dependencias propietarias). Estimación: Planning Poker si sprint se atrasa $>$20\% (PM-07, disparador $<$80\% Must cerradas).
+
+\subsection{U2 Riesgos, Configuración, Medición}
+Riesgos: matriz formal R-01..R-13 (\texttt{risk-register.md}, PM-03) con probabilidad$\times$impacto + mitigación; cascadas documentadas (MOV-06$\leftarrow$RF$\leftarrow$DEVOPS-05, EST$\leftarrow$DEVOPS-12). Configuración: Git main/develop, CI como puerta, commits citan ID backlog, secretos fuera de código (\texttt{.env.example}, DEVOPS-08/11), docs vivos con frescura (PM-05). Medición producto: 5 KPIs PRD cuantitativos antes de construir; proceso: PM-05 estado sprints + PM-06 retro 3 columnas + velocity (cerradas/planeadas) + burndown por sprint.
+
+\subsection{U3 Calidad, Costos, Monitoreo/Control}
+Calidad: plan \texttt{test-plan.md} + BDD como oracle + 6 puertas CI (ruff/mypy/pytest/firmware/Docker/Trivy) -- merge sin verde prohibido; RNF medibles. Costos: inventario hardware como base + restricción FOSS (costo licenciamiento cero por diseño, RNF-3.1); brecha: presupuesto formal plan vs real aún no tabulado (PM-10). Monitoreo: tablero Scrum (\texttt{tablero-scrum.md}, PM-02), Gantt (PM-04), control desviaciones (Must no cerrado $\rightarrow$ riesgos+Gantt), cierre iterativo (retro + replanificación).
+
+\section{Método Scrum en AetherNet}
+\subsection{Backlog y Definition of Done}
+IDs MOV-01..10 (móvil), DEVOPS-01..15 (infra), LOW-01..07 (LowCode), PM-01..11 (gestión), EST-01..11 (estadística). Cada fila trae Prioridad MoSCoW, Sprint, Depende de y Origen RF/HU. DoD por tipo: firmware compila en CI + banco; backend tests+CI verde; app CI+manual; docs revisada. Regla backlog: precedentes por materia ganan sobre general si chocan.
+
+\subsection{Sprints y dependencias críticas}
+Sprint~1 fundacional (DEVOPS-01..05, MOV-01 plantilla, EST-01); Deuda 1$\rightarrow$2 saldada 2026-08-29 (8/8 ACT: PM-08, DEVOPS-11/10, PM-03 R-12/R-13, MOV-01 cierre, MOV-12, PM-02, PM-04); Sprint~2 domótica (MEGA cerrojo/láser, MOV-02/03/04, DEVOPS-06/07); Sprint~3 rover+joystick (\texttt{e821700}); Sprint~4 LowCode/Stats/cierre. Gantt Mermaid (\texttt{gantt.md}) con \texttt{excludes weekends}, hitos fin Sprint + demo final, dependencias lógicas:
+\begin{equation}
+\text{DEVOPS-01..05}\rightarrow\text{Sprint~2}\rightarrow\text{Sprint~4}\rightarrow\text{Sprint~3}
+\end{equation}
+
+\subsection{Riesgos y configuración}
+R-01 tuya-local (políticas API, ADR-001) y R-07 cerrados; R-12 secretos (FELIPE./2516f751) resuelto con rotación 2026-08-31 (\texttt{auditoria-secretos-sprint1.md}); R-02/R-03 críticos vigentes. Auditoría PM-08: \texttt{git log -p | grep -iE "password|secret|key"}, \texttt{.gitignore:219} cubre \texttt{secrets.h/.env}. Versionado releases \texttt{v1.0.0-demo} + APK artifact (PM-11).
+
+\section{Resultados}
+\begin{table}[t]
+\centering
+\caption{Entregables TS683 (docs/Administracion-Proyectos/administracion-proyectos.md \S3)}
+\label{tab:entregables}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Entregable & Evidencia & Estado \\
+\midrule
+Product Backlog & backlog.md MoSCoW 5 áreas & \checkmark \\
+Sprint Planning & sprints.md 4 sprints & \checkmark \\
+Matriz riesgos & risk-register.md R-01..13 & \checkmark (viva) \\
+Gantt & gantt.md Mermaid & \checkmark \\
+Tablero Scrum & Project 14 (6 cols) & \checkmark \\
+Retros/control & PM-05/06/07 & En curso \\
+WBS 40 & Proyecto\_AetherNet.docx & \checkmark \\
+Calendarios & .ics (8 sem + clases) & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Velocity y burndown medidos desde Sprint~1 permiten reestimar sprints 3--4 con datos; presupuesto COP 176k/1.176M documentado pero desviación plan vs real pendiente (PM-10). Trazabilidad final PM-09 (\texttt{trazabilidad-final.md}: RF/HU$\rightarrow$tarea$\rightarrow$archivo$\rightarrow$test) es la evidencia para sustentación.
+
+\section{Discusión}
+La gestión transversal evitó adelantar Sprint~3 sin base Sprint~1 y contuvo la deuda LOW-02 (Node-RED) como Won't sin romper HU-02. La lección es operativa: PM-05 (actualizar \texttt{sprints.md} $\leq$2 días tras cierre) es el control que mantiene coherentes a todos los agentes. La brecha costos (sin seguimiento gasto real) es riesgo reputacional bajo pero académico relevante.
+
+\section{Conclusiones}
+AetherNet demuestra que Scrum+BDD con trazabilidad fina y puertas CI es suficiente para coordinar 5 áreas heterogéneas (incluido firmware) sin introducir procesos pesados PSP/TSP literales, usando estos como vocabulario complementario.
+
+\begin{thebibliography}{10}
+\bibitem{ts683} UTP, Programa TS683 Administración y Planeación, 2350\_TS683.pdf.
+\bibitem{admin} AetherNet, Documentación Administración, docs/Administracion-Proyectos/administracion-proyectos.md.
+\bibitem{roadmapPM} AetherNet, Roadmap Administración, docs/Administracion-Proyectos/roadmap-administracion.md.
+\bibitem{backlogPM} AetherNet, Backlog Administración PM-01..11, docs/Administracion-Proyectos/backlog-administracion.md.
+\bibitem{sprints} AetherNet, Planeación Sprints 1--4, docs/sprints.md.
+\bibitem{backlog} AetherNet, Backlog MoSCoW, docs/backlog.md.
+\bibitem{gantt} AetherNet, Diagrama Gantt PM-04, docs/gantt.md.
+\bibitem{risk} AetherNet, Risk Register R-01..R-13, docs/risk-register.md.
+\bibitem{tablero} AetherNet, Tablero Scrum Project 14, docs/tablero-scrum.md.
+\bibitem{proyecto} Martínez H., Proyecto\_AetherNet\_\-Andres\_Felipe\_\-Martinez\_Henao.docx (99KB, 14 sec, WBS 40).
+\end{thebibliography}
+\end{document}

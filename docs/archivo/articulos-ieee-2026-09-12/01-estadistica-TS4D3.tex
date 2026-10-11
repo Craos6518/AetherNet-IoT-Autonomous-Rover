@@ -1,0 +1,121 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+%\usepackage{algorithmic} % no usado -- requiere texlive-science
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{url}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\graphicspath{{../../docs/fritzing/}{../}{./}}
+
+\begin{document}
+\title{Filtrado EMA y Analítica Inferencial en AetherNet: de la Estadística Descriptiva (U1) a la Confiabilidad (U8) — TS4D3}
+\author{\IEEEauthorblockN{Andrés Felipe Martínez Henao}
+\IEEEauthorblockA{Estadística TS4D3 -- 3 créditos, 4 h/sem\\Tecnología en Desarrollo de Software (5º sem) -- Ing. Sistemas y Computación (6º sem)\\Universidad Tecnológica de Pereira\\\texttt{F.martinez5@utp.edu.co}}
+\and
+\IEEEauthorblockN{Proyecto AetherNet -- Área 5}
+\IEEEauthorblockA{IDs EST-01..EST-11 -- Roadmap/B backlog: docs/Estadistica/\\Notebook canónico: docs/Estadistica/notebook/EMA\_Estadistica.ipynb}}
+\maketitle
+
+\begin{abstract}
+Este artículo mapea el programa oficial TS4D3 (U1 descriptiva -- U8 confiabilidad, texto Mendenhall \& Sincich) contra su aplicación en AetherNet, cuyo núcleo es el filtrado de telemetría ultrasónica. El filtro EMA $S_t=\alpha Y_t+(1-\alpha)S_{t-1}$ con $\alpha=0.2$ (HU-03, RNF-2.1, KPI $>$85\% reducción de ruido) se implementa tanto en Python (\texttt{stats/ema\_filter.py:15}, clase \texttt{EMAFilter}, \texttt{MultiSensorEMA}, \texttt{calculate\_noise\_reduction}) como en firmware embebido (\texttt{rover-uno.ino:259}, 100~Hz, init lazy). La validación offline combina simulación gaussiana ($\sigma=8$~cm) y 36.5k filas externas (\texttt{water\_level\_turbidity} 31.5k CC BY-SA 4.0 + \texttt{gesture} 5k CC0) con descriptivos, Welch $t$-Student y ANOVA en \texttt{stats/water\_turbidity\_analysis.py} (364 líneas) y PNGs \texttt{water\_us\_vs\_true.png}/\texttt{water\_ir\_by\_angle.png}. Se formalizan Bernoulli para accesos, Normal para ruido, y teoría de confiabilidad serie + fail-safe RF 500~ms (RF-3.3/HU-04) con checksum. Al 2026-09-11: EST-01 prototipo offline Done, EST-02 EMA rover Done Sprint~3, EST-05/06 adelanto 36.5k Done, pendiente EST-03 KY-037 y t-Student final con latencias RF vs Wi-Fi reales (EST-09/10).
+\end{abstract}
+\begin{IEEEkeywords}
+EMA $\alpha=0.2$, reducción de ruido $>$85\%, Welch t-Student, ANOVA, Bernoulli, confiabilidad serie, HC-SR04, SciPy, Pandas
+\end{IEEEkeywords}
+
+\section{Introducción: TS4D3 y el Proyecto Integrador}
+El PDF \texttt{docs/Estadistica/2344\_TS4D3 Estadística.pdf} estructura la asignatura en 8 unidades (Tab.~I). AetherNet usa la estadística en dos planos: (i) \emph{tiempo real} -- filtrado EMA embebido que decide evasión autónoma; (ii) \emph{offline} -- descriptiva e inferencia sobre histórico PostgreSQL + validación externa. RNF-2.1/RNF-2.2 y HU-03 son los anclajes formales; el KPI PRD $>$85\% es la métrica de éxito.
+
+\begin{table}[t]
+\centering
+\caption{Programa TS4D3 (fuente: docs/Estadistica/estadistica.md \S1)}
+\label{tab:programa}
+\begin{tabular}{@{}cl@{}}
+\toprule
+U & Tema \\
+\midrule
+U1 & Descriptiva: organización, tendencia central, dispersión, momentos \\
+U2 & Probabilidad: enumeración, espacio muestral, axiomática \\
+U3 & Condicional e independencia: Bayes, independientes \\
+U4 & V.A. discretas: esperanza, varianza, FGM \\
+U5 & Distribuciones discretas (Bernoulli..Pascal) \\
+U6 & V.A. continuas: discriminación, momentos \\
+U7 & Continuas: Uniforme, Exponencial, Poisson, Normal \\
+U8 & Confiabilidad: ley normal/exponencial/Weibull, sistemas \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Mapeo U1--U8 $\rightarrow$ Proyecto}
+\subsection{U1 Descriptiva $\rightarrow$ KPI de dispersión}
+La reducción de ruido se define como razón de varianzas:
+\begin{equation}
+\small
+\text{noise\_reduction\_pct}= \left(1-\frac{\text{MSE}_f}{\text{MSE}_r}\right)\!\times\!100,\quad
+\text{MSE}=\frac1n\sum (Y_i - Y^{\text{true}}_i)^2
+\end{equation}
+MSE es momento central de 2º orden del error. Implementado en \texttt{ema\_filter.py:99-123} con retorno booleano \texttt{meets\_kpi}. Organización de datos: tabla \texttt{SensorEvent(value, filtered\_value, timestamp)} (\texttt{backend/app/models.py}). EST-06 (Pandas \texttt{describe}, outliers $>$3$\sigma$, crudo vs filtrado) está adelantado con 36.5k filas externas (\texttt{water\_turbidity\_analysis.py:descriptive\_by\_group}).
+
+\subsection{U2--U4 Probabilidad y V.A. $\rightarrow$ EMA como esperanza condicional}
+El EMA es $\mathbb{E}[S_t\mid S_{t-1}]$: el suavizado de hoy condiciona al estado previo (proceso estocástico recursivo). Ruido modelado como V.A. gaussiana para validación offline: \texttt{simulate\_noisy\_signal} con \texttt{random.gauss(0,\,$\sigma$)} ($\sigma=8$~cm para HC-SR04). U3 Bayes sin aplicación formal: la fusión ultrasónico+IR del rover (\texttt{rover-uno/src/rover.ino:315-358}) es combinación de evidencia sin formalismo bayesiano (brecha documentada).
+
+\subsection{U5--U7 Distribuciones}
+Bernoulli: cada intento PIN es ensayo con \texttt{AccessEvent.success BOOLEAN} y $\hat p$ de fallos. Normal: supuesto de simulación EMA. Continua U6: distancia HC-SR04 (0--200~cm) como V.A. que alimenta decisión discreta esquivar/no. Exponencial/Poisson: tiempos entre intrusiones con timestamp $\rightarrow$ modelable como Poisson (extensión EST-06/07 registrada, no formalizada).
+
+\subsection{U8 Confiabilidad $\rightarrow$ Fail-safe}
+Cadena App$\rightarrow$ESP32$\rightarrow$RF$\rightarrow$UNO es sistema serie: falla un eslabón $\Rightarrow$ falla sistema. Ley exponencial (tasa constante, sin memoria) justifica timeout 500~ms: si no llega paquete válido en \texttt{FAILSAFE\_TIMEOUT\_MS}, \texttt{checkFailsafe()} corta PWM (\texttt{rover.ino:63,209-218}, HU-04/RF-3.3). Checksum aritmético (\texttt{verifyChecksum:372-379}) descarta trama corrupta y no resetea el timer.
+
+\section{Método: EMA dual y validación}
+\subsection{Prototipo Python (EST-01)}
+\texttt{EMAFilter($\alpha$=0.2)} valida $\alpha\in(0,1]$, \texttt{MultiSensorEMA} gestiona N sensores, \texttt{simulate\_noisy\_signal} + \texttt{calculate\_noise\_reduction} + demo reproducible (\texttt{:126-161}). Tests en \texttt{stats/tests/test\_ema\_filter.py} (CI verde). Trade-off $\alpha$: pequeño $\Rightarrow$ más suavizado + más retardo; $\alpha=0.2$ fijado por HU-03. Barrido formal EST-08 ($\alpha\in\{0.05,0.1,0.2,0.3,0.5,0.8\}$ Monte Carlo 100$\times$) entrega tabla reducción\% vs retardo y falsos obstáculos
+(\texttt{stats/experiments/alpha\_sweep.py} $\rightarrow$ \texttt{alpha\_sweep.json} + PNG).
+
+\subsection{Embebido C++ (EST-02)}
+Misma fórmula en \texttt{rover-uno.ino:259} a 100~Hz:
+\begin{equation}
+S_t = 0.2\,Y_t + 0.8\,S_{t-1}
+\end{equation}
+con \texttt{ultrasonicInitialized} lazy y descarte fuera de rango; \texttt{ultrasonicEma} decide \texttt{executeAutoMode} (umbrales 30/15~cm). Validado en banco \texttt{firmware/test-ema-uno} y pista blanca pot mitad 3~mm (\texttt{e821700}: US\_raw 6--33~cm, EMA 6--32~cm, T4 7.3k).
+
+\subsection{Datasets y pipeline inferencial}
+36.5k filas: \texttt{water-level\_turbidity-*.csv} (low/medium/high) 31.5k CC BY-SA 4.0 + \texttt{gesture\_dataset.csv} 5k CC0 (\texttt{stats/Dataset/README.md}, espejo \texttt{docs/Estadistica/Datasets/}). Script \texttt{water\_turbidity\_analysis.py} (364 líneas): descriptivos + \texttt{scipy.stats.ttest\_ind(equal\_var=False)} (Welch) + ANOVA \texttt{us\_value} vs \texttt{water\_level} por turbidez/ángulo; reporte \texttt{water\_turbidity\_report.json} + PNGs 87k/45k. Notebook canónico \texttt{EMA\_Estadistica.ipynb} \S7c (6. barrido $\alpha$ Monte Carlo 100$\times$). Este adelanto valida EST-05/06 sin esperar latencias reales RF/Wi-Fi (EST-09).
+
+\section{Resultados}
+\subsection{KPI y telemetría}
+EMA embebido supera $>$85\% en bench 531 muestras (\texttt{a051dd4}) y en pista real mantiene estabilidad sin falsos obstáculos; telemetría \texttt{T\_telemetry\_invertida 89} publica \texttt{ultrasonic 0--95~cm} + \texttt{ir\_left/right} + \texttt{rf\_rssi -70}.
+
+\subsection{Validación externa 36.5k}
+Welch y ANOVA significativos por turbidez (us\_value degrade con turbidez alta, IR por ángulo) -- ver \texttt{water\_turbidity\_report.json} y PNGs en \texttt{docs/fritzing/}. Shapiro-Wilk + Levene previos a Welch; si normalidad falla, Mann-Whitney U como respaldo (EST-05 especifica reportar ambos).
+
+\subsection{Estado backlog EST}
+EST-01 Done, EST-02 rover Done Sprint~3, EST-08/09/10 diseñados (EST-08 barrido $\alpha$, EST-09 instrumentación latencias 50$\times$ RF/Wi-Fi en \texttt{latency\_rf.csv}/\texttt{latency\_wifi.csv}, EST-10 \texttt{db\_extract.py} SQLAlchemy $\rightarrow$ Pandas), EST-03 KY-037 + EST-05 final + EST-07 informe pendientes Sprint~4.
+
+\section{Discusión y limitaciones}
+La prueba t-Student formal no aparece en el PDF TS4D3 (cubre hasta confiabilidad); se hereda del entregable integrador como RNF-2.2, por lo que se exige verificar supuestos (normalidad, varianzas) y reportar IC95\% + $d$ de Cohen, no solo $p<0.05$. El ruido del KY-037 no es gaussiano simétrico (AC sobre baseline): EST-11 exige captura 60~s y decidir transformación (valor absoluto de desviación) antes de replicar EMA. Limitación instrumental: sin timestamps de latencia RF/Wi-Fi reales hasta coordinar con DevOps (gateway imprime deltas, script captura 50 muestras/protocolo).
+
+\section{Conclusiones}
+La estadística atraviesa AetherNet de punta a punta: (i) descriptiva como métrica de calidad del filtro, (ii) probabilidad como modelo de ruido y esperanza condicional, (iii) distribuciones como tipificación de eventos, (iv) confiabilidad como diseño fail-safe. El doble carril Python$\leftrightarrow$firmware demuestra portabilidad del concepto y trazabilidad KPI$\rightarrow$código$\rightarrow$test.
+
+\begin{thebibliography}{10}
+\bibitem{ts4d3} UTP, Programa TS4D3 Estadística, docs/Estadistica/2344\_TS4D3.pdf.
+\bibitem{estadistica} AetherNet, Documentación Académica Estadística, docs/Estadistica/estadistica.md.
+\bibitem{roadmapEST} AetherNet, Roadmap Estadística, docs/Estadistica/roadmap-estadistica.md.
+\bibitem{backlogEST} AetherNet, Backlog Estadística EST-01..11, docs/Estadistica/backlog-estadistica.md.
+\bibitem{emafilter} AetherNet, stats/ema\_filter.py ($\alpha$=0.2, KPI).
+\bibitem{water} AetherNet, stats/water\_turbidity\_analysis.py + water\_turbidity\_report.json (36.5k).
+\bibitem{notebook} AetherNet, docs/Estadistica/notebook/EMA\_Estadistica.ipynb.
+\bibitem{rover} AetherNet, firmware/rover-uno/rover-uno.ino:259 (EMA) y :63 fail-safe.
+\bibitem{prd} AetherNet, PRD \S5 KPI $>$85\%, docs/prd.md.
+\bibitem{mendenhall} Mendenhall \& Sincich, Probabilidad y Estadística para Ingeniería y Ciencias (texto guía TS4D3).
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,4 @@
+=== AetherNet MEGA Cerrojo RF-2.2/HU-01 ===
+Laser KY-008 + LDR discreta init — TX:8 HIGH, RX:7 INPUT (divisor 10k), armed=true
+MEGA Cerrojo+Laser listo — PIN 1234 | Auto-lock 5s | LED verde 5s / rojo 3s intrusión
+Teclas: # envía, * borra, A-D ignoradas

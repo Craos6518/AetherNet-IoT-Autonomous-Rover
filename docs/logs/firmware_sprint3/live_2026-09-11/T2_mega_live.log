@@ -1,0 +1,37 @@
+�
+U
+=== AetherNet MEGA Cerrojo RF-2.2/HU-01 ===
+Laser KY-008 + LDR discreta init — TX:8 HIGH, RX:7 INPUT (divisor 10k), armed=true
+MEGA Cerrojo+Laser listo — PIN 1234 | Auto-lock 5s | LED verde 5s / rojo 3s intrusión
+Teclas: # envía, * borra, A-D ignoradas
+[KEY RAW] '1' code=49
+Key pressed: * (len=1)
+[KEY RAW] '2' code=50
+Key pressed: * (len=2)
+[KEY RAW] '3' code=51
+Key pressed: * (len=3)
+[KEY RAW] '4' code=52
+Key pressed: * (len=4)
+[KEY RAW] '#' code=35
+[PIN DBG] buffer='1234' len=4
+Door UNLOCKED (90°)
+[UART TX] ACCESS:{"user_id":"keypad_user","pin_hash":"7c78c98f","success":true,"timestamp":77757,"source":"keypad"}
+PIN attempt: len=4 -> GRANTED
+Door LOCKED (0°)
+[KEY RAW] '1' code=49
+Key pressed: * (len=1)
+[KEY RAW] '2' code=50
+Key pressed: * (len=2)
+[KEY RAW] '3' code=51
+Key pressed: * (len=3)
+[KEY RAW] '#' code=35
+[PIN DBG] buffer='123' len=3
+PIN attempt FAILED (len=3)
+[UART TX] ACCESS:{"user_id":"keypad_user","pin_hash":"b8789fb","success":false,"timestamp":96352,"source":"keypad"}
+PIN attempt: len=3 -> DENIED
+!!! INTRUSION DETECTED — LASER BREAK !!!
+[UART TX] SECURITY:{"event_type":"intrusion","sensor":"laser-01","location":"entrance","severity":"high","timestamp":128693}
+Door UNLOCKED (90°)
+[UART TX] ACCESS:{"user_id":"keypad_user","pin_hash":"7c78c98f","success":true,"timestamp":174015,"source":"keypad"}
+PIN attempt: len=4 -> GRANTED
+Door LOCKED (0°)

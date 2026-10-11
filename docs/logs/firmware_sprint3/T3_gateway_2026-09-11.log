@@ -1,0 +1,14 @@
+=== AetherNet Gateway ESP32 Starting ===
+UART to MEGA initialized
+nRF24L01 initialized
+Connecting to WiFi FELIPE.........
+WiFi connected: 192.168.1.23
+MQTT reconnecting...connected
+[MEGA UART RX] STATUS:{"door_locked":true,"laser_armed":true,"laser_beam_intact":false,"free_ram":7238,"uptime_ms":328691}
+MQTT RX: aethernet/rover/command -> {"left_pwm":120,"right_pwm":120,"mode":1}
+RF TX: L=120 R=120 mode=1
+MQTT RX: aethernet/rover/command -> {"left_pwm":195,"right_pwm":0,"mode":1}
+RF TX: L=195 R=0 mode=1
+MQTT RX: aethernet/rover/command -> {"left_pwm":0,"right_pwm":0,"mode":0}
+RF TX: L=0 R=0 mode=0
+# Joystick App rafaga completa validada - ver log completo T3_joystick_2026-09-11.log
