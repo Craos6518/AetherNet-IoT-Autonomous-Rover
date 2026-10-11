@@ -23,6 +23,7 @@ import java.io.BufferedReader // leer líneas del socket — como readline en py
 import java.io.IOException
 import java.io.InputStreamReader
 import java.util.UUID // SPP UUID canónico
+import java.util.concurrent.TimeUnit // TimeUnit para timeout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * MOV-07 — Gestor Bluetooth SPP (RF-1.3, fallback cuando MQTT/Wi-Fi no están).
@@ -118,8 +120,8 @@ class BluetoothManagerImpl(
 
     /**
      * Conecta por SPP al dispositivo emparejado (HC-06). Bloquea en RfcommChannel hasta
-     * conectar (por eso withContext(Dispatchers.IO)). Tras conectar arranca el thread lector
-     * que parsea ACCESS/PRESENCE y emite a los SharedFlow (como WebSocket onmessage en JS).
+     * conectar (por eso withContext(Dispatchers.IO)). Timeout 10s para evitar bloqueo indefinido.
+     * Tras conectar arranca el thread lector que parsea ACCESS/PRESENCE y emite a los SharedFlow.
      */
     @SuppressLint("MissingPermission")
     override suspend fun connect(address: String): Result<Unit> = withContext(Dispatchers.IO) {
@@ -129,7 +131,14 @@ class BluetoothManagerImpl(
             val device: BluetoothDevice = adapter!!.getRemoteDevice(address) // MAC válida
             val s = device.createRfcommSocketToServiceRecord(SPP_UUID) // socket RFCOMM
             _connectionState.value = BtConnectionState.Connecting(device.name ?: address)
-            s.connect() // bloquea hasta SPP ok — como `await fetch()` en JS (IO thread)
+            // Timeout 10s en connect() — evita bloqueo indefinido si HC-06 no responde
+            val connected = withTimeoutOrNull(10_000) { s.connect() }
+            if (connected == null) {
+                // Timeout: cierra socket y reporta error
+                try { s.close() } catch (_: Exception) {}
+                _connectionState.value = BtConnectionState.Error("Timeout conectando HC-06 (10s)")
+                return@withContext Result.Error("Timeout conectando HC-06 (10s)")
+            }
             socket = s
             startReader(s, device.name ?: address) // reader de líneas ACCESS/PRESENCE
             _connectionState.value = BtConnectionState.Connected(device.name ?: address)
