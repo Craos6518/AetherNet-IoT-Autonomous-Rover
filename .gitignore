@@ -1,66 +1,9 @@
-# =============================================================================
-# .gitignore — AetherNet IoT & Autonomous Rover | 6º Semestre UTP
-# Autor: Andres Felipe Martinez Henao
-# Experiencia: 2 años electrónica/Arduino (arduino-cli .pio), 1 año Programación C
-#              (*.o/*.elf), 2 años Python (venv/__pycache__), 2 años HTML/CSS/JS/React
-#              (node_modules/build), 1 año PostgreSQL (postgres_data, *.db), 2 años Docker
-# Stack: Python 3.12 (FastAPI/stats) + Kotlin/Android (Gradle) + C++ (Arduino/PlatformIO)
-#        + Node-RED (flows) + Docker (Mosquitto/postgres_data)
-# FOSS: Git ignore puro (no dependencia) — RNF-3.1. Principio: nunca commitear
-#       artefactos/cachés/secretos; solo fuentes (`.ino`, `.kt`, `.py`, `.md`) + evidencia
-#       trazable (`docs/fritzing/*.png`, `stats/data/ema_demo.json`) via `!`.
-# Regla: línea que empieza con `#` es comentario (como `//` en C o `#` en Python);
-#        línea con patrón es glob (como `*.py[cod]` en fnmatch); `!` niega (whitelist,
-#        como `!gradlew` que rescata wrapper pese a `build/` ignore).
-# Ver: docs/deuda-sprint1-sprint2.md:36 DEVOPS-11 + docs/auditoria-secretos-sprint1.md + ci.yml:38
-# =============================================================================
-
 # AetherNet IoT & Autonomous Rover - .gitignore
 # Generated for multi-component project: Python/FastAPI, Android/Kotlin, C++/Arduino, Node-RED, Docker
 
 # =============================================================================
-# Top-level caches/build — fix 2026-09-11: asegura que ./build .gradle .venv .idea no aparezcan como 900 untracked
-# Antes .gradle/ build/ solo ignoraban subdirs; ahora se cubren tanto raíz como anidados
+# Python / Backend / Stats
 # =============================================================================
-.gradle/
-**/.gradle/
-.gradle/**
-build/
-**/build/
-out/
-**/out/
-.venv/
-**/.venv/
-venv/
-**/venv/
-.idea/
-**/.idea/
-.coverage
-**/.coverage
-coverage/
-**/coverage/
-.pytest_cache/
-**/.pytest_cache/
-.mypy_cache/
-**/.mypy_cache/
-.ruff_cache/
-**/.ruff_cache/
-local.properties
-**/local.properties
-backend/.env
-backend/mosquitto/log/
-mosquitto/log/
-# whitelists: docs/logs es evidencia trazable Sprint3 — no ignorar (ver Firmare_Notebook)
-!docs/logs/
-!docs/logs/**
-!docs/logs/**/*.log
-
-# =============================================================================
-# Python / Backend / Stats — 2 años Python (venv, pip, ruff, mypy, pytest)
-# Como .gitignore de un repo Python puro: ignora cachés y envs, no fuentes .py
-# Analogía React: equivale a `node_modules/` + `dist/` en JS — artefactos, no código
-# =============================================================================
-# Cachés bytecode — se regeneran con `python -m compileall` (como `.next/` en Next.js)
 __pycache__/
 *.py[cod]
 *$py.class
@@ -85,15 +28,12 @@ dist/
 build/
 *.egg
 
-# Virtual environments (if any in subdirectories) — 2 años Python: cada `python -m venv .venv` crea uno
-# Analogía React: cada `npm ci` crea `node_modules` local; aquí cada `pip install -r requirements.txt`
+# Virtual environments (if any in subdirectories)
 backend/.venv/
 stats/.venv/
 automation/.venv/
 
-# Environment files (keep .env.example but ignore actual .env) — 1 año PostgreSQL + 2 años React dotenv
-# Analogía React: `.env` es como `secrets.h` en firmware — contiene `DATABASE_URL` y `POSTGRES_PASSWORD`
-# Nunca commitear: `.env` está en .gitignore, `.env.example` sí trackeado (como `secrets.h.example`)
+# Environment files (keep .env.example but ignore actual .env)
 .env
 .env.local
 .env.*.local
@@ -101,23 +41,19 @@ backend/.env
 automation/.env
 
 # =============================================================================
-# Docker — 1 año PostgreSQL (postgres_data) + Docker Compose
-# Analogía React: `docker-compose.override.yml` es como `.env.local` en Docker — override local no versionado
+# Docker
 # =============================================================================
 .docker/
 docker-compose.override.yml
 *.dockerfile~
 
 # =============================================================================
-# Android / Kotlin / Gradle — 2 años HTML/CSS/JS/React (Gradle como Vite)
-# Analogía React: `build/` es `dist/` en Vite, `.gradle/` es `.next/cache`, `*.apk` es `dist/*.js`
+# Android / Kotlin / Gradle
 # =============================================================================
-# Apps firmadas/binarios — no versionar (como `dist/*.js` minificado en React, se genera con `./gradlew assembleDebug`)
 *.apk
 *.ap_
 *.aab
 *.aas
-# Keystores — nunca commitear (como `*.pem` en secrets) — contienen clave firma Play Store (como `secrets.h`)
 *.jks
 *.keystore
 *.store
@@ -134,14 +70,12 @@ out/
 local.properties
 signing.properties
 # gradle.properties global is ignored, pero build scripts sí se trackean (FIX MOV-12: no ignorar *.gradle.kts)
-# Antes: *.gradle y *.gradle.kts ignoraban `app/build.gradle.kts` y rompía `ci.yml:317 assembleDebug`
-# Fix: removidos — ahora `app/build.gradle.kts` sí trackeado (ver git log f1ffcaa)
 # *.gradle y *.gradle.kts removidos — eran la causa de que app/build.gradle.kts no estuviera trackeado
 *.iml
 .idea/
 *.iws
 *.ipr
-# Android Studio specific — como `.next/` en Next.js pero para NDK
+# Android Studio specific
 .cxx/
 .externalNativeBuild/
 *.apk
@@ -154,23 +88,21 @@ signing.properties
 *.ks
 *.key
 # Gradle wrapper — conservar wrapper raíz y app/ para CI reproducible (MOV-12)
-# Analogía React: `gradlew` es como `npm` wrapper — `gradle/wrapper/gradle-wrapper.jar` debe trackearse para CI
 # Root wrapper trackeado para build reproducible; app/ también si existe (legado)
-!gradle/wrapper/gradle-wrapper.jar # rescata pese a `*.jar` genérico — como `!gradlew` en .gitignore de React (whitelist)
+!gradle/wrapper/gradle-wrapper.jar
 !gradle/wrapper/gradle-wrapper.properties
 !gradlew
 !gradlew.bat
 !app/gradle/wrapper/gradle-wrapper.jar
 !app/gradlew
 !app/gradlew.bat
-# Daemon JVM auto-generado por foojay toolchains — no versionar (como `.gradle/daemon` en React)
+# Daemon JVM auto-generado por foojay toolchains — no versionar
 gradle/gradle-daemon-jvm.properties
 
 # =============================================================================
-# C++ / Arduino / Firmware — 2 años electrónica/Arduino + 1 año C
-# Analogía React: `*.o` es `*.js` compilado, `.pio/` es `node_modules` de PlatformIO
+# C++ / Arduino / Firmware
 # =============================================================================
-# Build artifacts — 1 año C: `*.o` objeto, `*.elf` ejecutable, `*.hex` para flashear (como `*.o` en gcc)
+# Build artifacts
 *.o
 *.obj
 *.elf
@@ -184,7 +116,7 @@ gradle/gradle-daemon-jvm.properties
 *.d
 *.dep
 
-# Arduino CLI / IDE — `arduino-cli` genera `.build/` y `*.ino.*` temporales (como `.next/` en Next.js)
+# Arduino CLI / IDE
 .build/
 .build-*/
 *.ino.cpp
@@ -198,21 +130,20 @@ gradle/gradle-daemon-jvm.properties
 *.ino.sym
 *.ino.lst
 
-# PlatformIO — 2 años Arduino: `.pio/` es `node_modules` de PlatformIO (ver firmware/*/platformio.ini)
+# PlatformIO
 .pio/
 .pioenvs/
 .piolibdeps/
 platformio.ini~
 
-# VS Code / Arduino extension — config local no portable (como `.vscode/settings.json` en React)
+# VS Code / Arduino extension
 .vscode/arduino.json
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/tasks.json
 
 # =============================================================================
-# Node-RED / Automation — 2 años HTML/JS (Node)
-# Analogía React: `node_modules/` es `node_modules` en React, `*.log` es `npm-debug.log`
+# Node-RED / Automation
 # =============================================================================
 node_modules/
 *.log
@@ -231,11 +162,10 @@ automation/.node-red/lib/
 automation/.node-red/projects/
 
 # =============================================================================
-# IDE / Editor — como .gitignore de un repo React: ignora config local
+# IDE / Editor
 # =============================================================================
 .vscode/*
 !.vscode/extensions.json
-!.vscode/settings.json
 !.vscode/settings.json.example
 !.vscode/tasks.json.example
 !.vscode/launch.json.example
@@ -251,7 +181,7 @@ automation/.node-red/projects/
 *.sw?
 
 # =============================================================================
-# OS / Filesystem — como .gitignore de React para OS
+# OS / Filesystem
 # =============================================================================
 .DS_Store
 .DS_Store?
@@ -264,7 +194,7 @@ Thumbs.db
 *.temp
 
 # =============================================================================
-# Logs / Runtime — como .gitignore de Node: logs y pids
+# Logs / Runtime
 # =============================================================================
 *.log
 logs/
@@ -273,17 +203,14 @@ logs/
 *.pid.lock
 
 # =============================================================================
-# Testing / Coverage — 2 años Python (pytest) + 2 años React (jest)
-# Analogía React: `coverage/` es `coverage/` en Jest, `.nyc_output` es `coverage` en Node
+# Testing / Coverage
 # =============================================================================
 coverage/
 .nyc_output/
 *.lcov
 
 # =============================================================================
-# Secrets / Credentials (NEVER COMMIT) — DEVOPS-11 / PM-08
-# Analogía React: `*.pem` es como `secrets.h` en firmware — nunca `git add`
-# Ver docs/auditoria-secretos-sprint1.md:15 H-01/H-02 (FELIPE./2516f751) + .env.example
+# Secrets / Credentials (NEVER COMMIT)
 # =============================================================================
 *.pem
 *.key
@@ -294,84 +221,54 @@ secrets/
 *.secret
 *.credentials
 *.token
-# Firmware secrets — DEVOPS-11 / PM-08 (docs/auditoria-secretos-sprint1.md:15)
-# Analogía C: `secrets.h` es `secrets.h.example` + valores LAN (como `.env` en React)
-# Nunca commitear `secrets.h` con `WIFI_SSID "FELIPE."` real — `.gitignore` lo bloquea, CI usa `secrets.h.example` fallback `ci.yml:101`
+# Firmware secrets — DEVOPS-11 / PM-08 (docs/auditoria-secretos-sprint1.md)
 firmware/gateway-esp32/secrets.h
 firmware/mega-access/src/secrets.h
 firmware/**/secrets.h
 
 # =============================================================================
-# Project-specific — 1 año PostgreSQL + 2 años Docker (postgres_data)
-# Analogía React: `*.db` es `*.db` en SQLite, `postgres_data/` es `postgres_data/` en Docker
+# Project-specific
 # =============================================================================
-# Database — `*.db` SQLite local — como `*.db` en React Native (SQLite)
+# Database
 *.db
 *.sqlite
 *.sqlite3
 postgres_data/
 
-# Mosquitto — `mosquitto/data/` y `log/` son volúmenes Docker (ver docker-compose.yml:27)
+# Mosquitto
 mosquitto/data/
 mosquitto/log/
 
-# Firmware build outputs — `arduino-cli` y PlatformIO generan `build/` en firmware/*/ (como `app/build/` en Android)
+# Firmware build outputs
 firmware/*/build/
 firmware/*/.build/
 firmware/*/.pio/
 
-# Stats output — trazabilidad FOSS: solo evidencia EST-08 versionada (ver stats/README.md §10)
-# Antes: `stats/data/` ignoraba todo y obligaba `git add -f` para evidencia; ahora con `!` permite `git add` normal
-# Analogía React: `stats/output/` es `dist/` en Vite — bench temporales no versionados
-# stats/data con `!` es como `!dist/keep.json` en React (whitelist evidencia)
+# Stats output (forzados con git add -f para evidencia EST-08: alpha_sweep.json/png, ema_demo.json, ema-real-531.csv)
 stats/output/
-stats/data/*
-!stats/data/ema_demo.json # rescata evidencia — como `!keep.json` en React (KPI 89.3% `prd.md:51`, ver `stats/README.md:10`)
-!stats/data/alpha_sweep.json # EST-08 Monte Carlo 100× — como `alpha_sweep.json` en React (ver `notebooks/EMA_Estadistica.ipynb:8`)
-!stats/data/alpha_sweep.png # PNG 3 paneles — como `alpha_sweep.png` en React (79K, ver `docs/fritzing/alpha_sweep.png`)
-!stats/data/ema-real-531.csv # banco real UNO 531 muestras — como `ema-real-531.csv` en React (ver `stats/serial_plot_ema.py`)
-!stats/data/ema_demo.csv # opcional — como `ema_demo.csv` en React (si `visualize_ema.py --csv`)
-!stats/data/.gitkeep # mantiene carpeta vacía — como `.gitkeep` en React (evita que `stats/data/` sea totalmente ignorada en git)
+stats/data/
 stats/*.csv
-!stats/data/*.csv # rescata csv en data/ ya whitelisted — como `!keep.csv` en React
 stats/*.json
-!stats/data/*.json
 stats/*.png
-!stats/data/*.png
 stats/*.pdf
-!stats/data/*.pdf
 
-# Fritzing — trazabilidad Sprint 1: versionar PNGs exportados y FZZ canónico (ver docs/fritzing/README si existe)
-# Antes: `docs/fritzing/*.fzz` bloqueaba todo .fzz y obligaba `git add -f` para `mega-cerrojo-v1.fzz` (Sprint 1 cerrojo)
-# Ahora: ignora `Filtro*` y `.fz` genéricos, pero permite `mega-cerrojo` + `AetherNet-P*` + `ema-*/alpha_*` (ver .gitignore:256 docs/fritzing/ history)
-# Analogía React: `docs/fritzing/*.fzz` es `*.fzz` binario Fritzing (como `*.psd` en diseño) — pesado, solo se versiona el canónico
+# Fritzing — fuentes binarias pesadas no versionadas (versionar solo .md/.png exportados ema-*.md/png)
 docs/fritzing/*.fzz
-!docs/fritzing/mega-cerrojo-v1.fzz # rescata canónico — como `!keep.fzz` en React (538K, Sprint 1 cerrojo `docs/sprints.md:13`, verificado `mega-cerrojo-v1.fzz`)
 docs/fritzing/*.fz
-!docs/fritzing/mega-cerrojo-v1.fz
 docs/fritzing/Filtro*
-!docs/fritzing/AetherNet-P*.png # rescata breadboards — como `!keep.png` en React (7× `AetherNet-P1..P7` 276K-522K, trazabilidad Sprint 1)
-!docs/fritzing/ema-*.png # rescata EMA — como `!ema-*.png` en React (`ema-demo.png` 160K, `ema-compare.png`, `ema-real-531.png`)
-!docs/fritzing/alpha_sweep.png # rescata alpha — como `!alpha_sweep.png` en React (79K)
 
-# Documentation builds — como `docs/_build/` en Sphinx (Python) o `docs/site/` en MkDocs
+# Documentation builds
 docs/_build/
 docs/site/
 *.pdf
 
-# Backup files — como `*~` en editor, no versionar (ver `firmware/gateway-esp32/secrets.h.bak` 537B backup local)
+# Backup files
 *.bak
 *.backup
 *.orig
 
-# Temporary files — como `tmp/` en React (bench, capturas)
+# Temporary files
 tmp/
 temp/
 *.tmp
 *.temp
-
-# Untracked opcionales Sprint 3 — 932→2 tras fix inline-comments (2026-09-11)
-# package.json: no es proyecto Node (FOSS 100% Python/Kotlin/C++), si se usa npm luego quitar esta línea y hacer `git add package.json`
-package.json
-# Plantilla docx admin — binario 1.2MB, solo referencia local, no versionar (si se requiere, `git add -f`)
-docs/Administracion de proyectos/Plantilla Proyecto.docx
