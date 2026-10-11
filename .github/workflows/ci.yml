@@ -309,7 +309,12 @@ jobs:
 
       - name: Setup Android SDK
         if: steps.check.outputs.exists == 'true'
-        uses: android-actions/setup-android@v3  # setup Android SDK — como `setup-android` en CI de React (instala SDK 37, build-tools)
+        uses: android-actions/setup-android@v4  # setup Android SDK — como `setup-android` en CI de React (instala SDK 37, build-tools)
+        with:
+          api-level: 37
+          ndk-version: r27c
+          cache: true
+          licenses: accept  # auto-accept SDK licenses
 
       - name: Build Debug APK
         if: steps.check.outputs.exists == 'true'
@@ -329,16 +334,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run Trivy vulnerability scanner
+- name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master  # Trivy — como `aquasecurity/trivy-action` en CI de React (scan fs)
         with:
           scan-type: 'fs'  # fs — escanea filesystem (como `npm audit` en React pero para todos los archivos)
           scan-ref: '.'  # ref . — escanea repo root
           format: 'sarif'  # SARIF — formato para GitHub Security tab (como `sarif` en CodeQL)
-          output: 'trivy-results.sarif'  # output — como `output: trivy-results.sarif` en CI de React
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3  # upload SARIF — como `codeql-action/upload-sarif` en CI de React (muestra en Security tab)
+        uses: github/codeql-action/upload-sarif@v4  # upload SARIF — como `codeql-action/upload-sarif` en CI de React (muestra en Security tab)
         continue-on-error: true  # no falla job si upload falla — como `continue-on-error: true` en CI de React
         with:
           sarif_file: 'trivy-results.sarif'  # SARIF file — como `sarif_file: 'trivy-results.sarif'` en CI de React
