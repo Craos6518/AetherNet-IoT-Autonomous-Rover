@@ -334,7 +334,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-- name: Run Trivy vulnerability scanner
+      - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master  # Trivy — como `aquasecurity/trivy-action` en CI de React (scan fs)
         with:
           scan-type: 'fs'  # fs — escanea filesystem (como `npm audit` en React pero para todos los archivos)
