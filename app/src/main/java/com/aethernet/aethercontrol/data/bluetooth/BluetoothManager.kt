@@ -20,6 +20,7 @@ import android.bluetooth.BluetoothSocket // RFCOMM socket — SPP UUID 00001101-
 import android.content.Context // contexto de app
 import com.aethernet.aethercontrol.util.Result // Result — como {ok, error} en TS
 import java.io.BufferedReader // leer líneas del socket — como readline en pyserial
+import java.io.IOException
 import java.io.InputStreamReader
 import java.util.UUID // SPP UUID canónico
 import kotlinx.coroutines.Dispatchers
@@ -49,11 +50,33 @@ import kotlinx.coroutines.withContext
  *  responde "ACCESS:{\"user_id\":\"hc06_user\",...}" (emit by accessEvents) y
  *  "PRESENCE:{\"presence\":true}" (emit by presence) + "POLL:PRESENCE" para sondeo.
  */
-class BluetoothManager(private val appContext: Context) {
+
+// Interfaz para testabilidad — como `interface SocketClient { connect(); disconnect() }` en TS
+/** SPP UUID canónico (RFCOMM serial) — es lo que HC-06 usa en Android. */
+val SPP_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+
+interface BluetoothManager {
+    val connectionState: StateFlow<BtConnectionState>
+    val accessEvents: SharedFlow<BtAccessResult>
+    val presence: SharedFlow<Boolean>
+
+    fun isSupported(): Boolean
+    fun listPaired(): List<BluetoothDeviceInfo>
+    suspend fun connect(address: String): Result<Unit>
+    fun disconnect()
+    suspend fun sendAccessCommand(pin: String): Result<Unit>
+    suspend fun requestPresence(): Result<Unit>
+}
+
+/**
+ * Implementación real usando Android Bluetooth API.
+ * Inyectada via ServiceLocator.bluetoothManager.
+ */
+class BluetoothManagerImpl(
+    private val appContext: Context
+) : BluetoothManager {
 
     companion object {
-        // SPP UUID canónico (RFCOMM serial) — es lo que HC-06 usa en Android
-        val SPP_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
         private const val MAX_PIN_LEN = 6 // espejo firmware PIN_MAX_LEN
     }
 
@@ -61,28 +84,28 @@ class BluetoothManager(private val appContext: Context) {
 
     // StateFlow conexión — como MqttManager._connectionState (MqttManager.kt:59)
     private val _connectionState = MutableStateFlow<BtConnectionState>(BtConnectionState.Disconnected)
-    val connectionState: StateFlow<BtConnectionState> = _connectionState.asStateFlow()
+    override val connectionState: StateFlow<BtConnectionState> = _connectionState.asStateFlow()
 
     // SharedFlow resultados ACCESS: y push PRESENCE: — buffer para pérdida mínima en rotación
     private val _accessEvents = MutableSharedFlow<BtAccessResult>(extraBufferCapacity = 16)
-    val accessEvents: SharedFlow<BtAccessResult> = _accessEvents.asSharedFlow()
+    override val accessEvents: SharedFlow<BtAccessResult> = _accessEvents.asSharedFlow()
     private val _presence = MutableSharedFlow<Boolean>(extraBufferCapacity = 8)
-    val presence: SharedFlow<Boolean> = _presence.asSharedFlow()
+    override val presence: SharedFlow<Boolean> = _presence.asSharedFlow()
 
     private var socket: BluetoothSocket? = null // socket RFCOMM activo (null si desconectado)
     private var readerThread: Thread? = null    // thread lector del socket (como worker en JS)
 
     /** true si el dispositivo tiene Bluetooth (getDefaultAdapter() != null). */
-    fun isSupported(): Boolean = adapter != null
+    override fun isSupported(): Boolean = adapter != null
 
     /**
      * Lista dispositivos BT emparejados (HC-06 ya pareado desde settings del teléfono).
      * Requiere BLUETOOTH_CONNECT (API 31+) — la UI lo pide antes de llamar. Sin permiso
-     * devuelve [] (no crashea): la pantalla muestra el botón "Habilitar Bluetooth".
+     * devuelve [] (no crashea): la pantalla muestra "Habilita Bluetooth".
      * @SuppressLint: no usamos los nuevos listener APIs, solo getBondedDevices (lectura).
      */
     @SuppressLint("MissingPermission")
-    fun listPaired(): List<BluetoothDeviceInfo> {
+    override fun listPaired(): List<BluetoothDeviceInfo> {
         val a = adapter ?: return emptyList() // sin BT
         return try {
             a.bondedDevices.map { device -> // bondedDevices — como `pairedDevices` en BT settings
@@ -99,7 +122,7 @@ class BluetoothManager(private val appContext: Context) {
      * que parsea ACCESS/PRESENCE y emite a los SharedFlow (como WebSocket onmessage en JS).
      */
     @SuppressLint("MissingPermission")
-    suspend fun connect(address: String): Result<Unit> = withContext(Dispatchers.IO) {
+    override suspend fun connect(address: String): Result<Unit> = withContext(Dispatchers.IO) {
         try {
             if (socket?.isConnected == true) return@withContext Result.Success(Unit) // ya conectado
             disconnect() // limpia restos — como `socket.close()` antes de reconnect en JS
@@ -139,7 +162,7 @@ class BluetoothManager(private val appContext: Context) {
                         null -> Unit // línea desconocida — ignora (no crashea)
                     }
                 }
-            } catch (_: Exception) {
+            } catch (_: IOException) {
                 // socket murió — desconexión limpia (Nano fuera de rango / BT apagado)
             } finally {
                 if (socket === s) { // solo si este mismo socket sigue activo — evita pisar reconexiones
@@ -155,7 +178,7 @@ class BluetoothManager(private val appContext: Context) {
      * Espejo de publishAccessCommand de MqttManager pero por SPP (MqttManager.kt:188).
      * Valida 4..6 dígitos igual que el firmware — no envía PIN inválido por la radio.
      */
-    suspend fun sendAccessCommand(pin: String): Result<Unit> = withContext(Dispatchers.IO) {
+    override suspend fun sendAccessCommand(pin: String): Result<Unit> = withContext(Dispatchers.IO) {
         if (pin.length !in 4..MAX_PIN_LEN || !pin.all { it.isDigit() }) {
             return@withContext Result.Error("PIN inválido (4-6 dígitos)")
         }
@@ -174,7 +197,7 @@ class BluetoothManager(private val appContext: Context) {
     }
 
     /** Sondea presencia FC-51: "POLL:PRESENCE" -> Nano responde PRESENCE:{...} (pushed a UI). */
-    suspend fun requestPresence(): Result<Unit> = withContext(Dispatchers.IO) {
+    override suspend fun requestPresence(): Result<Unit> = withContext(Dispatchers.IO) {
         val s = socket
         if (s == null || !s.isConnected) return@withContext Result.Error("BT no conectado")
         return@withContext try {
@@ -187,7 +210,7 @@ class BluetoothManager(private val appContext: Context) {
     }
 
     /** Cierra socket + reader — como `client.end()` en MQTT.js (MqttManager.disconnect). */
-    fun disconnect() {
+    override fun disconnect() {
         try { socket?.close() } catch (_: Exception) {}
         readerThread?.interrupt() // despierta reader — como `worker.terminate()` en JS
         readerThread = null

@@ -68,6 +68,7 @@ class BluetoothViewModel(
         // Gestiona sondeo POLL:PRESENCE: arranca al conectar, para al desconectar
         viewModelScope.launch {
             bt.connectionState.collect { state ->
+                _uiState.update { it.copy(connection = state) }
                 when (state) {
                     is BtConnectionState.Connected -> {
                         pollJob?.cancel()
