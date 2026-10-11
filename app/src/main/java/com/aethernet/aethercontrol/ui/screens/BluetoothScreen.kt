@@ -33,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue // by collectAsStateWithLifecycle
+import androidx.compose.runtime.derivedStateOf // derivedStateOf — como useMemo con deps en React
 import androidx.compose.runtime.remember // remember { permission } — como useMemo en React
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,8 +59,11 @@ fun BluetoothScreen(vm: BluetoothViewModel, onBack: () -> Unit) {
     val context = LocalContext.current // para checkSelfPermission
     val needsRuntimePerm = Build.VERSION.SDK_INT >= 31 // BLUETOOTH_CONNECT solo API 31+ (Android 12+)
     // permiso ya otorgado? — como `navigator.permissions.query({name:'bluetooth'})` en JS
-    val hasPermission = !needsRuntimePerm || // API 24..30: BLUETOOTH es normal, ya instalado
+    // derivedStateOf re-evalúa en cada recomposición → detecta permiso concedido sin navegar fuera
+    val hasPermission by remember { derivedStateOf {
+        !needsRuntimePerm || // API 24..30: BLUETOOTH es normal, ya instalado
         ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+    }}
 
     // Launcher de permiso — como `const [granted, request] = usePromision()` en React
     val requestPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
