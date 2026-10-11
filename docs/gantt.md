@@ -2,7 +2,7 @@
 
 Resuelve deuda Sprint 1→2 PM-04. Fuente: `docs/sprints.md:9-48` + `docs/backlog.md:9-79` + `docs/branching-strategy.md:122-131` + `docs/deuda-sprint1-sprint2.md`.
 
-> Sprint 1 fechado 2026-08-26 (merge `9eac686` a `develop`), Sprint 2 activo **fase cierre documental**. Deuda 1→2 saldada 2026-08-29 en `feature/firmware-mega-cerrojo`, sincerada 2026-08-31 (MOV-01 plantilla-only, rotación cerrada, Project 14, LOW-01 pivot skill). **Actualizado 2026-09-10** `docs/revision-sprint2-completa`: `FW-MEGA cerrojo+laser` Done, `MOV-02/03/04` + `DEVOPS-06/07` Done, `LOW-02` deuda 2026-09-09, `LOW-04` cancelado, `EST-01` + datasets 36.5k adelantados. Fuera de alcance (W) omitido.
+> Sprint 1 fechado 2026-08-26 (merge `9eac686` a `develop`), Sprint 2 ✅ CERRADO 2026-09-10, **Sprint 3 ✅ CERRADO 2026-09-11**. Deuda 1→2 saldada 2026-08-29 en `feature/firmware-mega-cerrojo`, sincerada 2026-08-31 (MOV-01 plantilla-only, rotación cerrada, Project 14, LOW-01 pivot skill). **Actualizado 2026-09-11** `Sprint 3 Rover`: `MOV-05/06/07` Done + `FW-ROVER` chasis/evasion/anti-caída Done, `FW-MEGA cerrojo+laser` Done, `MOV-02/03/04` + `DEVOPS-06/07` Done, `LOW-02` deuda 2026-09-09, `LOW-04` cancelado, `EST-01` + datasets 36.5k adelantados. Sprint 4 activo. Fuera de alcance (W) omitido.
 
 ```mermaid
 gantt
@@ -43,12 +43,12 @@ gantt
     EST datasets 36.5k externo           :done, s2h, 2026-09-07, 3d
     Revision docs Sprint 2               :active, s2i, 2026-09-10, 2d
 
-    section Sprint 3 — Rover (RF-3.2, RF-1.2)
-    FW-ROVER chasis L298N/HC-SR04        :       s3a, 2026-09-08, 10d
-    FW-ROVER failsafe 300-500ms          :       s3b, after s3a, 5d
-    MOV-05 joystick Compose               :       s3c, 2026-09-08, 7d
-    MOV-06 latencia <10ms                :       s3d, after s3c, 7d
-    MOV-07 BT SPP fallback               :       s3e, 2026-09-15, 7d
+    section Sprint 3 — Rover (RF-3.2, RF-1.2) ✅ CERRADO 2026-09-11
+    FW-ROVER chasis L298N/HC-SR04        :done,  s3a, 2026-09-08, 10d
+    FW-ROVER failsafe 300-500ms          :done,  s3b, after s3a, 5d
+    MOV-05 joystick Compose               :done,  s3c, 2026-09-08, 7d
+    MOV-06 latencia <10ms                :done,  s3d, after s3c, 7d
+    MOV-07 BT SPP fallback               :done,  s3e, 2026-09-15, 7d
 
     section Sprint 4 — LowCode/Stats/Cierre
     LOW-03 Telegram bot directo          :       s4a, 2026-09-22, 5d
@@ -81,8 +81,8 @@ PM-08 ─► DEVOPS-11 ─► DEVOPS-10 ─► MOV-01/12 (deuda, ya saldada 2026
 - 2026-09-07 FW-MEGA laser v2 `c7ce065` + DEVOPS-06/07 21 tests verdes.
 - 2026-09-09 datasets 36.5k + admin doc `ec5d70b`.
 - 2026-09-10 revisión `docs/revision-sprint2-completa` (esta rama) — sincroniza 9 docs.
-- 2026-09-08 Sprint 3 inicia (requiere Sprint 2 verde, ahora desbloqueado).
-- 2026-09-22 Sprint 4 cierre E2E + sustentación.
+- **2026-09-11 Sprint 3 ✅ CERRADO** — `MOV-05/06/07` + `FW-ROVER` (L298N/HC-SR04/TCRT5000, EMA α=0.2, failsafe 500ms, RF nRF24L01) — `rover-uno.ino:42/86/247/375` + `gateway-esp32.ino:241`.
+- 2026-09-22 Sprint 4 cierre E2E + sustentación (activo).
 
 ## Export
 
