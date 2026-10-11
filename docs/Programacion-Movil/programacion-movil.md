@@ -73,7 +73,7 @@ La app está en fase **fundacional**: la arquitectura (MVVM + estados sellados +
 | Cliente MQTT | ❌ TODO contractual (`connect()`, publicación a topics) | `DashboardViewModel.kt:50-75` |
 | Pantallas Compose de luces/dashboard | ❌ Pendiente | Backlog MOV-02/MOV-08 (Sprint 2/4) |
 | Joystick virtual | ✅ Done `feature/app-joystick-virtual` 2026-09-11 `JoystickScreen` Canvas 120dp + `MqttManager` QoS0 + `JoystickMapperTest` 10 + `ViewModelTest` 6 | `app/src/main/java/com/aethernet/aethercontrol/ui/screens/JoystickScreen.kt` · `MqttManager.kt` · `JoystickMapperTest.kt` (10 tests) · `JoystickViewModelTest.kt` (6 tests) |
-| Fallback Bluetooth SPP | ❌ Pendiente | Backlog MOV-07 (Sprint 3) |
+| Fallback Bluetooth SPP | 🔄 Implementado 2026-10-10 (E2E RF pendiente HC-06) | Backlog MOV-07 (Sprint 3) — `BluetoothManager.kt` SPP UUID + `BtPayloadParser` + `BluetoothScreen`/`BluetoothViewModel` + permiso `BLUETOOTH_CONNECT` + `BtPayloadParserTest` 8 verdes; firmware `nano-access-compacto.ino` probado por USB serial; bloqueo E2E RF = **falla física del HC-06** (`s.connect()` `IOException read failed... ret:-1`, RFCOMM `SABME_WAIT_UA`, re-emparejar falla) → revisar 5V/GND/divisor RX (`fritzing P7`) |
 | Tests unitarios de ViewModels | ❌ Pendiente | Backlog MOV-10 (Sprint 4, JUnit) |
 | Build CI de Android | ⚠️ Plantilla desactivada hasta que exista Gradle | `ci.yml` job `android-build` (`if: false`) |
 

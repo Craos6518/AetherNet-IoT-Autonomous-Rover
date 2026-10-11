@@ -16,6 +16,8 @@ import android.content.Context
 import com.aethernet.aethercontrol.BuildConfig // BuildConfig.DEBUG — como `process.env.NODE_ENV !== 'production'` en React
 import com.aethernet.aethercontrol.data.local.PreferencesManager
 import com.aethernet.aethercontrol.data.local.preferencesManager // extension Context.preferencesManager() — como `createStore()` en Zustand
+import com.aethernet.aethercontrol.data.bluetooth.BluetoothManager // BluetoothManager — interfaz (MOV-07 RF-1.3)
+import com.aethernet.aethercontrol.data.bluetooth.BluetoothManagerImpl // BluetoothManagerImpl — implementación real
 import com.aethernet.aethercontrol.data.mqtt.MqttManager
 import com.aethernet.aethercontrol.data.remote.ApiService
 import com.aethernet.aethercontrol.data.repository.AetherRepository
@@ -98,6 +100,7 @@ object ServiceLocator { // object — singleton Kotlin (como `const ServiceLocat
     private var cachedApi: ApiService? = null // cache ApiService
     private var cachedRepo: AetherRepository? = null
     private var cachedMqtt: MqttManager? = null
+    private var cachedBt: BluetoothManagerImpl? = null
 
     private fun buildRetrofit(url: String): Retrofit =
         Retrofit.Builder() // Builder — como `axios.create({baseURL: url})` en JS pero con Retrofit
@@ -124,6 +127,13 @@ object ServiceLocator { // object — singleton Kotlin (como `const ServiceLocat
     val mqttManager: MqttManager
         get() = synchronized(this) {
             cachedMqtt ?: MqttManager(requireContext()).also { cachedMqtt = it } // MqttManager — como `new MqttManager(context)` en JS
+        }
+
+    // MOV-07 RF-1.3: Bluetooth SPP fallback (HC-06 + Nano Acceso Compacto) — como `new BluetoothManager(context)` en JS
+    // Singleton separado de MQTT: BT es el plan B cuando cae el Wi-Fi (no depende de broker ni backend)
+    val bluetoothManager: BluetoothManager
+        get() = synchronized(this) {
+            cachedBt ?: BluetoothManagerImpl(requireContext()).also { cachedBt = it } // BluetoothManagerImpl — como `new BluetoothManagerImpl(context)` en JS
         }
 
     val repository: AetherRepository

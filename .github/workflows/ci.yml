@@ -80,8 +80,8 @@ jobs:
 
   # =============================================================================
   # Firmware - Arduino CLI Compilation — 2 años electrónica/Arduino (arduino-cli) + 1 año C
-  # Compila 3 firmwares con FQBN correcto sin flashear hardware (como `npm run build` en React pero con arduino-cli).
-  # Matrix 3 firmwares en paralelo — como `strategy: matrix: node: [16,18]` en CI de React pero con firmware.
+  # Compila 4 firmwares con FQBN correcto sin flashear hardware (como `npm run build` en React pero con arduino-cli).
+  # Matrix 4 firmwares en paralelo — como `strategy: matrix: node: [16,18]` en CI de React pero con firmware.
   # Valida que no hay error de sintaxis C++ y que pinout no rompe SPI (como `tsc` en React valida tipos).
   # =============================================================================
   firmware-compile:
@@ -89,10 +89,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        firmware:  # matrix 3 firmwares — como `matrix: { firmware: [gateway-esp32, mega-access, rover-uno] }` en CI de React
+        firmware:  # matrix 4 firmwares — como `matrix: { firmware: [gateway-esp32, mega-access, rover-uno] }` en CI de React
           - gateway-esp32  # ESP32 — FQBN esp32:esp32:esp32 (ver gateway-esp32.ino:1, CI fallback secrets.h)
           - mega-access    # MEGA — FQBN arduino:avr:mega (ver mega-access.ino:1, config.h:30 LED 44/45/46)
           - rover-uno      # UNO — FQBN arduino:avr:uno (ver rover-uno.ino:1, EMA α=0.2)
+          - nano-access-compacto  # NANO — FQBN arduino:avr:nano (MOV-07 RF-1.3, HC-06 SPP 9600 D2/D3 + FC-51 D4; SoftwareSerial built-in, JSON manual sin libs)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -137,7 +138,7 @@ jobs:
       - name: Compile firmware
         run: |
           export PATH="$(pwd)/bin:$HOME/bin:$PATH"
-          if [ "${{ matrix.firmware }}" = "gateway-esp32" ]; then FQBN="esp32:esp32:esp32"; elif [ "${{ matrix.firmware }}" = "rover-uno" ]; then FQBN="arduino:avr:uno"; else FQBN="arduino:avr:mega"; fi; echo "Compiling ${{ matrix.firmware }} with $FQBN"; arduino-cli compile --fqbn $FQBN ./firmware/${{ matrix.firmware }}  # compila — como `arduino-cli compile --fqbn $FQBN ./firmware/${firmware}` en local (ver docs/architecture.md:72)
+          if [ "${{ matrix.firmware }}" = "gateway-esp32" ]; then FQBN="esp32:esp32:esp32"; elif [ "${{ matrix.firmware }}" = "rover-uno" ]; then FQBN="arduino:avr:uno"; elif [ "${{ matrix.firmware }}" = "nano-access-compacto" ]; then FQBN="arduino:avr:nano"; else FQBN="arduino:avr:mega"; fi; echo "Compiling ${{ matrix.firmware }} with $FQBN"; arduino-cli compile --fqbn $FQBN ./firmware/${{ matrix.firmware }}  # compila — como `arduino-cli compile --fqbn $FQBN ./firmware/${firmware}` en local (ver docs/architecture.md:72)
 
   # =============================================================================
   # Docker Build Test + Integration (Sprint 1 cierre — docs/sprints.md:61)

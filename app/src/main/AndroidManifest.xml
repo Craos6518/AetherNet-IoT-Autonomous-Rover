@@ -12,6 +12,16 @@
     <!-- INTERNET para Retrofit HTTP y Paho MQTT TCP 1883 — como fetch necesita internet -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- MOV-07 RF-1.3: Bluetooth SPP clásico (HC-06) — fallback PIN+presencia si cae el Wi-Fi.
+         API 24-30: BLUETOOTH (normal) + BLUETOOTH_ADMIN (maxSdk 30, la usa apenas pair/list).
+         API 31+: BLUETOOTH_CONNECT (runtime — la UI la pide en BluetoothScreen antes de listar). -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- MOV-07: indica que la app puede usar Bluetooth — opcional, mejora filtrado en Play -->
+    <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
+
     <application
         android:name=".AetherControlApp"
         android:allowBackup="true"

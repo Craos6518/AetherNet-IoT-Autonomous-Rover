@@ -73,17 +73,17 @@ Backlog operativo detallado del Área 1. IDs MOV-01..10 provienen de `docs/backl
 - [ ] KPI PRD: percepción inmediata (<50 ms comando→motor, validar junto DevOps con timestamps)
 
 ### MOV-07 — Fallback Bluetooth SPP
-| S · Sprint 3 · Depende de DEVOPS-13 (tramas UART) · Origen RF-1.3 |
+| S · Sprint 3 · Depende de DEVOPS-13 (tramas UART) · Origen RF-1.3 · 🔄 Implementado 2026-10-10, E2E RF pendiente (bloqueo físico HC-06) |
 **Qué hacer exactamente:**
-1. Permisos runtime: en Manifest declarar `BLUETOOTH_CONNECT` (API 31+), `BLUETOOTH` legacy (≤30), `ACCESS_FINE_LOCATION`; solicitar con `rememberLauncherForActivityResult` antes de escanear.
-2. `data/bluetooth/SppClient.kt`: bond con HC-06 (UUID SPP estándar `00001101-...`), socket bloqueo en `Dispatchers.IO`, loop lectura→Flow<String>, escritura de tramas del protocolo DEVOPS-13.
-3. `AccessScreen` con toggle "Wi-Fi / Bluetooth": misma lógica de negocio, transporte distinto (Repository pattern).
+1. Permisos runtime: en Manifest declarar `BLUETOOTH_CONNECT` (API 31+), `BLUETOOTH` legacy (≤30), `ACCESS_FINE_LOCATION`; solicitar con `rememberLauncherForActivityResult` antes de escanear. — ✅ Hecho (Manifest `BLUETOOTH`/`BLUETOOTH_ADMIN maxSdk30`/`BLUETOOTH_CONNECT`; `BluetoothScreen` pide `BLUETOOTH_CONNECT` con `RequestPermission`).
+2. `data/bluetooth/SppClient.kt`: bond con HC-06 (UUID SPP estándar `00001101-...`), socket bloqueo en `Dispatchers.IO`, loop lectura→Flow<String>, escritura de tramas del protocolo DEVOPS-13. — ✅ Hecho como `data/bluetooth/BluetoothManager.kt` (SPP UUID `00001101-0000-1000-8000-00805F9B34FB`, `withContext(IO)`, reader thread→SharedFlow `accessEvents`/`presence`, `sendAccessCommand` `CMD:ACCESS:{pin}` + `requestPresence` `POLL:PRESENCE`).
+3. `AccessScreen` con toggle "Wi-Fi / Bluetooth": misma lógica de negocio, transporte distinto (Repository pattern). — ✅ Hecho como `BluetoothScreen` dedicada (`Dest.Bluetooth`) con lista de emparejados, teclado PIN y presencia FC-51 (se mantiene `PinScreen` MQTT por separado).
 
 **Alcance IN:** desbloqueo por PIN vía BT cuando Wi-Fi cae.
 **Alcance OUT:** control del Rover por BT (solo nodo crítico de acceso, según RF-1.3).
 **Criterios:**
-- [ ] Con Wi-Fi apagado, PIN enviado por BT abre cerrojo (HU-01 completa por canal alterno)
-- [ ] Denegación de permisos muestra explicación y no crashea
+- [ ] Con Wi-Fi apagado, PIN enviado por BT abre cerrojo (HU-01 completa por canal alterno) — ⏳ protocolo probado por USB serial; E2E RF bloqueado por **falla física del HC-06** (`s.connect()` → `IOException read failed... ret:-1`; RFCOMM `SABME_WAIT_UA`; re-emparejar falla "No se puede comunicar") → revisar 5V/GND/divisor RX del módulo (`fritzing P7`)
+- [x] Denegación de permisos muestra explicación y no crashea (`listPaired()` captura `SecurityException`→`[]`; UI invita a habilitar)
 
 ## Sprint 4 — Consolidación
 
