@@ -20,6 +20,7 @@ package com.aethernet.aethercontrol.domain.model
  * x,y ∈ [-1, 1] normalizados (0,0 centro). leftPwm/rightPwm ∈ [-255, 255] para L298N.
  * mode: 0=stop (centro), 1=manual (joystick activo), 2=auto (no usado por joystick, reservado RF-3.2).
  * isSending true mientras publish en vuelo; error nullable para badge MQTT.
+ * emergencyLatched true tras PARADA EMERGENCIA — bloquea drag hasta pulsar MANUAL/AUTO (reset deliberado, seguridad).
  */
 data class JoystickUiState(
     val x: Float = 0f, // -1 izquierda .. 1 derecha — como axis X en gamepad (JoystickViewModel normaliza con radius)
@@ -29,5 +30,6 @@ data class JoystickUiState(
     val mode: Int = 0, // 0 stop si x=y=0, 1 manual si |x|>0 o |y|>0 — espejo gateway-esp32.ino:136
     val isSending: Boolean = false, // true si publishRoverCommand en vuelo (opcional spinner)
     val error: String? = null, // mensaje si MQTT no conectado o publish fallido — como Result.Error msg
-    val isActive: Boolean = false // true mientras dedo sobre joystick (dragging) — para anillo activo en UI
+    val isActive: Boolean = false, // true mientras dedo sobre joystick (dragging) — para anillo activo en UI
+    val emergencyLatched: Boolean = false // RF-1.2/RF-3.2 HU-04: true tras emergencyStop hasta reset MANUAL/AUTO
 )

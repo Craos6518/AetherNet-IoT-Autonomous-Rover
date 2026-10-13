@@ -17,6 +17,8 @@ import androidx.lifecycle.ViewModel // ViewModel — como `useState` + `useEffec
 import androidx.lifecycle.ViewModelProvider // Factory — como `createContext` en React
 import com.aethernet.aethercontrol.data.bluetooth.BluetoothManager // BluetoothManager — como `new BluetoothManager(context)` en JS (MOV-07 RF-1.3)
 import com.aethernet.aethercontrol.data.repository.AetherRepository // repo — como apiService en React props
+import com.aethernet.aethercontrol.ui.viewmodel.HistorialViewModel
+import com.aethernet.aethercontrol.ui.viewmodel.SettingsViewModel
 
 /**
  * Factory manual — MOV-01 1.3 (RNF-3.1 sin Hilt/Koin FOSS).
@@ -26,7 +28,8 @@ import com.aethernet.aethercontrol.data.repository.AetherRepository // repo — 
  * Si vienes de React: es como `function createViewModel(repo, type) { switch(type) { case 'dashboard': return new DashboardViewModel(repo) } }`
  */
 class DashboardViewModelFactory(
-    private val repo: AetherRepository // repo inyectado — como `const repo = useRepo()` en React, pero via constructor
+    private val repo: AetherRepository, // repo inyectado — como `const repo = useRepo()` en React, pero via constructor
+    private val bt: BluetoothManager? = null // canal BT para PinViewModel auto (nullable = tests viejos sin BT)
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST") // cast `as T` es seguro porque verificamos isAssignableFrom — como `as unknown as T` en TS
@@ -35,13 +38,21 @@ class DashboardViewModelFactory(
         if (modelClass.isAssignableFrom(DashboardViewModel::class.java)) {
             return DashboardViewModel(repo) as T
         }
-        // Crea PinViewModel — usado en MainActivity:24 `val pinVm: PinViewModel = viewModel(factory = vmFactory)` (MOV-04 Plan B)
+        // Crea PinViewModel ÚNICO — auto BT/MQTT (HU-01 RF-1.3/RF-2.2), mismo factory reusa repo+bt
         if (modelClass.isAssignableFrom(PinViewModel::class.java)) {
-            return PinViewModel(repo) as T
+            return PinViewModel(repo, bt) as T
         }
         // Crea JoystickViewModel — usado en MainActivity:26 `val joyVm: JoystickViewModel = viewModel(factory = vmFactory)` (MOV-05 RF-1.2)
         if (modelClass.isAssignableFrom(JoystickViewModel::class.java)) {
             return JoystickViewModel(repo) as T
+        }
+        // Crea SettingsViewModel — Ajustes RED/BT/Rover/Tema (MOV-08/MOV-09, BT live + prefs DataStore)
+        if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
+            return SettingsViewModel(repo, bt) as T
+        }
+        // Crea HistorialViewModel — telemetría TCRT5000/HC-SR04/FC-51 (MOV-XX)
+        if (modelClass.isAssignableFrom(HistorialViewModel::class.java)) {
+            return HistorialViewModel(repo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}") // error si piden otro ViewModel no registrado (como `throw new Error('Unknown type')` en JS)
     }

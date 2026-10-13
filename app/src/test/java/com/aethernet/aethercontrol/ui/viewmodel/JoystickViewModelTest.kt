@@ -77,6 +77,7 @@ class JoystickViewModelTest {
             lastLeft = l; lastRight = r; lastMode = if(l==0&&r==0)0 else 1; sendCount++
             return sendResult
         }
+        override suspend fun testMqttConnection(brokerUrl: String): Result<Unit> = Result.Success(Unit)
         fun setMqtt(s: MqttConnectionState){ mqttState=s; _mqtt.value=s}
     }
 
@@ -141,5 +142,73 @@ class JoystickViewModelTest {
         vm.onPositionChanged(1f, 0f)
         assertEquals(255, vm.uiState.value.leftPwm)
         assertEquals(-255, vm.uiState.value.rightPwm)
+    }
+
+    @Test fun `setMaxSpeedPct limita PWM enviado`() = runTest {
+        val repo = FakeRepo()
+        val vm = JoystickViewModel(repo, throttleMs = 0)
+        vm.setMaxSpeedPct(50)
+        vm.onPositionChanged(0f, 1f) // adelante: 255 crudo -> 127 con cap 50%
+        assertEquals(127, vm.uiState.value.leftPwm)
+        assertEquals(127, vm.uiState.value.rightPwm)
+        assertEquals(127, repo.lastLeft)
+        assertEquals(127, repo.lastRight)
+        assertEquals(1, repo.lastMode)
+    }
+
+    @Test fun `setMaxSpeedPct clamp 0 a 100`() = runTest {
+        val repo = FakeRepo()
+        val vm = JoystickViewModel(repo, throttleMs = 0)
+        vm.setMaxSpeedPct(0)
+        vm.onPositionChanged(0f, 1f)
+        assertEquals(0, vm.uiState.value.leftPwm)
+        assertEquals(0, vm.uiState.value.mode) // cap 0 = todo stop
+        vm.setMaxSpeedPct(200) // clamp a 100
+        vm.onPositionChanged(0f, 1f)
+        assertEquals(255, vm.uiState.value.leftPwm)
+    }
+
+    @Test fun `setMode AUTO envia 0 0 mode 2`() = runTest {
+        val repo = FakeRepo()
+        val vm = JoystickViewModel(repo, throttleMs = 0)
+        vm.setMode(2)
+        assertEquals(2, vm.uiState.value.mode)
+        assertEquals(0, repo.lastLeft)
+        assertEquals(0, repo.lastRight)
+        assertEquals(2, repo.lastMode)
+    }
+
+    @Test fun `setMode MANUAL envia 0 0 mode 1`() = runTest {
+        val repo = FakeRepo()
+        val vm = JoystickViewModel(repo, throttleMs = 0)
+        vm.setMode(2) // primero auto
+        vm.setMode(1) // vuelve a manual
+        assertEquals(1, vm.uiState.value.mode)
+        assertEquals(1, repo.lastMode)
+    }
+
+    @Test fun `setMode invalido se ignora`() = runTest {
+        val repo = FakeRepo()
+        val vm = JoystickViewModel(repo, throttleMs = 0)
+        vm.setMode(9)
+        assertEquals(0, repo.sendCount)
+    }
+
+    @Test fun `emergencyStop enclava y bloquea drag hasta MANUAL`() = runTest {
+        val repo = FakeRepo()
+        val vm = JoystickViewModel(repo, throttleMs = 0)
+        vm.emergencyStop()
+        assertEquals(0, vm.uiState.value.mode)
+        assertTrue(vm.uiState.value.emergencyLatched)
+        assertEquals(0, repo.lastMode)
+        val countAfterStop = repo.sendCount
+        vm.onPositionChanged(0f, 1f) // drag bloqueado
+        assertEquals(countAfterStop, repo.sendCount)
+        assertEquals(0, vm.uiState.value.leftPwm)
+        vm.setMode(1) // reset deliberado
+        assertTrue(!vm.uiState.value.emergencyLatched)
+        assertEquals(1, repo.lastMode)
+        vm.onPositionChanged(0f, 1f) // drag vuelve a funcionar
+        assertEquals(255, repo.lastLeft)
     }
 }

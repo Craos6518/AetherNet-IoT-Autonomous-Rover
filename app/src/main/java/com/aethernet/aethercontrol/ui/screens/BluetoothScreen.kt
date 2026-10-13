@@ -41,21 +41,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext // context — para checkSelfPermission
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat // checkSelfPermission — como navigator.permissions.query
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aethernet.aethercontrol.data.bluetooth.BtConnectionState // estado SPP
 import com.aethernet.aethercontrol.ui.viewmodel.BluetoothViewModel
 
 /**
- * MOV-07 — Pantalla fallback Bluetooth SPP (RF-1.3).
- * 1) Si API 31+ y sin permiso BLUETOOTH_CONNECT -> botón "Habilitar Bluetooth".
- * 2) Lista HC-06 emparejados (vm.loadDevices después de permiso).
- * 3) Conectado: presencia FC-51 en vivo (poll 1s en VM) + teclado PIN (espejo PinScreen).
- * Feedback: lastResultSuccess ✓/✕ como PinScreen, badge de conexión "BT ● HC-06".
+ * MOV-07 — Pantalla gestión Bluetooth SPP (RF-1.3). SIN teclado PIN: la ÚNICA vista
+ * PIN vive en Acceso (PinScreen, auto BT/MQTT). Aquí solo: permiso, lista HC-06,
+ * conectar/desconectar y presencia FC-51 en vivo.
+ * Feedback: badge de conexión "BT ● HC-06".
  */
 @Composable
-fun BluetoothScreen(vm: BluetoothViewModel, onBack: () -> Unit) {
+fun BluetoothScreen(vm: BluetoothViewModel, onBack: () -> Unit, onOpenPin: () -> Unit = {}) {
     val s by vm.uiState.collectAsStateWithLifecycle() // state — como useSelector en React
     val context = LocalContext.current // para checkSelfPermission
     val needsRuntimePerm = Build.VERSION.SDK_INT >= 31 // BLUETOOTH_CONNECT solo API 31+ (Android 12+)
@@ -150,45 +148,15 @@ fun BluetoothScreen(vm: BluetoothViewModel, onBack: () -> Unit) {
                 Text(it, color = c, style = MaterialTheme.typography.bodyMedium)
             }
 
-            // --- Teclado PIN (mismo grid que PinScreen:104) — solo cuando conectado ---
-            if (s.connection is BtConnectionState.Connected) {
-                Text("PIN del cerrojo (${s.pinInput.length}/6)", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-                val rows = listOf(
-                    listOf("1", "2", "3"),
-                    listOf("4", "5", "6"),
-                    listOf("7", "8", "9"),
-                    listOf("*", "0", "#") // * borrar, # enviar — espejo keypad MEGA 4x4
-                )
-                rows.forEach { row ->
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        row.forEach { k ->
-                            val isSend = k == "#"
-                            val isClear = k == "*"
-                            Button(
-                                onClick = {
-                                    when (k) {
-                                        "*" -> vm.onPinClear()
-                                        "#" -> vm.sendPin()
-                                        else -> vm.onPinDigit(k)
-                                    }
-                                },
-                                enabled = !s.isLoading,
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text(text = when (k) { "#" -> "Enviar"; "*" -> "Borrar"; else -> k }, fontSize = 20.sp)
-                            }
-                        }
-                    }
-                }
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = { vm.onPinBackspace() }, enabled = !s.isLoading && s.pinInput.isNotEmpty(), modifier = Modifier.weight(1f)) {
-                        Text("←")
-                    }
-                    OutlinedButton(onClick = { vm.onPinClear() }, enabled = !s.isLoading && s.pinInput.isNotEmpty(), modifier = Modifier.weight(1f)) {
-                        Text("Limpiar")
-                    }
-                }
+            // PIN unificado en Acceso — aquí solo gestión HC-06 (sin segunda vista PIN)
+            Button(onClick = onOpenPin, modifier = Modifier.fillMaxWidth()) {
+                Text("Ir a Acceso (enviar PIN)")
             }
+            Text(
+                "El PIN se envía desde Acceso: si el HC-06 está conectado usa BT, si no usa MQTT.",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
 
             if (s.isLoading) CircularProgressIndicator() // spinner — como PinScreen:151
             OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {

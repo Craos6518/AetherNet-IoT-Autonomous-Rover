@@ -1,6 +1,10 @@
 package com.aethernet.aethercontrol.ui.viewmodel
 
 import app.cash.turbine.test
+import com.aethernet.aethercontrol.data.bluetooth.BluetoothDeviceInfo
+import com.aethernet.aethercontrol.data.bluetooth.BluetoothManager
+import com.aethernet.aethercontrol.data.bluetooth.BtAccessResult
+import com.aethernet.aethercontrol.data.bluetooth.BtConnectionState
 import com.aethernet.aethercontrol.data.mqtt.AccessEventMqtt
 import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState
 import com.aethernet.aethercontrol.data.mqtt.RoverTelemetryMqtt
@@ -66,7 +70,34 @@ class PinViewModelTest {
         override suspend fun sendAccessCommand(pin:String): Result<Unit> = sendResult
         override suspend fun sendRoverCommand(leftPwm: Int, rightPwm: Int, mode: Int): Result<Unit> = Result.Success(Unit)
         override suspend fun sendRoverVector(x: Float, y: Float): Result<Unit> = Result.Success(Unit)
+        override suspend fun testMqttConnection(brokerUrl: String): Result<Unit> = Result.Success(Unit)
         fun setMqtt(s: MqttConnectionState){ mqttState=s; _mqtt.value=s}
+    }
+
+    private class FakeBt(
+        initial: BtConnectionState = BtConnectionState.Disconnected,
+        var sendResult: Result<Unit> = Result.Success(Unit)
+    ) : BluetoothManager {
+        private val _conn = MutableStateFlow(initial)
+        override val connectionState: StateFlow<BtConnectionState> = _conn
+        val accessFlow = MutableSharedFlow<BtAccessResult>(extraBufferCapacity = 32)
+        override val accessEvents: SharedFlow<BtAccessResult> get() = accessFlow
+        override val presence: SharedFlow<Boolean> get() = MutableSharedFlow()
+        var sendCount = 0
+        var lastPin: String? = null
+        override fun isSupported(): Boolean = true
+        override fun listPaired(): List<BluetoothDeviceInfo> = emptyList()
+        override suspend fun connect(address: String): Result<Unit> = Result.Success(Unit)
+        override fun disconnect() { _conn.value = BtConnectionState.Disconnected }
+        override suspend fun sendAccessCommand(pin: String): Result<Unit> {
+            sendCount++; lastPin = pin; return sendResult
+        }
+        override suspend fun requestPresence(): Result<Unit> = Result.Success(Unit)
+        fun setConn(s: BtConnectionState) { _conn.value = s }
+    }
+
+    private fun pin4(vm: PinViewModel) {
+        vm.onPinDigit("1"); vm.onPinDigit("2"); vm.onPinDigit("3"); vm.onPinDigit("4")
     }
 
     @Test fun `onPinDigit valida 4 a 6`() = runTest {
@@ -104,12 +135,12 @@ class PinViewModelTest {
         assertEquals("PIN 4-6 dígitos", vm.pinState.value.error)
     }
 
-    @Test fun `sendPin guarda MQTT no conectado`() = runTest {
+    @Test fun `sendPin sin canal avisa BT o MQTT`() = runTest {
         val repo = FakeRepo(mqttState = MqttConnectionState.Disconnected)
-        val vm = PinViewModel(repo)
+        val vm = PinViewModel(repo) // sin BT -> NONE
         vm.onPinDigit("1"); vm.onPinDigit("2"); vm.onPinDigit("3"); vm.onPinDigit("4")
         vm.sendPin()
-        assertEquals("MQTT no conectado — verifica Wi-Fi/broker", vm.pinState.value.error)
+        assertEquals("Sin conexión — conecta MQTT o HC-06", vm.pinState.value.error)
     }
 
     @Test fun `sendPin success limpia input y muestra Enviado`() = runTest {
@@ -119,7 +150,7 @@ class PinViewModelTest {
         vm.sendPin()
         // Unconfined -> inmediato
         assertEquals("", vm.pinState.value.pinInput)
-        assertEquals("Enviado, esperando confirmación…", vm.pinState.value.lastMessage)
+        assertEquals("Enviado por MQTT, esperando confirmación…", vm.pinState.value.lastMessage)
         assertEquals(1, vm.pinState.value.attemptsInWindow)
     }
 
@@ -152,5 +183,60 @@ class PinViewModelTest {
         vm.onPinDigit("1"); vm.onPinDigit("2"); vm.onPinDigit("3"); vm.onPinDigit("4")
         vm.sendPin()
         assertEquals("Demasiados intentos, espera 60s", vm.pinState.value.error)
+    }
+
+    // HU-01 RF-1.3/RF-2.2 — canal auto BT > MQTT > NONE
+    @Test fun `resolveTransport prefiere BT sobre MQTT`() = runTest {
+        val vm = PinViewModel(FakeRepo())
+        assertEquals(
+            com.aethernet.aethercontrol.domain.model.PinTransport.MQTT,
+            vm.resolveTransport(MqttConnectionState.Connected("tcp://1:1883"), BtConnectionState.Disconnected)
+        )
+        assertEquals(
+            com.aethernet.aethercontrol.domain.model.PinTransport.BLUETOOTH,
+            vm.resolveTransport(MqttConnectionState.Connected("tcp://1:1883"), BtConnectionState.Connected("HC-06"))
+        )
+        assertEquals(
+            com.aethernet.aethercontrol.domain.model.PinTransport.BLUETOOTH,
+            vm.resolveTransport(MqttConnectionState.Disconnected, BtConnectionState.Connected("HC-06"))
+        )
+        assertEquals(
+            com.aethernet.aethercontrol.domain.model.PinTransport.NONE,
+            vm.resolveTransport(MqttConnectionState.Disconnected, BtConnectionState.Disconnected)
+        )
+    }
+
+    @Test fun `sendPin usa BT si HC-06 conectado aunque MQTT caido`() = runTest {
+        val repo = FakeRepo(mqttState = MqttConnectionState.Disconnected)
+        val bt = FakeBt(BtConnectionState.Connected("HC-06"))
+        val vm = PinViewModel(repo, bt)
+        pin4(vm)
+        vm.sendPin()
+        assertEquals(1, bt.sendCount)
+        assertEquals("1234", bt.lastPin)
+        assertEquals("Enviado por BT, esperando confirmación…", vm.pinState.value.lastMessage)
+    }
+
+    @Test fun `sendPin usa MQTT si BT desconectado`() = runTest {
+        val repo = FakeRepo(mqttState = MqttConnectionState.Connected("tcp://1:1883"))
+        val bt = FakeBt(BtConnectionState.Disconnected)
+        val vm = PinViewModel(repo, bt)
+        pin4(vm)
+        vm.sendPin()
+        assertEquals(0, bt.sendCount)
+        assertEquals("Enviado por MQTT, esperando confirmación…", vm.pinState.value.lastMessage)
+    }
+
+    @Test fun `confirmacion BT actualiza mensaje HC-06`() = runTest {
+        val bt = FakeBt(BtConnectionState.Connected("HC-06"))
+        val vm = PinViewModel(FakeRepo(mqttState = MqttConnectionState.Disconnected), bt)
+        vm.pinState.test {
+            var s = awaitItem()
+            bt.accessFlow.emit(BtAccessResult(true, "7c78c98f", "bluetooth"))
+            s = awaitItem()
+            assertEquals(true, s.lastResultSuccess)
+            assertEquals("✓ Desbloqueado (HC-06)", s.lastMessage)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }

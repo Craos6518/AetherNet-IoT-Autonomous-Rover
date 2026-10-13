@@ -166,6 +166,8 @@ class DashboardViewModel(
                                 isLoading = false,
                                 error = null
                             ),
+                            lastAccess = ev, // MOV-08: guarda último acceso para card Alertas consolidada
+                            lastAlertAt = now,
                             lastSync = now,
                             isConnected = true
                         )
@@ -184,6 +186,8 @@ class DashboardViewModel(
                                 isLoading = false,
                                 error = null
                             ),
+                            lastAccess = ev, // MOV-08: guarda intento fallido también (auditoría HU-01)
+                            lastAlertAt = now,
                             lastSync = now,
                             isConnected = true
                         )
@@ -208,11 +212,24 @@ class DashboardViewModel(
                                 isLoading = false,
                                 error = null
                             ),
+                            lastSecurity = ev, // MOV-08: guarda última alerta para card Alertas consolidada (HU-02)
+                            lastAlertAt = now,
                             lastSync = now,
                             isConnected = true
                         )
                     }
                     scheduleLedExpiry(10000L) // HU-02 rojo 10s (LedStateMapper:36 RED_INTRUSION_WINDOW_MS)
+                } else {
+                    // MOV-08: eventos security no-intrusión (access_denied, rf_failstop) también se guardan para auditoría
+                    val now = System.currentTimeMillis()
+                    _uiState.update {
+                        it.copy(
+                            lastSecurity = ev,
+                            lastAlertAt = now,
+                            lastSync = now,
+                            isConnected = true
+                        )
+                    }
                 }
             }
         }

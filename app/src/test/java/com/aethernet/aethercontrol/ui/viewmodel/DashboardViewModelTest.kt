@@ -92,6 +92,7 @@ class DashboardViewModelTest {
         override suspend fun sendAccessCommand(pin: String): Result<Unit> = Result.Success(Unit)
         override suspend fun sendRoverCommand(leftPwm: Int, rightPwm: Int, mode: Int): Result<Unit> = Result.Success(Unit)
         override suspend fun sendRoverVector(x: Float, y: Float): Result<Unit> = Result.Success(Unit)
+        override suspend fun testMqttConnection(brokerUrl: String): Result<Unit> = Result.Success(Unit)
     }
 
     @Test
@@ -236,5 +237,77 @@ class DashboardViewModelTest {
         }
         vm.disconnectMqtt()
         vm.stopLedPolling()
+    }
+
+    // MOV-08 — Dashboard consolidado: últimas alertas access/security (HU-01/HU-02, RF-1.1)
+
+    @Test
+    fun `mqtt access success updates led green and lastAccess`() = runTest {
+        val repo = FakeRepo(isHealthOk = true)
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = true)
+        vm.uiState.test {
+            var state = awaitItem()
+            repo.accessFlow.emit(AccessEventMqtt(user_id = "app", pin_hash = "7c78c98f", success = true, source = "app"))
+            state = awaitItem()
+            assertEquals(LedState.GREEN_UNLOCKED, state.ledState.state)
+            assertEquals(LedColor.GREEN, state.ledState.color)
+            assertEquals(true, state.lastAccess?.success)
+            assertEquals("7c78c98f", state.lastAccess?.pin_hash)
+            assertNotNull(state.lastAlertAt)
+            cancelAndIgnoreRemainingEvents()
+        }
+        vm.disconnectMqtt()
+    }
+
+    @Test
+    fun `mqtt access fail updates led red fail and lastAccess`() = runTest {
+        val repo = FakeRepo(isHealthOk = true)
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = true)
+        vm.uiState.test {
+            var state = awaitItem()
+            repo.accessFlow.emit(AccessEventMqtt(user_id = "app", pin_hash = "b916ae0", success = false, source = "app"))
+            state = awaitItem()
+            assertEquals(LedState.RED_FAIL, state.ledState.state)
+            assertEquals(LedColor.RED, state.ledState.color)
+            assertEquals(false, state.lastAccess?.success)
+            assertNotNull(state.lastAlertAt)
+            cancelAndIgnoreRemainingEvents()
+        }
+        vm.disconnectMqtt()
+    }
+
+    @Test
+    fun `mqtt security intrusion updates led red and lastSecurity`() = runTest {
+        val repo = FakeRepo(isHealthOk = true)
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = true)
+        vm.uiState.test {
+            var state = awaitItem()
+            repo.securityFlow.emit(SecurityEventMqtt(event_type = "intrusion", severity = "high", description = "Laser interrupted"))
+            state = awaitItem()
+            assertEquals(LedState.RED_INTRUSION, state.ledState.state)
+            assertEquals(LedColor.RED, state.ledState.color)
+            assertEquals("intrusion", state.lastSecurity?.event_type)
+            assertEquals("high", state.lastSecurity?.severity)
+            assertNotNull(state.lastAlertAt)
+            cancelAndIgnoreRemainingEvents()
+        }
+        vm.disconnectMqtt()
+    }
+
+    @Test
+    fun `mqtt security non-intrusion stores lastSecurity without changing led`() = runTest {
+        val repo = FakeRepo(isHealthOk = true)
+        val vm = DashboardViewModel(repo, autoPollLed = false, autoConnectMqtt = true)
+        vm.uiState.test {
+            var state = awaitItem()
+            val ledBefore = state.ledState
+            repo.securityFlow.emit(SecurityEventMqtt(event_type = "rf_failstop", severity = "medium"))
+            state = awaitItem()
+            assertEquals("rf_failstop", state.lastSecurity?.event_type)
+            assertEquals(ledBefore, state.ledState)
+            assertNotNull(state.lastAlertAt)
+            cancelAndIgnoreRemainingEvents()
+        }
+        vm.disconnectMqtt()
     }
 }

@@ -1,59 +1,86 @@
 package com.aethernet.aethercontrol.ui.viewmodel
 
 // =============================================================================
-// PinViewModel.kt — ViewModel PIN Cerrojo | 6º Semestre UTP | MOV-04 HU-01, RF-2.2
+// PinViewModel.kt — ViewModel PIN Cerrojo ÚNICO | 6º Semestre UTP | MOV-04 HU-01, RF-1.3/RF-2.2
 // Autor: Andres Felipe Martinez Henao
 // Experiencia: 2 años JS/React (form state), 2 años electrónica (keypad 4x4), 1 año C (throttle),
 //              1 año PostgreSQL (pin_hash), 2 años Python
-// Analogía React: este class es como `function usePinForm() { const [pinInput, setPinInput] = useState(""); const sendPin = async () => {...} }`
+// Analogía React: este class es como `function usePinForm() { const [pinInput, setPinInput] = useState(""); const transport = btConnected ? 'bt' : mqttConnected ? 'mqtt' : 'none'; const sendPin = async () => transport === 'bt' ? bt.send(pin) : api.send(pin) }`
 // en React con hooks — aquí con ViewModel + MutableStateFlow + PinValidator + throttle.
-// Analogía Python: como `class PinViewModel` con `def on_pin_digit()` y `async def send_pin()` con validación y rate limit.
+// Analogía Python: como `class PinViewModel` con `def resolve_transport()` y `async def send_pin()` con validación y rate limit.
 // Analogía C: espejo de firmware/mega-access/src/keypad_control.cpp:51 isDigit + :44 processPinAttempt — aquí con PinValidator.
 // FOSS: ViewModel + Coroutines (Apache 2.0) — RNF-3.1.
-// Origen: MOV-04 Plan B — S — HU-01 RF-2.2 — ViewModel dedicado pantalla PIN (no DashboardViewModel).
-// Reusa AetherRepository.sendAccessCommand -> MqttManager.publishAccessCommand -> gateway aethernet/access/command:70
-// Valida formato 4..6 dígitos espejo config.h:49 + throttle 5/60s + guard MQTT Connected.
-// Observa accessEventFlow para confirmar success/fail (LedUiState ya pinta verde 5s en DashboardViewModel).
+// Origen: MOV-04 Plan B — S — HU-01 RF-2.2 + MOV-07 RF-1.3 — ÚNICA vista PIN: el canal se elige
+// solo abajo (BT HC-06 conectado > MQTT conectado > NONE). La UI no pregunta por dónde enviar.
+// Flujo MQTT: repo.sendAccessCommand -> MqttManager.publishAccessCommand -> gateway aethernet/access/command:70
+// Flujo BT: bt.sendAccessCommand -> "CMD:ACCESS:{\"pin\"}" SPP -> Nano valida -> ACCESS:{success}.
+// Valida formato 4..6 dígitos espejo config.h:49 + throttle 5/60s.
+// Observa AMBOS accessEventFlow (MQTT/MEGA y BT/Nano) para confirmar success/fail.
 // =============================================================================
 
 import androidx.lifecycle.ViewModel // ViewModel — como `useState` + `useEffect` en React pero con ciclo vida
 import androidx.lifecycle.viewModelScope // scope — como `useEffect` con cancel en unmount
+import com.aethernet.aethercontrol.data.bluetooth.BluetoothManager // canal BT HC-06 SPP (MOV-07 RF-1.3)
+import com.aethernet.aethercontrol.data.bluetooth.BtConnectionState // estado SPP — Connected = canal BT activo
 import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState // estado MQTT — como connectionState en WebSocket JS
 import com.aethernet.aethercontrol.data.repository.AetherRepository // repo — como apiService en React
+import com.aethernet.aethercontrol.domain.model.PinTransport // BLUETOOTH > MQTT > NONE (auto)
 import com.aethernet.aethercontrol.domain.model.PinUiState // UiState PIN — como `type PinFormState` en TS
 import com.aethernet.aethercontrol.domain.validator.PinValidator // validador — como `PinValidator` en JS (regex 4..6 dígitos)
 import com.aethernet.aethercontrol.util.Result // Result — como {ok, data, error} en TS
 import kotlinx.coroutines.Job // Job — handle coroutine (como setTimeout id en JS)
 import kotlinx.coroutines.delay // delay — como `await sleep(ms)` en JS
 import kotlinx.coroutines.flow.MutableStateFlow // MutableStateFlow — como useState pero reactivo
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine // combine(mqtt, bt) -> transport — como `computed(() => ...)` en Vue
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update // update { copy(...) } — como setState(prev => ({...prev, pinInput: next})) en React
 import kotlinx.coroutines.launch
 
 /**
- * MOV-04 Plan B — S — HU-01 RF-2.2 — ViewModel dedicado pantalla PIN.
- * Reusa AetherRepository.sendAccessCommand -> MqttManager.publishAccessCommand -> gateway aethernet/access/command:70
- * Valida formato 4..6 dígitos espejo config.h:49 PIN_MAX_LEN=6 + throttle 5/60s + guard MQTT Connected.
- * Observa accessEventFlow para confirmar success/fail (LedUiState ya pinta verde 5s en DashboardViewModel).
- * Si vienes de React: es como `function usePinForm(api) { const [pinInput, setPinInput] = useState(""); const [isValid, setIsValid] = useState(false); }`
+ * MOV-04 + MOV-07 — ÚNICO ViewModel del PIN (HU-01 RF-2.2 + RF-1.3).
+ * El canal se resuelve solo: BT HC-06 conectado gana (funciona sin Wi-Fi, plan B local);
+ * si no, MQTT conectado (camino normal vía Gateway); si ninguno, NONE y sendPin() avisa.
+ * Si vienes de React: es como `function usePinForm(api, bt) { const transport = useTransport(); }`
  */
 class PinViewModel(
-    private val repo: AetherRepository // inyectado via ViewModelFactory — como props en React
+    private val repo: AetherRepository, // inyectado via ViewModelFactory — como props en React
+    private val bt: BluetoothManager? = null // inyectado via Factory (nullable para tests viejos sin BT)
 ) : ViewModel() {
 
     private val _pinState = MutableStateFlow(PinUiState()) // state interno — como `const [state, setState] = useState(PinUiState())` en React
     val pinState: StateFlow<PinUiState> = _pinState.asStateFlow() // público read-only — como `state` en React
 
-    // Expone mqtt state para badge "MQTT ●" en PinScreen:138 — como `mqttState` en React props
+    // Expone mqtt state para badge en PinScreen — como `mqttState` en React props
     val mqttState: StateFlow<MqttConnectionState> get() = repo.mqttConnectionState // delega a repo — como `const mqttState = useMqttState()` en React
 
-    private var accessJob: Job? = null // job colecta accessEventFlow — como `socket.on('access', handler)` handle
+    // Estado BT crudo (Disconnected si no hay manager — tests sin BT) — para badge "BT ● HC-06"
+    private val _btState: StateFlow<BtConnectionState> =
+        bt?.connectionState ?: MutableStateFlow<BtConnectionState>(BtConnectionState.Disconnected)
+    val btConnectionState: StateFlow<BtConnectionState> get() = _btState
+
+    // Canal auto: BT Connected > MQTT Connected > NONE — como `computed` en Vue / `useMemo` en React
+    val transport: StateFlow<PinTransport> = combine(mqttState, _btState) { mqtt, btSt ->
+        resolveTransport(mqtt, btSt)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, PinTransport.NONE)
+
+    private var accessJob: Job? = null // job colecta accessEventFlow MQTT — como `socket.on('access', handler)` handle
+    private var btAccessJob: Job? = null // job colecta accessEvents BT (Nano) — como segundo `socket.on`
+    private var transportJob: Job? = null // job espeja transport -> pinState (una sola fuente para la UI)
     private var windowStartMs: Long = 0L // inicio ventana throttle 60s — como `windowStart` en rate limiter Express
     private var cooldownJob: Job? = null // job auto-limpia lastMessage tras 3s — como `setTimeout(() => clearMessage(), 3000)` en JS
 
     init {
-        // Observa confirmación del Gateway/MEGA — como `socket.on('access/event', (ev) => setLastResult(ev.success))` en JS
+        // Espeja canal auto al pinState para que PinScreen lea UNA sola fuente (pinState.transport)
+        transportJob = viewModelScope.launch {
+            transport.collect { t ->
+                val dev = (_btState.value as? BtConnectionState.Connected)?.deviceName
+                _pinState.update { it.copy(transport = t, btDeviceName = dev) }
+            }
+        }
+        // Observa confirmación MQTT del Gateway/MEGA — como `socket.on('access/event', (ev) => setLastResult(ev.success))` en JS
         accessJob = viewModelScope.launch {
             repo.accessEventFlow.collect { ev -> // SharedFlow — push del Gateway tras processPinAttempt (keypad_control.cpp:67)
                 _pinState.update {
@@ -72,6 +99,36 @@ class PinViewModel(
                 }
             }
         }
+        // Observa confirmación BT del Nano (ACCESS:{success}) — mismo feedback con sufijo HC-06
+        btAccessJob = viewModelScope.launch {
+            bt?.accessEvents?.collect { ev ->
+                _pinState.update {
+                    it.copy(
+                        lastResultSuccess = ev.success,
+                        lastMessage = if (ev.success) "✓ Desbloqueado (HC-06)" else "✕ Denegado (HC-06)",
+                        error = null
+                    )
+                }
+                cooldownJob?.cancel()
+                cooldownJob = viewModelScope.launch {
+                    delay(3000)
+                    _pinState.update { s -> if (s.lastMessage != null) s.copy(lastMessage = null, lastResultSuccess = null) else s }
+                }
+            }
+        }
+    }
+
+    /**
+     * Regla de canal (testeable sin Flows): BT Connected gana, si no MQTT Connected, si no NONE.
+     * BT gana porque es enlace local que no necesita Wi-Fi/broker (RF-1.3 contingencia).
+     */
+    fun resolveTransport(
+        mqtt: MqttConnectionState = mqttState.value,
+        btSt: BtConnectionState = _btState.value
+    ): PinTransport = when {
+        btSt is BtConnectionState.Connected -> PinTransport.BLUETOOTH
+        mqtt is MqttConnectionState.Connected -> PinTransport.MQTT
+        else -> PinTransport.NONE
     }
 
     fun onPinDigit(d: String) {
@@ -116,11 +173,19 @@ class PinViewModel(
             return
         }
 
-        // guard MQTT — como `if (!socket.connected) return Error` en JS (ver AetherRepositoryImpl:86)
-        val mqtt = repo.mqttConnectionState.value
-        if (mqtt !is MqttConnectionState.Connected) {
-            _pinState.update { it.copy(error = "MQTT no conectado — verifica Wi-Fi/broker") }
-            return
+        // canal auto — como `const ch = btConnected ? 'bt' : mqttConnected ? 'mqtt' : 'none'` en JS
+        when (resolveTransport()) {
+            PinTransport.NONE -> {
+                _pinState.update { it.copy(error = "Sin conexión — conecta MQTT o HC-06") }
+                return
+            }
+            PinTransport.BLUETOOTH -> {
+                if (bt == null) {
+                    _pinState.update { it.copy(error = "Sin conexión — conecta MQTT o HC-06") }
+                    return
+                }
+            }
+            PinTransport.MQTT -> Unit
         }
 
         // throttle 5 intentos / 60s — como rate limit en Express `rateLimit({windowMs: 60000, max: 5})` (evita spam cerrojo)
@@ -136,7 +201,13 @@ class PinViewModel(
 
         viewModelScope.launch {
             _pinState.update { it.copy(isLoading = true, error = null, lastMessage = null, lastResultSuccess = null) } // loading — como `setIsLoading(true)` en React
-            when (val r = repo.sendAccessCommand(pin)) { // publish MQTT — como `await fetch('/api/access-command', {method:'POST', body: JSON.stringify({pin})})` en JS
+            val channel = resolveTransport()
+            val r: Result<Unit> = when (channel) {
+                PinTransport.BLUETOOTH -> bt!!.sendAccessCommand(pin) // CMD:ACCESS:{"pin"} SPP -> Nano
+                PinTransport.MQTT -> repo.sendAccessCommand(pin) // publish MQTT — como `await fetch('/api/access-command', ...)` en JS
+                PinTransport.NONE -> Result.Error("Sin conexión — conecta MQTT o HC-06")
+            }
+            when (r) { // publish — espera confirmación real vía flows colectados en init
                 is Result.Success -> {
                     _pinState.update {
                         it.copy(
@@ -144,16 +215,16 @@ class PinViewModel(
                             pinInput = "", // limpia input tras envío — como `inputBuffer = ""` en C tras processPinAttempt
                             isValid = false,
                             attemptsInWindow = it.attemptsInWindow + 1, // incrementa contador throttle
-                            lastMessage = "Enviado, esperando confirmación…" // feedback — espera accessEventFlow push del MEGA
+                            lastMessage = if (channel == PinTransport.BLUETOOTH) "Enviado por BT, esperando confirmación…"
+                            else "Enviado por MQTT, esperando confirmación…" // feedback — espera push del MEGA/Nano
                         )
                     }
-                    // confirmación real llega vía accessEventFlow colectado en init (ver MqttManager:138 access/event)
                 }
                 is Result.Error -> {
                     _pinState.update {
                         it.copy(
                             isLoading = false,
-                            error = r.msg // error publish — como `setError(r.msg)` en React (ej. "MQTT no conectado")
+                            error = r.msg // error publish — como `setError(r.msg)` en React
                         )
                     }
                 }
@@ -166,6 +237,8 @@ class PinViewModel(
 
     override fun onCleared() {
         accessJob?.cancel() // cancela colecta access — como `socket.off('access')` en JS cleanup
+        btAccessJob?.cancel()
+        transportJob?.cancel()
         cooldownJob?.cancel() // cancela auto-limpia — como `clearTimeout(id)` en JS
         super.onCleared() // super — como `useEffect return () => cleanup` en React
     }

@@ -19,6 +19,7 @@ package com.aethernet.aethercontrol.data.mqtt
 // =============================================================================
 
 import android.content.Context // para MqttManager(context) — necesita Context para nada, pero lo pide Paho (ver ServiceLocator:113)
+import com.aethernet.aethercontrol.util.Result // wrapper Success/Error — como {ok, data, error} en TS
 import java.util.UUID // para id aethernet-app-xxxxxxxx (como gateway-esp32.ino:41 gateway-esp32)
 import kotlinx.coroutines.Dispatchers // IO dispatcher — como worker thread en Node
 import kotlinx.coroutines.flow.MutableSharedFlow // SharedFlow — como EventEmitter en Node pero con buffer
@@ -77,6 +78,9 @@ class MqttManager(private val appContext: Context) {
         "aethernet/system/status"        // gateway-esp32.ino:73 — Gateway heartbeat (no emite a UI, solo mantiene vivo)
     )
 
+    /** Topics suscritos (solo lectura) — para el diálogo "Ver logs MQTT" en Ajustes. */
+    val subscribedTopics: List<String> get() = topics
+
     // JSON lenient — ignoreUnknownKeys true evita crash si backend añade campo nuevo (como Zod passthrough)
     private val jsonLenient = Json { ignoreUnknownKeys = true; isLenient = true; coerceInputValues = true }
 
@@ -130,7 +134,7 @@ class MqttManager(private val appContext: Context) {
                     }
 
                     override fun connectionLost(cause: Throwable?) { // conexión caída — como `client.on('close', ...)` en MQTT.js
-                        _connectionState.value = MqttConnectionState.Error(cause?.message ?: "lost") // UI "MQTT ✕ lost" — DashboardViewModel volverá a polling 5s
+                        _connectionState.value = MqttConnectionState.Error(friendlyError(cause)) // UI "MQTT ✕ ..." — DashboardViewModel volverá a polling 5s
                     }
 
                     override fun deliveryComplete(token: IMqttDeliveryToken?) {} // entrega QoS 1/2 completa — no usado (QoS 0)
@@ -149,8 +153,21 @@ class MqttManager(private val appContext: Context) {
                 try { topics.forEach { t -> client?.subscribe(t, 0) } } catch (_: Exception) {}
             }
         } catch (e: Exception) {
-            _connectionState.value = MqttConnectionState.Error(e.message ?: "connect fail") // UI "MQTT ✕ ..." — fallback a HTTP polling 5s
+            _connectionState.value = MqttConnectionState.Error(friendlyError(e)) // UI "MQTT ✕ ..." — fallback a HTTP polling 5s
         }
+    }
+
+    /**
+     * Traduce errores crudos de Paho a texto útil (MOV-09).
+     * Paho suele dar "MqttException" sin detalle (reasonCode interno) — al usuario le sirve
+     * más "no se alcanzó el broker" + a dónde ir (Ajustes → RED). Solo texto, sin protocolo.
+     */
+    private fun friendlyError(e: Throwable?): String {
+        val raw = e?.message?.trim().orEmpty()
+        if (raw.isEmpty() || raw.startsWith("MqttException") || raw == "lost" || raw == "connect fail") {
+            return "sin ruta al broker — revisa Wi-Fi y URL en Ajustes"
+        }
+        return raw
     }
 
     private fun parse(topic: String, payload: String) {
@@ -242,5 +259,31 @@ class MqttManager(private val appContext: Context) {
         } catch (_: Exception) {}
         client = null
         _connectionState.value = MqttConnectionState.Disconnected // UI "MQTT - Desconectado" — DashboardViewModel volverá a polling
+    }
+
+    /** MOV-XX: prueba conexión MQTT a un broker específico (Settings: probar conexión). */
+    suspend fun testConnection(brokerUrl: String): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val id = "aethernet-test-${UUID.randomUUID().toString().take(8)}"
+            val testClient = MqttClient(brokerUrl, id, MemoryPersistence()).apply {
+                setCallback(object : MqttCallbackExtended {
+                    override fun connectComplete(reconnect: Boolean, serverURI: String?) {}
+                    override fun messageArrived(topic: String, message: MqttMessage) {}
+                    override fun connectionLost(cause: Throwable?) {}
+                    override fun deliveryComplete(token: IMqttDeliveryToken?) {}
+                })
+            }
+            val opts = MqttConnectOptions().apply {
+                connectionTimeout = 3 // 3s timeout para test
+                isAutomaticReconnect = false
+                isCleanSession = true
+            }
+            testClient.connect(opts)
+            testClient.disconnect()
+            testClient.close()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "test connection fail")
+        }
     }
 }

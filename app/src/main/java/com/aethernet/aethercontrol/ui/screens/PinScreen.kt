@@ -2,7 +2,7 @@ package com.aethernet.aethercontrol.ui.screens
 
 // =============================================================================
 // PinScreen.kt — Pantalla PIN Cerrojo | 6º Semestre UTP | MOV-04 HU-01, RF-2.2
-// Autor: Andres Felipe Martinez Henao
+// Autor: Est. Tecnología en Desarrollo Software + Ing. Sistemas (UTP)
 // Experiencia: 2 años HTML/CSS/JS/React (form Grid), 2 años electrónica (keypad 4x4),
 //              2 años Python (validator), 1 año C (PIN buffer)
 // Analogía React: este @Composable es como `function PinScreen({ vm, onBack }) { const {pinInput, isValid, error} = useSelector(vm.pinState); return <div><Dots count={6} filled={pinInput.length} /><Grid rows={rows} /></div> }`
@@ -40,23 +40,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp // sp — como `px` pero scaled (accesibilidad)
 import androidx.lifecycle.compose.collectAsStateWithLifecycle // collectAsStateWithLifecycle — como `useSelector` con lifecycle
+import com.aethernet.aethercontrol.data.bluetooth.BtConnectionState
 import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState
+import com.aethernet.aethercontrol.domain.model.PinTransport
 import com.aethernet.aethercontrol.ui.viewmodel.PinViewModel
 
 /**
- * MOV-04 Plan B — S — HU-01 RF-2.2 — Pantalla dedicada PIN cerrojo.
- * Grid 4x3: 1 2 3 / 4 5 6 / 7 8 9 / * 0 # (# = enviar, * = borrar) — espejo keypad MEGA.
- * Dots 6x CircleShape reflejan pinInput.length sin mostrar PIN claro (seguridad).
- * Observa PinViewModel.pinState + mqttState para badge "MQTT ●".
+ * MOV-04 + MOV-07 — ÚNICA pantalla PIN del cerrojo (HU-01 RF-2.2 + RF-1.3).
+ * El canal se elige solo abajo en PinViewModel (BT HC-06 > MQTT > NONE) — la UI
+ * solo muestra el badge "Canal" y el teclado. No hay segunda vista PIN en Bluetooth.
  * Navega desde DashboardScreen "Abrir PIN cerrojo" -> NavGraph Dest.Pin.
  */
 @Composable
 fun PinScreen(
-    vm: PinViewModel, // ViewModel PIN — como `pinViewModel` prop en React
-    onBack: () -> Unit // callback volver — como `onBack` prop en React (NavGraph popBackStack)
+    vm: PinViewModel, // ViewModel PIN único (auto BT/MQTT) — como `pinViewModel` prop en React
+    onBack: () -> Unit, // callback volver — como `onBack` prop en React (NavGraph popBackStack)
+    onOpenBluetooth: () -> Unit = {} // abre gestión HC-06 — como `navigate('bluetooth')` en React Router
 ) {
     val s by vm.pinState.collectAsStateWithLifecycle() // pin state — como `const s = useSelector(vm.pinState)` en React Redux
-    val mqtt by vm.mqttState.collectAsStateWithLifecycle() // mqtt state — como `const mqtt = useSelector(vm.mqttState)` en React
+    val mqtt by vm.mqttState.collectAsStateWithLifecycle() // mqtt state — para badge detallado
+    val btSt by vm.btConnectionState.collectAsStateWithLifecycle() // bt state — para badge detallado
 
     Scaffold { innerPadding ->
         Column(
@@ -150,8 +153,30 @@ fun PinScreen(
 
             if (s.isLoading) CircularProgressIndicator() // spinner si enviando — como `{isLoading && <CircularProgress />}` en React MUI
 
+            // Badge canal auto — ÚNICA vista PIN: BT HC-06 > MQTT > NONE (PinViewModel.resolveTransport)
+            val channelText = when (s.transport) {
+                PinTransport.BLUETOOTH -> "Canal: BT ● ${s.btDeviceName ?: "HC-06"}"
+                PinTransport.MQTT -> "Canal: MQTT ● ${(mqtt as? MqttConnectionState.Connected)?.broker ?: ""}"
+                PinTransport.NONE -> "Canal: sin conexión"
+            }
             Text(
-                text = when (mqtt) { // badge MQTT — como `mqtt === 'connected' ? 'MQTT ●' : 'MQTT ○'` en React
+                text = channelText, // badge canal — como `transport === 'bt' ? 'BT ●' : ...` en React
+                color = if (s.transport != PinTransport.NONE) Color(0xFF4CAF50) else Color.Red,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            // Detalle ambos canales (una línea cada uno, compacto)
+            Text(
+                text = when (val c = btSt) {
+                    is BtConnectionState.Connected -> "BT ● ${c.deviceName}"
+                    is BtConnectionState.Connecting -> "BT ○ Conectando ${c.deviceName}…"
+                    is BtConnectionState.Error -> "BT ✕ ${c.msg}"
+                    is BtConnectionState.Disconnected -> "BT - Desconectado"
+                },
+                color = if (btSt is BtConnectionState.Connected) Color(0xFF4CAF50) else Color.Gray,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = when (mqtt) { // estado MQTT — como `mqtt === 'connected' ? 'MQTT ●' : 'MQTT ○'` en React
                     is MqttConnectionState.Connected -> "MQTT ● ${(mqtt as MqttConnectionState.Connected).broker}" // conectado — como `MQTT ● tcp://host:1883`
                     is MqttConnectionState.Connecting -> "MQTT ○ Conectando…" // conectando
                     is MqttConnectionState.Error -> "MQTT ✕ ${(mqtt as MqttConnectionState.Error).msg}" // error
@@ -160,6 +185,11 @@ fun PinScreen(
                 color = if (mqtt is MqttConnectionState.Connected) Color(0xFF4CAF50) else Color.Gray, // verde si conectado — como `color: isConnected ? 'green' : 'gray'` en React style
                 style = MaterialTheme.typography.bodySmall
             )
+            if (s.transport == PinTransport.NONE) {
+                OutlinedButton(onClick = onOpenBluetooth, modifier = Modifier.fillMaxWidth()) {
+                    Text("Conectar HC-06 / revisar MQTT")
+                }
+            }
 
             OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) { // volver — como `<Button onClick={onBack}>Volver Dashboard</Button>` en React Router
                 Text("Volver Dashboard")

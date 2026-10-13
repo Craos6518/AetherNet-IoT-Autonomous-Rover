@@ -30,8 +30,10 @@ data class PinUiState(
     val pinInput: String = "", // dígitos acumulados — como inputBuffer en C keypad_control.cpp:12, pero en Compose StateFlow
     val isLoading: Boolean = false, // true mientras sendAccessCommand en vuelo — como isLoading en React Query (muestra CircularProgressIndicator en PinScreen:136)
     val isValid: Boolean = false, // true si pinInput 4..6 dígitos — como PinValidator.isValidFormat(pin) (ver PinValidator.kt:21)
-    val error: String? = null, // mensaje error validación/throttle/MQTT — nullable, se pinta rojo en PinScreen:81
+    val error: String? = null, // mensaje error validación/throttle/transporte — nullable, se pinta rojo en PinScreen:81
     val lastResultSuccess: Boolean? = null, // null = sin envío aún, true/false tras accessEventFlow (como lastResult en React)
     val lastMessage: String? = null, // "✓ Desbloqueado" / "✕ Denegado" / "Enviado, esperando confirmación…" — feedback UI (PinScreen:83)
-    val attemptsInWindow: Int = 0 // para throttling UI (max 5 / 60s en PinViewModel:114) — como rate limit en Express
+    val attemptsInWindow: Int = 0, // para throttling UI (max 5 / 60s en PinViewModel:114) — como rate limit en Express
+    val transport: PinTransport = PinTransport.NONE, // canal auto actual (BT > MQTT > NONE) — badge "Canal" en PinScreen
+    val btDeviceName: String? = null // nombre HC-06 conectado (null si BT desconectado) — para badge "BT ● HC-06"
 )

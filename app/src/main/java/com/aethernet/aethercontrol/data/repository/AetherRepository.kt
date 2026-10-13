@@ -72,4 +72,7 @@ interface AetherRepository {
     /** MOV-05 RF-1.2: envía vectores joystick normalizados -1..1 o PWM directo -255..255 al Rover vía MQTT aethernet/rover/command. */
     suspend fun sendRoverCommand(leftPwm: Int, rightPwm: Int, mode: Int = 1): Result<Unit> // publish aethernet/rover/command {"left_pwm":..} -> Gateway handleRoverCommand:303 -> radio.write -> rover-uno.ino:219
     suspend fun sendRoverVector(x: Float, y: Float): Result<Unit> // helper x,y -1..1 → PWM tank-steering (JoystickMapper)
+
+    /** MOV-XX: prueba conexión MQTT a un broker específico (Settings: probar conexión). */
+    suspend fun testMqttConnection(brokerUrl: String): Result<Unit>
 }

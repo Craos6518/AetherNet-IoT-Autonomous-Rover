@@ -17,6 +17,7 @@ package com.aethernet.aethercontrol.ui.screens
 // =============================================================================
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +35,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,13 +43,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aethernet.aethercontrol.core.di.ServiceLocator
 import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState
 import com.aethernet.aethercontrol.ui.viewmodel.JoystickViewModel
+import kotlin.math.hypot
 import kotlin.math.roundToInt
 
 /**
@@ -63,6 +71,14 @@ fun JoystickScreen(
 ) {
     val s by vm.uiState.collectAsStateWithLifecycle()
     val mqtt by vm.mqttState.collectAsStateWithLifecycle()
+
+    // Cap velocidad Ajustes → Rover (MOV-08): observa DataStore y lo empuja al VM en vivo
+    val prefs = remember { runCatching { ServiceLocator.preferencesManager }.getOrNull() }
+    val speedCap: Int = if (prefs != null) {
+        val c by prefs.maxSpeedPct.collectAsStateWithLifecycle(initialValue = 100)
+        c
+    } else 100
+    LaunchedEffect(speedCap) { vm.setMaxSpeedPct(speedCap) }
 
     Scaffold { innerPadding ->
         Column(
@@ -92,7 +108,7 @@ fun JoystickScreen(
                 style = MaterialTheme.typography.bodySmall
             )
 
-            // Card estado PWM — como `Rover L={t.left_pwm} R={t.right_pwm}` en DashboardScreen:113 pero para comando enviado
+            // Card estado X,Y — coordenadas joystick
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -105,118 +121,130 @@ fun JoystickScreen(
                         text = "X=${String.format("%.2f", s.x)} Y=${String.format("%.2f", s.y)}",
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    Text(
-                        text = "L=${s.leftPwm} R=${s.rightPwm} mode=${s.mode} ${if (s.isActive) "● activo" else "○ reposo"}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = if (s.isActive) Color(0xFF4CAF50) else Color.Gray
-                    )
-                    if (s.isSending) {
-                        Text("Enviando…", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-                    }
-                    s.error?.let {
-                        Text(it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
-                    }
-                    Text(
-                        "Deadband ${com.aethernet.aethercontrol.domain.model.JoystickMapper.MIN_PWM} — throttle ${com.aethernet.aethercontrol.domain.model.JoystickMapper.THROTTLE_MS}ms (MOV-06 espejo rover-uno.ino:91)",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
                 }
             }
 
-            // Joystick Canvas — base 240dp (radio 120dp) + thumb 40dp
-            // Como `<canvas width=240 height=240>` en HTML5 con `arc` y `pointer events` (detectDragGestures ≈ pointermove)
-            val baseRadiusDp = 120.dp
-            val thumbRadiusDp = 24.dp // thumb 48dp diámetro visual (24dp radio)
-            val basePx = with(LocalDensity.current) { baseRadiusDp.toPx() } // radio base en px
-            val thumbPx = with(LocalDensity.current) { thumbRadiusDp.toPx() }
+            // Badge modo actual — RF-1.2/RF-3.2: 0=STOP 1=MANUAL 2=AUTO (+ enclavamiento emergencia HU-04)
+            Text(
+                text = "Modo: " + when {
+                    s.emergencyLatched -> "⛔ EMERGENCIA (bloqueado)"
+                    s.mode == 2 -> "AUTO (evasión HC-SR04 + TCRT)"
+                    s.mode == 1 -> "MANUAL (joystick)"
+                    else -> "STOP (detenido)"
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = when {
+                    s.emergencyLatched -> Color(0xFFBA1A1A)
+                    s.mode == 2 -> Color(0xFF1976D2)
+                    s.mode == 1 -> Color(0xFF4CAF50)
+                    else -> Color.Gray
+                }
+            )
 
-            // Offset del thumb respecto al centro — derivado de s.x,s.y normalizados
-            // x * basePx, -y * basePx (Y invertido porque Canvas Y+ abajo pero joystick Y+ adelante)
-            val thumbOffsetX = s.x * basePx
-            val thumbOffsetY = -s.y * basePx
+            // Banner emergencia enclavada — requiere reset deliberado MANUAL/AUTO (seguridad)
+            if (s.emergencyLatched) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFDAD6))
+                ) {
+                    Text(
+                        text = "⛔ PARADA DE EMERGENCIA ACTIVA — joystick bloqueado. Pulsa MANUAL (o AUTO) para reanudar.",
+                        modifier = Modifier.padding(12.dp),
+                        color = Color(0xFFBA1A1A),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+            // Joystick Canvas — Stitch dimensions: base 192dp (radio 96dp) + thumb 80dp (radio 40dp)
+            // Como `<canvas width=192 height=192>` en HTML5 con `arc` y `pointer events`
+            val baseSize = 192.dp
+            val thumbSize = 80.dp
+            val baseRadiusPx = with(LocalDensity.current) { (baseSize / 2).toPx() } // radio base 96dp en px
+            val thumbRadiusPx = with(LocalDensity.current) { (thumbSize / 2).toPx() } // radio thumb 40dp en px
+            val maxThumbTravelPx = baseRadiusPx - thumbRadiusPx
 
-            // Box contenedor 240dp — centra Canvas y maneja pointerInput
+            // Estado local del thumb para renderizado inmediato (anti-vibración)
+            var thumbOffset by remember { mutableStateOf(Offset.Zero) }
+
+            // Reset visual al soltar o STOP
+            if (!s.isActive && thumbOffset != Offset.Zero) {
+                thumbOffset = Offset.Zero
+            }
+
+            // Box contenedor 192dp — centra Canvas y maneja pointerInput
             // pointerInput detecta drag dentro del área; calcula delta desde centro, normaliza y llama vm
-            var boxCenter by remember { mutableStateOf(Offset.Zero) }
 
             Box(
                 modifier = Modifier
-                    .size(baseRadiusDp * 2)
-                    .pointerInput(Unit) {
+                    .size(baseSize)
+                    .pointerInput(s.emergencyLatched) {
                         detectDragGestures(
                             onDragStart = { offset ->
-                                // offset es posición del dedo dentro del Box (0..size). Centro = size/2
-                                // boxCenter se setea en onSizeChanged; por ahora calculamos con size
+                                if (s.emergencyLatched) return@detectDragGestures
                                 val center = Offset(size.width / 2f, size.height / 2f)
-                                boxCenter = center
                                 val dx = offset.x - center.x
                                 val dy = offset.y - center.y
-                                // Normaliza en círculo con radio basePx, invertY true (Canvas Y-down → joystick Y-up)
-                                val (nx, ny) = com.aethernet.aethercontrol.domain.model.JoystickMapper.normalizeInCircle(dx, dy, basePx, invertY = true)
+                                val (nx, ny) = com.aethernet.aethercontrol.domain.model.JoystickMapper.normalizeInCircle(dx, dy, baseRadiusPx, invertY = true)
+                                thumbOffset = Offset(nx * maxThumbTravelPx, -ny * maxThumbTravelPx)
                                 vm.onPositionChanged(nx, ny)
                             },
                             onDragEnd = {
+                                thumbOffset = Offset.Zero
                                 vm.onReleased()
                             },
                             onDragCancel = {
+                                thumbOffset = Offset.Zero
                                 vm.onReleased()
                             },
                             onDrag = { change, _ ->
                                 change.consume()
-                                val center = boxCenter
-                                // Si aún no hay center (primera vez), usa size/2
-                                val cx = if (center == Offset.Zero) size.width / 2f else center.x
-                                val cy = if (center == Offset.Zero) size.height / 2f else center.y
-                                val dx = change.position.x - cx
-                                val dy = change.position.y - cy
-                                val (nx, ny) = com.aethernet.aethercontrol.domain.model.JoystickMapper.normalizeInCircle(dx, dy, basePx, invertY = true)
+                                if (s.emergencyLatched) return@detectDragGestures
+                                val center = Offset(size.width / 2f, size.height / 2f)
+                                val dx = change.position.x - center.x
+                                val dy = change.position.y - center.y
+                                val (nx, ny) = com.aethernet.aethercontrol.domain.model.JoystickMapper.normalizeInCircle(dx, dy, baseRadiusPx, invertY = true)
+                                thumbOffset = Offset(nx * maxThumbTravelPx, -ny * maxThumbTravelPx)
                                 vm.onPositionChanged(nx, ny)
                             }
                         )
                     },
                 contentAlignment = Alignment.Center
             ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
+                Canvas(modifier = Modifier.size(baseSize)) {
                     val center = Offset(size.width / 2f, size.height / 2f)
-                    // Base círculo — como `ctx.arc(center.x, center.y, basePx, 0, 2*Math.PI)` en HTML5 Canvas
-                    drawCircle(
-                        color = Color(0xFFE0E0E0),
-                        radius = basePx,
-                        center = center
-                    )
-                    // Anillo activo si isActive — como `strokeStyle = isActive ? 'green' : 'gray'` en Canvas
+                    val radius = baseRadiusPx
+                    // Base background
+                    drawCircle(color = Color(0xFFE0E0E0), radius = radius, center = center)
+                    // Active ring
                     drawCircle(
                         color = if (s.isActive) Color(0xFF4CAF50) else Color(0xFFBDBDBD),
-                        radius = basePx,
+                        radius = radius,
                         center = center,
                         style = androidx.compose.ui.graphics.drawscope.Stroke(width = 3.dp.toPx())
                     )
-                    // Ejes cruz — como líneas guía en joystick HTML5 (opcional visual)
-                    drawLine(
-                        color = Color.Gray.copy(alpha = 0.3f),
-                        start = Offset(center.x - basePx, center.y),
-                        end = Offset(center.x + basePx, center.y),
-                        strokeWidth = 1.dp.toPx()
-                    )
-                    drawLine(
-                        color = Color.Gray.copy(alpha = 0.3f),
-                        start = Offset(center.x, center.y - basePx),
-                        end = Offset(center.x, center.y + basePx),
-                        strokeWidth = 1.dp.toPx()
-                    )
-                    // Thumb — como `ctx.arc(thumbX, thumbY, thumbPx, 0, 2*Math.PI)` con fill
-                    val thumbCenter = Offset(center.x + thumbOffsetX, center.y + thumbOffsetY)
+                    // Directional indicators (N/S/E/W)
+                    val indicatorColor = Color.Gray.copy(alpha = 0.3f)
+                    val indW = 1.dp.toPx()
+                    val indH = 8.dp.toPx()
+                    val indOffset = 16.dp.toPx()
+                    drawRect(color = indicatorColor, topLeft = Offset(center.x - indW / 2, center.y - radius + indOffset), size = Size(indW, indH))
+                    drawRect(color = indicatorColor, topLeft = Offset(center.x - indW / 2, center.y + radius - indOffset - indH), size = Size(indW, indH))
+                    drawRect(color = indicatorColor, topLeft = Offset(center.x - radius + indOffset, center.y - indH / 2), size = Size(indH, indW))
+                    drawRect(color = indicatorColor, topLeft = Offset(center.x + radius - indOffset - indH, center.y - indH / 2), size = Size(indH, indW))
+                    // Thumb at local thumbOffset
+                    val thumbCenter = Offset(center.x + thumbOffset.x, center.y + thumbOffset.y)
                     drawCircle(
                         color = if (s.isActive) Color(0xFF4CAF50) else Color(0xFF757575),
-                        radius = thumbPx,
+                        radius = thumbRadiusPx,
                         center = thumbCenter
                     )
-                    // Brillo interno thumb — como highlight en CSS
+                    // Inner highlight
                     drawCircle(
                         color = Color.White.copy(alpha = 0.5f),
-                        radius = thumbPx * 0.4f,
-                        center = Offset(thumbCenter.x - thumbPx * 0.2f, thumbCenter.y - thumbPx * 0.2f)
+                        radius = thumbRadiusPx * 0.4f,
+                        center = Offset(thumbCenter.x - thumbRadiusPx * 0.2f, thumbCenter.y - thumbRadiusPx * 0.2f)
                     )
                 }
             }
@@ -227,12 +255,56 @@ fun JoystickScreen(
                 color = Color.Gray
             )
 
+            // Botonera modos RF-1.2/RF-3.2 — AUTO=2 (autónomo UNO), MANUAL=1 (joystick), PARAR=0
+            // maxLines=1 + 12sp: en 3 botones weight(1f) "MANUAL" a 14sp se recorta ("MANUA")
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                Button(onClick = { vm.stop() }, modifier = Modifier.weight(1f)) {
-                    Text("STOP (0,0)")
+                Button(
+                    onClick = { vm.setMode(2) },
+                    modifier = Modifier.weight(1f),
+                    enabled = !s.emergencyLatched,
+                    colors = if (s.mode == 2 && !s.emergencyLatched)
+                        androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+                    else androidx.compose.material3.ButtonDefaults.buttonColors()
+                ) {
+                    Text("AUTO", maxLines = 1, fontSize = 12.sp)
                 }
-                OutlinedButton(onClick = onBack, modifier = Modifier.weight(1f)) {
-                    Text("Volver Dashboard")
+                Button(
+                    onClick = { vm.setMode(1) },
+                    modifier = Modifier.weight(1f),
+                    colors = if (s.mode == 1 && !s.emergencyLatched)
+                        androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+                    else androidx.compose.material3.ButtonDefaults.buttonColors()
+                ) {
+                    Text("MANUAL", maxLines = 1, fontSize = 12.sp)
+                }
+                OutlinedButton(onClick = { vm.stop() }, modifier = Modifier.weight(1f)) {
+                    Text("PARAR", maxLines = 1, fontSize = 12.sp)
+                }
+            }
+
+// Emergency button — HU-04: stop inmediato + enclavamiento (bloquea drag hasta MANUAL/AUTO)
+            Button(
+                onClick = { vm.emergencyStop() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .padding(vertical = 12.dp),
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFBA1A1A),
+                    contentColor = Color(0xFFFFFFFF)
+                ),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("⚠", style = MaterialTheme.typography.titleLarge)
+                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                    Text(
+                        "PARADA EMERGENCIA"
+                    )
                 }
             }
 
