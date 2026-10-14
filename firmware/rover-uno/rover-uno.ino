@@ -47,12 +47,12 @@
 #define MOTOR_IN2 7   // Dirección izquierda
 #define MOTOR_IN3 8   // Dirección derecha
 #define MOTOR_IN4 9   // Dirección derecha (PWM también, pero usado como digital aquí)
-#define MOTOR_ENB 11  // PWM — Motor derecho velocidad (OC2A, Timer2) — MOVIDO de 10 para liberar CSN
+#define MOTOR_ENB 3   // PWM — Motor derecho velocidad (OC2B, Timer2) — PIN REAL VERIFICADO D3 (no D11)
 
 // HC-SR04 Ultrasonic — mide distancia por eco (TRIG pulso 10us, ECHO mide tiempo ida/vuelta)
 // Como sonar de murciélago pero con ultrasonido 40kHz. Distancia = (tiempo * 343 m/s) / 2
 #define ULTRASONIC_TRIG 2          // OUT — dispara pulso 10us
-#define ULTRASONIC_ECHO 3          // IN — recibe eco (duración proporcional a distancia)
+#define ULTRASONIC_ECHO A3         // IN — recibe eco — PIN REAL VERIFICADO A3 (no D3)
 #define MAX_DISTANCE_CM 200        // Máx 200cm — más allá NewPing devuelve 0 (sin eco)
 
 // TCRT5000 IR Sensors (analógico) — detecta borde/línea por reflectancia
@@ -141,22 +141,11 @@ void setup() {
     while (!Serial) delay(10); // Espera monitor serial (no bloquea mucho)
     Serial.println("\n=== AetherNet Rover UNO Starting ===");
 
-    // Motores — todos como OUTPUT, inicia detenido por seguridad (no arranca solo)
-    pinMode(MOTOR_ENA, OUTPUT);
-    pinMode(MOTOR_IN1, OUTPUT);
-    pinMode(MOTOR_IN2, OUTPUT);
-    pinMode(MOTOR_IN3, OUTPUT);
-    pinMode(MOTOR_IN4, OUTPUT);
-    pinMode(MOTOR_ENB, OUTPUT);
-    stopMotors(); // PWM 0 + IN LOW — freno seguro (como poner parking brake)
-
-    // TCRT5000 — INPUT analógico (no pullup — el sensor da tensión, no es botón)
-    // analogRead() devuelve 0-1023 según reflectancia. No usar INPUT_PULLUP aquí.
-    pinMode(IR_LEFT_PIN, INPUT);
-    pinMode(IR_CENTER_PIN, INPUT);
-    pinMode(IR_RIGHT_PIN, INPUT);
-
-    // nRF24L01 — inicializa SPI + RF
+    // nRF24L01 PRIMERO — antes de configurar motores.
+    // CRÍTICO: MOTOR_ENB=11 comparte MOSI=11 (SPI). Si se hace pinMode(11, OUTPUT)
+    // y analogWrite(11, 0) ANTES de radio.begin(), el bus SPI queda mudo y
+    // radio.begin() falla siempre ("nRF24L01 not detected").
+    // Fix 2026-10-13: mover init nRF ANTES de init motores.
     if (!radio.begin()) {
         Serial.println("ERROR: nRF24L01 not detected!");
         // Sigue igual para test sin nRF (como modo offline en web) — no while(1)
@@ -171,6 +160,22 @@ void setup() {
         radio.startListening();           // Modo RX por defecto — escucha comandos
         Serial.println("nRF24L01 initialized");
     }
+
+    // Motores DESPUÉS del nRF — porque MOTOR_ENB=11 comparte MOSI=11 (SPI).
+    // Si se inicializan motores primero, analogWrite(11,0) corrompe el bus SPI.
+    // Fix 2026-10-13: init nRF primero, motores después.
+    pinMode(MOTOR_ENA, OUTPUT);
+    pinMode(MOTOR_IN1, OUTPUT);
+    pinMode(MOTOR_IN2, OUTPUT);
+    pinMode(MOTOR_IN3, OUTPUT);
+    pinMode(MOTOR_IN4, OUTPUT);
+    pinMode(MOTOR_ENB, OUTPUT);
+    stopMotors(); // PWM 0 + IN LOW — freno seguro (como poner parking brake)
+
+    // TCRT5000 — INPUT analógico (no pullup — el sensor da tensión, no es botón)
+    pinMode(IR_LEFT_PIN, INPUT);
+    pinMode(IR_CENTER_PIN, INPUT);
+    pinMode(IR_RIGHT_PIN, INPUT);
 
     // Precarga telemetría inicial para que gateway la reciba en primer ACK
     // Sin esto, primer comando no tendría telemetría de vuelta hasta siguiente loop
