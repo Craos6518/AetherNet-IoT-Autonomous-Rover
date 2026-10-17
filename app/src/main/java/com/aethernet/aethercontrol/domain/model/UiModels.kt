@@ -15,6 +15,8 @@ package com.aethernet.aethercontrol.domain.model
 // =============================================================================
 
 import com.aethernet.aethercontrol.data.mqtt.MqttConnectionState // estado MQTT (Disconnected/Connecting/Connected/Error)
+import com.aethernet.aethercontrol.data.mqtt.AccessEventMqtt // último acceso push (HU-01, MOV-08 alertas)
+import com.aethernet.aethercontrol.data.mqtt.SecurityEventMqtt // última alerta push (HU-02, MOV-08 alertas)
 import com.aethernet.aethercontrol.data.mqtt.RoverTelemetryMqtt // telemetría Rover push (left_pwm, ultrasonic_cm, ir_*)
 import com.aethernet.aethercontrol.data.remote.dto.HealthResponse // health backend GET /health (status, database, version)
 
@@ -34,5 +36,8 @@ data class DashboardUiState(
     val lastSync: Long? = null, // millis última sync exitosa — para "Última sync: 123456" en DashboardScreen:153
     val ledState: LedUiState = LedUiState(), // LED local — default UNKNOWN hasta primer getLedState (MOV-02, ver LedState.kt:38)
     val mqttState: MqttConnectionState = MqttConnectionState.Disconnected, // MQTT — default Disconnected hasta connectMqtt (MOV-03, ver MqttModels.kt:40)
-    val lastRover: RoverTelemetryMqtt? = null // última telemetría Rover push — nullable hasta primer MQTT aethernet/rover/telemetry (MOV-03)
+    val lastRover: RoverTelemetryMqtt? = null, // última telemetría Rover push — nullable hasta primer MQTT aethernet/rover/telemetry (MOV-03)
+    val lastAccess: AccessEventMqtt? = null, // último acceso push — nullable hasta primer MQTT aethernet/access/event (MOV-08 alertas, HU-01)
+    val lastSecurity: SecurityEventMqtt? = null, // última alerta push — nullable hasta primer MQTT aethernet/seguridad/intrusion (MOV-08 alertas, HU-02)
+    val lastAlertAt: Long? = null // millis última alerta (access o security) — para "hace Xs" en card Alertas (MOV-08)
 )

@@ -375,3 +375,5 @@ temp/
 package.json
 # Plantilla docx admin — binario 1.2MB, solo referencia local, no versionar (si se requiere, `git add -f`)
 docs/Administracion de proyectos/Plantilla Proyecto.docx
+# Configuración local de opencode (contiene rutas y claves sensibles)
+opencode.json

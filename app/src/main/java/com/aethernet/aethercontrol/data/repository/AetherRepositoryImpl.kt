@@ -127,4 +127,9 @@ class AetherRepositoryImpl(
         val mode = if (l == 0 && r == 0) 0 else 1
         return sendRoverCommand(l, r, mode)
     }
+
+    override suspend fun testMqttConnection(brokerUrl: String): Result<Unit> {
+        val m = mqtt ?: return Result.Error("MQTT no inicializado")
+        return m.testConnection(brokerUrl)
+    }
 }

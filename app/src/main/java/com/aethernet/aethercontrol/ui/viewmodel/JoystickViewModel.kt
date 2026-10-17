@@ -51,15 +51,29 @@ class JoystickViewModel(
     private var lastSendMs: Long = 0L
     private var sendJob: Job? = null
 
+    // Cap de velocidad 0..100% desde Ajustes → Rover (MOV-08). 100 = sin límite (comportamiento
+    // original verificado E2E). JoystickScreen lo sincroniza con DataStore en vivo.
+    private var speedCapPct: Int = 100
+
+    /** Ajustes → Rover: limita el PWM máximo del joystick (0..100%). Solo reduce, nunca amplía. */
+    fun setMaxSpeedPct(pct: Int) {
+        speedCapPct = pct.coerceIn(0, 100)
+    }
+
     /**
      * Llamado por JoystickScreen en drag/move con x,y ya normalizados -1..1 (invertY ya aplicado).
      * Actualiza UI inmediato (x,y,leftPwm,rightPwm) y dispara publish throttled.
      * Si throttleMs=0 (tests), envía cada vez; si 50ms, ignora si pasaron <50ms (excepto stop 0,0 que siempre envía).
+     * RF-3.2/HU-04: si emergencyLatched, ignora el drag (requiere reset MANUAL/AUTO deliberado).
      */
     fun onPositionChanged(x: Float, y: Float) {
+        if (_uiState.value.emergencyLatched) return // e-stop enclavado — solo setMode(1/2) lo libera
         val cx = x.coerceIn(-1f, 1f)
         val cy = y.coerceIn(-1f, 1f)
-        val (left, right) = JoystickMapper.vectorToPwm(cx, cy, applyDeadband = true)
+        val (rawLeft, rawRight) = JoystickMapper.vectorToPwm(cx, cy, applyDeadband = true)
+        // Cap de velocidad MOV-08 — escala lineal del PWM ya con deadband (ej. 85% de 255 = 216 máx)
+        val left = rawLeft * speedCapPct / 100
+        val right = rawRight * speedCapPct / 100
         val mode = if (left == 0 && right == 0) 0 else 1
         val active = !(cx == 0f && cy == 0f)
         _uiState.update {
@@ -81,6 +95,51 @@ class JoystickViewModel(
      * Alias para botonera STOP — como onReleased pero explícito.
      */
     fun stop() = onReleased()
+
+    /**
+     * RF-1.2 + RF-3.1/RF-3.2 — Botonera de modos AUTO/MANUAL/PARAR.
+     * Envía SIEMPRE con force=true (sin throttle, como un stop) porque es un cambio
+     * de modo deliberado, no un stream de drag a 100Hz.
+     * Protocolo intacto: mismo JSON {left_pwm,right_pwm,mode} → gateway-esp32.ino:303
+     * → RoverCommand struct → rover-uno.ino:219. Sin cambio de protocolo (AGENTS.md §4).
+     *
+     * - mode 2 AUTO: publica {0,0,2} — el UNO entra en executeAutoMode() (HC-SR04 EMA + TCRT).
+     * - mode 1 MANUAL: publica {0,0,1} — el UNO vuelve a executeManualCommand(), listo para drag.
+     *   Además libera emergencyLatched (reset deliberado tras e-stop).
+     * - mode 0 PARAR: equivale a onReleased() {0,0,0} pero SIN liberar e-stop
+     *   (una parada normal no debe desenclavar una emergencia).
+     * Cualquier otro valor se ignora (MqttManager solo acepta 0..2).
+     */
+    fun setMode(mode: Int) {
+        when (mode) {
+            2 -> {
+                _uiState.update { it.copy(x = 0f, y = 0f, leftPwm = 0, rightPwm = 0, mode = 2, isActive = false, error = null, emergencyLatched = false) }
+                throttledSend(0, 0, 2, force = true)
+            }
+            1 -> {
+                _uiState.update { it.copy(x = 0f, y = 0f, leftPwm = 0, rightPwm = 0, mode = 1, isActive = false, error = null, emergencyLatched = false) }
+                throttledSend(0, 0, 1, force = true)
+            }
+            0 -> {
+                // PARAR normal: no desenclava emergencia (ver emergencyStop).
+                _uiState.update { it.copy(x = 0f, y = 0f, leftPwm = 0, rightPwm = 0, mode = 0, isActive = false, error = null) }
+                throttledSend(0, 0, 0, force = true)
+            }
+            else -> return
+        }
+    }
+
+    /**
+     * RF-1.2 + HU-04 — PARADA DE EMERGENCIA con enclavamiento.
+     * Publica {0,0,0} con force=true (igual que stop) pero además pone
+     * emergencyLatched=true: el drag posterior se ignora hasta pulsar MANUAL o AUTO.
+     * El rover además tiene su propio fail-stop 500ms (rover-uno.ino:80 HU-04), así que
+     * aunque se pierda este paquete, el tanque se detiene solo al soltar / perder RF.
+     */
+    fun emergencyStop() {
+        _uiState.update { it.copy(x = 0f, y = 0f, leftPwm = 0, rightPwm = 0, mode = 0, isActive = false, error = null, emergencyLatched = true) }
+        throttledSend(0, 0, 0, force = true)
+    }
 
     private fun throttledSend(left: Int, right: Int, mode: Int, force: Boolean = false) {
         val now = System.currentTimeMillis()
